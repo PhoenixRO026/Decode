@@ -1,0 +1,70 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+
+<!--This declares the robot class, and can be copy-pasted.-->
+<Robot type="FirstInspires-FTC">
+
+    <!--This line declares the Control Hub Portal which contains both hubs. It can be copy-pasted-->
+    <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
+
+        <!--This line declares the Expansion Hub. We use RS485 connection, so we declare it with a port.-->
+        <LynxModule name="Expansion Hub 1" port="1">
+
+            <!--These are the Expansion Hub's motors. Change the ports and names of your motors.-->
+            <goBILDA5202SeriesMotor name="motorRB" port="0"/>
+            <goBILDA5202SeriesMotor name="motorRF" port="1"/>
+            <goBILDA5202SeriesMotor name="motorLB" port="2"/>
+            <goBILDA5202SeriesMotor name="motorLF" port="3"/>
+
+
+            <!--These are the Expansion Hub's servos. Change the ports and names of your servos.-->
+            <!--<Servo name="servoWrist" port="0"/>
+            <Servo name="servoClaw" port="1"/>
+            <Servo name="servoExtendoOuttake" port="2"/>
+            <Servo name="servoShoulder" port="3"/>
+            <Servo name="servoElbow" port="4"/>-->
+
+
+            <!--This is a REV 2m Distance Sensor. Since this is an I^2C device, we require the type of device in the configuration as well.-->
+            <!--            <REV_VL53L0X_RANGE_SENSOR name="clawDistance" port="0" bus="3" />-->
+
+            <!--This is a limit switch. Since we plugged it into digital devices, we don't need to specify this in our config.-->
+            <!--            <DigitalDevice name="vswitch" port="0"/>-->
+
+            <!--This line signifies that the Expansion Hub configuration has ended.-->
+        </LynxModule>
+
+        <!--This line declares the Control Hub and can be copy-pasted.-->
+        <LynxModule name="Control Hub" port="173">
+
+            <!--These are the Control Hub's motors. Change the ports and names of your motors.-->
+            <goBILDA5202SeriesMotor name="intake" port="0" />
+            <goBILDA5202SeriesMotor name="transfer" port="1" />
+            <!--<goBILDA5202SeriesMotor name="motorLF" port="2" />
+            <goBILDA5202SeriesMotor name="motorLB" port="3" />-->
+
+            <!--This is a limit switch. Since we plugged it into digital devices, we don't need to specify this in our config.-->
+            <!--            <DigitalDevice name="hSwitch" port="0"/>-->
+
+            <!--This is a REV Color Sensor V3. Since this is an I^2C device, we require the type of device in the configuration as well.-->
+            <!--<RevColorSensorV3 name="intakeColorSensor" port="0" bus="2"/>-->
+            <!--This is a GoBilda Pinpoint Computer. Use this to configure your pinpoint if you are using one of the pinpoint localizers.-->
+            <goBILDAPinpoint name="odo" port="0" bus="1"/>
+
+            <!--These are the Control Hub's servos. Change the ports and names of your servos.-->
+            <!--<Servo name="servoIntakeTilt" port="0"/>
+            <Servo name="servoBoxTilt" port="2"/>
+-->
+            <!--This is the built-in Control Hub IMU. Use this if you are using one of the Control Hub IMU localizers.-->
+            <ControlHubImuBHI260AP name="imu" port="0" bus="0"/>
+
+            <!--This line signifies that the Control Hub configuration has ended.-->
+        </LynxModule>
+
+        <!--This line signifies that the Control Hub Portal configuration has ended.-->
+    </LynxUsbDevice>
+
+    <!--This is the configuration for an Ethernet Device, in this case our Limelight3A.-->
+    <!--    <EthernetDevice serialNumber="EthernetOverUsb:eth0:172.29.0.25" name="webcam" port="0" ipAddress="172.29.0.1" />-->
+
+    <!--This line signifies that the robot configuration has ended-->
+</Robot>
