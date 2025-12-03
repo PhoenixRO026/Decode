@@ -16,21 +16,14 @@ class Intake(
 )
 {
 
-    enum class SensorColor {
-        GREEN,
-        PURPLE,
-        OTHER
-    }
-
     var power
         get() = motor.power
         set(value) {
             motor.power = value
         }
 
-
     fun addTelemetry(telemetry: Telemetry) {
-        telemetry.addData("Outtake power", power)
+        telemetry.addData("Inttake power", power)
 
         //telemetry.addData("lift current", rightMotor.getCurrent(CurrentUnit.AMPS) + leftMotor.getCurrent(CurrentUnit.AMPS))
     }

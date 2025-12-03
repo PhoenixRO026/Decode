@@ -55,7 +55,6 @@ class Robot(
 
         val finger = hardwareMap.get(Servo::class.java, "finger")
 
-
         drive = Drive(mecanumDrive)
         shooter = Shooter(
             motorTop = motorShooterTop,

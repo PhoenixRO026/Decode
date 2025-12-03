@@ -33,11 +33,8 @@ class Shooter(
         @JvmField var targetRpmTolerance = 50
     }
     enum class Mode {
-        PID,
-        RAW_POWER
+        PID
     }
-
-    private var currentMode = Mode.RAW_POWER
 
     private var rpm = 0
 
@@ -46,7 +43,6 @@ class Shooter(
     var outtakeTargetRpm = rpm
         set(value) {
             field = value
-            currentMode = Mode.PID
         }
 
     private var _power
@@ -56,17 +52,15 @@ class Shooter(
             motorBottom.power = value
         }
 
-
     var power
         get() = _power
         set(value) {
-            if (currentMode != Mode.RAW_POWER && value == 0.0) return
+            if (value == 0.0) return
             if (rpm < 0 ) {
                 rpm = abs(rpm)
                 return
             }
             _power = value
-            currentMode = Mode.RAW_POWER
         }
 
     fun update(deltaTime: Duration) {
@@ -76,7 +70,5 @@ class Shooter(
 
     fun addTelemetry(telemetry: Telemetry) {
         telemetry.addData("Outtake power", power)
-
-        //telemetry.addData("lift current", rightMotor.getCurrent(CurrentUnit.AMPS) + leftMotor.getCurrent(CurrentUnit.AMPS))
     }
 }

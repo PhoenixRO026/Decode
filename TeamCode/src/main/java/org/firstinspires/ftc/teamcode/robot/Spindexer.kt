@@ -26,16 +26,7 @@ class Spindexer(
         )
         @JvmField var targetPosTolerance = 10
     }
-    enum class Mode {
-        PID,
-        RAW_POWER
-    }
-    /*
-        cum faci sa ai acelasi 0 la fiecare run???
-     */
 
-
-    private var currentMode = Mode.RAW_POWER
     private var offset = 0
 
     val position get() = encoder.getPositionAndVelocity().position - offset
@@ -45,22 +36,29 @@ class Spindexer(
         get() = motor.power
         set(value) {
             motor.power = value
-            currentMode = Mode.RAW_POWER
         }
 
     var targetPosition = position
         set(value) {
             field = value
-            currentMode = Mode.PID
         }
 
     fun update(deltaTime: Duration) {
-        if (currentMode == Mode.PID)
-            power = transferConfig.controller.calculate(
-                position.toDouble(),
-                targetPosition.toDouble(),
-                deltaTime
-            )
+        power = transferConfig.controller.calculate(
+            position.toDouble(),
+            targetPosition.toDouble(),
+            deltaTime
+        )
+    }
+
+    fun open_trap() {
+        // activate servo trap to release ball to the shooter
+        finger.position = 1.0
+    }
+
+    fun close_trap() {
+        // closes trap after transferring ball to the shooter
+        finger.position = 0.0
     }
 
     fun addTelemetry(telemetry: Telemetry) {
