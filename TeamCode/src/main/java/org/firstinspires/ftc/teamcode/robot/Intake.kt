@@ -15,13 +15,6 @@ class Intake(
     val motor: DcMotorEx,
 )
 {
-
-    enum class SensorColor {
-        GREEN,
-        PURPLE,
-        OTHER
-    }
-
     var power
         get() = motor.power
         set(value) {
