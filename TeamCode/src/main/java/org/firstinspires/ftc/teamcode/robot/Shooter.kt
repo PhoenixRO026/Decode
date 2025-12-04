@@ -32,13 +32,8 @@ class Shooter(
         )
         @JvmField var targetRpmTolerance = 50
     }
-    enum class Mode {
-        PID
-    }
 
     private var rpm = 0
-
-    private var offset = 0.0
 
     var outtakeTargetRpm = rpm
         set(value) {
@@ -66,7 +61,6 @@ class Shooter(
     fun update(deltaTime: Duration) {
         _power = ShooterConfig.controller.calculate(rpm.toDouble(), outtakeTargetRpm.toDouble(), deltaTime)
     }
-
 
     fun addTelemetry(telemetry: Telemetry) {
         telemetry.addData("Outtake power", power)

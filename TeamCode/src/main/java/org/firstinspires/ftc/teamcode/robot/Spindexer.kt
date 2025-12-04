@@ -45,8 +45,8 @@ class Spindexer(
 
     fun update(deltaTime: Duration) {
         power = transferConfig.controller.calculate(
-            position.toDouble(),
-            targetPosition.toDouble(),
+            position,
+            targetPosition,
             deltaTime
         )
     }
@@ -65,6 +65,5 @@ class Spindexer(
         telemetry.addData("transfer power", power)
         telemetry.addData("spindexer pos", motor.currentPosition)
         telemetry.addData("finger pos", fingerPosition)
-        //telemetry.addData("lift current", rightMotor.getCurrent(CurrentUnit.AMPS) + leftMotor.getCurrent(CurrentUnit.AMPS))
     }
 }
