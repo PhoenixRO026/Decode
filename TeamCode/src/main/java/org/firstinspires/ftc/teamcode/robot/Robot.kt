@@ -15,8 +15,7 @@ import kotlin.jvm.java
 
 class Robot(
     hardwareMap: HardwareMap,
-    pose: Pose = Pose(0.0.cm, 0.0.cm, 0.0.deg),
-    resetEncoders: Boolean = true
+    pose: Pose = Pose(0.0.cm, 0.0.cm, 0.0.deg)
 ) {
     val drive: Drive
     val shooter: Shooter
@@ -28,6 +27,7 @@ class Robot(
 
         val motorShooterTop = hardwareMap.get(DcMotorEx::class.java, "motorShooterTop")
         val motorShooterBottom = hardwareMap.get(DcMotorEx::class.java, "motorShooterBottom")
+        motorShooterBottom.direction = DcMotorSimple.Direction.REVERSE
 
         motorShooterTop.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         motorShooterTop.direction = DcMotorSimple.Direction.FORWARD

@@ -10,6 +10,7 @@ import com.commonlibs.units.deg
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.DcMotor
+import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.robot.Robot
 import org.firstinspires.ftc.teamcode.teleop.prepPositions.OuttakeTest
@@ -47,7 +48,6 @@ class TeleOp : LinearOpMode() {
 
             robot.shooter.outtakeTargetRpm = CanonEventTele.teleConfig.targetRPM
 
-            robot.intake.power = CanonEventTele.teleConfig.intakePower
             robot.transfer.targetPosition = CanonEventTele.teleConfig.targetPos
 
             robot.shooter.update(timeKeep.deltaTime)
