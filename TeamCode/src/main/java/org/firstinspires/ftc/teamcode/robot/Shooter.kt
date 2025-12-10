@@ -40,26 +40,15 @@ class Shooter(
             field = value
         }
 
-    private var _power
+    var power
         get() = motorTop.power
         set(value) {
             motorTop.power = value
             motorBottom.power = value
         }
 
-    var power
-        get() = _power
-        set(value) {
-            if (value == 0.0) return
-            if (rpm < 0 ) {
-                rpm = abs(rpm)
-                return
-            }
-            _power = value
-        }
-
     fun update(deltaTime: Duration) {
-        _power = ShooterConfig.controller.calculate(rpm.toDouble(), outtakeTargetRpm.toDouble(), deltaTime)
+        power = ShooterConfig.controller.calculate(rpm.toDouble(), outtakeTargetRpm.toDouble(), deltaTime)
     }
 
     fun addTelemetry(telemetry: Telemetry) {
