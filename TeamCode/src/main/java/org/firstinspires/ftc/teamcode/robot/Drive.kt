@@ -23,7 +23,7 @@ class Drive(
 
     private var headingOffset = 0.0
     private val heading get() = mecanumDrive.localizer.pose.heading.toDouble() - headingOffset
-    private val curentSpeed get() = if (isSlowMode) DriveConfig.slowSpeed else  1.0
+    private val currentSpeed get() = if (isSlowMode) DriveConfig.slowSpeed else  1.0
 
     var isSlowMode = false
 
@@ -42,10 +42,10 @@ class Drive(
     fun driveFieldCentric(forward: Double, left: Double, rotate: Double) {
         val driveVec = PoseVelocity2d(
             Vector2d(
-                forward * curentSpeed,
-                left * curentSpeed
+                forward * currentSpeed,
+                left * currentSpeed
             ).rotate(-heading),
-            rotate * curentSpeed
+            rotate * currentSpeed
         )
 
         mecanumDrive.setDrivePowers(driveVec)

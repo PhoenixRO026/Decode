@@ -51,7 +51,7 @@ class Robot(
         motorTransfer.direction = DcMotorSimple.Direction.FORWARD
         motorTransfer.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
-        val encoderTransfer : Encoder = RawEncoder(mecanumDrive.leftFront)
+        val encoderTransfer : Encoder = RawEncoder(motorTransfer)
 
         val finger = hardwareMap.get(Servo::class.java, "finger")
 

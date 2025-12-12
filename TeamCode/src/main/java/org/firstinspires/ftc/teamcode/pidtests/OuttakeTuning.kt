@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
 import org.firstinspires.ftc.teamcode.robot.Robot
@@ -26,12 +27,10 @@ class OuttakeTuning : LinearOpMode() {
         @JvmField
         var controller = PIDController(
             kP = 0.0004,
-            kD = 0.00002,
+            kD = 0.0035,
             kI = 0.000005,
             stabilityThreshold = 50.0
         )
-        @JvmField
-        var kV = 0.00025
         @JvmField
         var targetRpm = 0.0
     }
@@ -43,21 +42,20 @@ class OuttakeTuning : LinearOpMode() {
         val motorShooterBottom = hardwareMap.get(DcMotorEx::class.java, "motorShooterBottom")
 
         motorShooterTop.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        motorShooterTop.direction = DcMotorSimple.Direction.FORWARD
-        motorShooterTop.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        motorShooterTop.direction = DcMotorSimple.Direction.REVERSE
+
+        motorShooterTop.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
 
         motorShooterBottom.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        motorShooterBottom.direction = DcMotorSimple.Direction.REVERSE
-        motorShooterBottom.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        motorShooterBottom.direction = DcMotorSimple.Direction.FORWARD
+        motorShooterBottom.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
+
+        val servo = hardwareMap.get(Servo::class.java, "servo")
 
         val shooterEncoder = RawEncoder(motorShooterBottom)
 
-
-        var lastTime = now()
         var lastResetTime = now()
         val timeKeep = TimeKeep()
-        var ff = 0.0
-        var pid = 0.0
         var rpm = 0.0
         var targetRpm = 0.0
         var shooterPower = 0.0
@@ -67,7 +65,6 @@ class OuttakeTuning : LinearOpMode() {
         while (opModeIsActive()) {
             timeKeep.resetDeltaTime()
             val currentTime = now()
-            val dt = currentTime - lastTime
 
             if (currentTime - lastResetTime >= outtakeConfig.sampleWindow) {
                 val pos = shooterEncoder.getPositionAndVelocity().position
@@ -83,21 +80,18 @@ class OuttakeTuning : LinearOpMode() {
 
             targetRpm = OuttakeTuningConfig.targetRpm
 
-            ff = OuttakeTuningConfig.kV * targetRpm
-            pid = OuttakeTuningConfig.controller .calculate(rpm, targetRpm, timeKeep.deltaTime)
-            shooterPower = (ff + pid).coerceIn(-1.0, 1.0)
+            shooterPower = OuttakeTuningConfig.controller .calculate(rpm, targetRpm, timeKeep.deltaTime).coerceIn(0.0, 1.0)
 
             motorShooterBottom.power = shooterPower
             motorShooterTop.power = shooterPower
 
-            telemetry.addData("RPM", "%.2f", rpm)
-            telemetry.addData("Target RPM", OuttakeTuningConfig.targetRpm)
-            telemetry.addData("Power", "%.3f", motorShooterBottom.power)
+            telemetry.addData("RPM", rpm)
+            telemetry.addData("Target RPM", targetRpm)
+            telemetry.addData("Power", "%.3f", shooterPower)
+            telemetry.addData("pos", shooterEncoder.getPositionAndVelocity().position)
             telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
             telemetry.addData("fps", 1.s / timeKeep.deltaTime)
             telemetry.update()
-
-            lastTime = currentTime
         }
     }
 }

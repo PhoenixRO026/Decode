@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.robot
 
 import com.acmerobotics.dashboard.config.Config
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.ftc.Encoder
 import com.commonlibs.units.Duration
 import com.qualcomm.robotcore.hardware.DcMotor
@@ -8,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
+import kotlin.math.abs
 
 class Spindexer(
     val motor: DcMotorEx,
@@ -19,48 +22,49 @@ class Spindexer(
     data object transferConfig {
         @JvmField
         var controller = PIDController(
-            kP = 0.015,
-            kD = 0.00069420,
-            kI = 0.001,
-            stabilityThreshold = 0.2
+            kP = 0.0015,
+            kD = 0.000001,
+            kI = 0.0045,
+            stabilityThreshold = 50.0
         )
-        @JvmField var targetPosTolerance = 10
     }
-    enum class Mode {
-        PID,
-        RAW_POWER
-    }
-    /*
-        cum faci sa ai acelasi 0 la fiecare run???
-     */
 
-
-    private var currentMode = Mode.RAW_POWER
-    private var offset = 0
+    private var offset = 0.0
 
     val position get() = encoder.getPositionAndVelocity().position - offset
 
     var fingerPosition by finger::position
-    var power
+
+    var power: Double
         get() = motor.power
         set(value) {
-            motor.power = value
-            currentMode = Mode.RAW_POWER
+            motor.power = value.coerceIn(-1.0, 1.0)
         }
 
     var targetPosition = position
-        set(value) {
-            field = value
-            currentMode = Mode.PID
+
+    fun goToPosAction(pos: Double) = object : Action {
+        var init = true
+        override fun run(p: TelemetryPacket): Boolean {
+            if (init) {
+                init = false
+                targetPosition = pos
+            }
+            p.addLine("waiting for spindexer")
+            return abs(targetPosition - position) > 5
         }
+    }
+
+    fun resetExtendoPosition() {
+        offset = encoder.getPositionAndVelocity().position
+    }
 
     fun update(deltaTime: Duration) {
-        if (currentMode == Mode.PID)
-            power = transferConfig.controller.calculate(
-                position.toDouble(),
-                targetPosition.toDouble(),
-                deltaTime
-            )
+        power = transferConfig.controller.calculate(
+            position.toDouble(),
+            targetPosition.toDouble(),
+            deltaTime
+        )
     }
 
     fun addTelemetry(telemetry: Telemetry) {
