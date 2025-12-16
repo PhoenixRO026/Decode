@@ -29,11 +29,16 @@ class Spindexer(
         )
     }
 
-    private var offset = 0.0
+    val position get() = encoder.getPositionAndVelocity().position
 
-    val position get() = encoder.getPositionAndVelocity().position - offset
-
-    var fingerPosition by finger::position
+    var fingerPosition : Double = 0.5
+        get() = finger.position
+        set(value) {
+            val clampedVal = value.coerceIn(0.0, 1.0)
+            if (clampedVal == field) return
+            field = clampedVal
+            finger.position = field
+        }
 
     var power: Double
         get() = motor.power
@@ -41,7 +46,12 @@ class Spindexer(
             motor.power = value.coerceIn(-1.0, 1.0)
         }
 
-    var targetPosition = position
+    var targetPosition : Double = position
+
+
+    fun goToPos(pos: Double, multiplier: Double = 1.0, offset: Double= 0.0) {
+        targetPosition= pos * multiplier + offset
+    }
 
     fun goToPosAction(pos: Double) = object : Action {
         var init = true
@@ -55,14 +65,10 @@ class Spindexer(
         }
     }
 
-    fun resetExtendoPosition() {
-        offset = encoder.getPositionAndVelocity().position
-    }
-
     fun update(deltaTime: Duration) {
         power = transferConfig.controller.calculate(
-            position.toDouble(),
-            targetPosition.toDouble(),
+            position,
+            targetPosition,
             deltaTime
         )
     }

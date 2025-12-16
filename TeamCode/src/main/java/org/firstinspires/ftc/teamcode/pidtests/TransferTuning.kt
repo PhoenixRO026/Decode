@@ -21,7 +21,7 @@ import kotlin.math.abs
 import kotlin.time.toDuration
 
 @TeleOp
-class TransferTuning : LinearOpMode() {
+class  TransferTuning : LinearOpMode() {
     @Config
     data object TransferTuningConfig {
         @JvmField
@@ -35,6 +35,10 @@ class TransferTuning : LinearOpMode() {
         var kV = 0.00025
         @JvmField
         var targetPos = 0.0
+        @JvmField
+        var multiplier = 1.0
+        @JvmField
+        var offset = 0.0
     }
 
     override fun runOpMode() {
@@ -43,7 +47,7 @@ class TransferTuning : LinearOpMode() {
         val motorTransfer = hardwareMap.get(DcMotorEx::class.java, "motorTransfer")
 
         motorTransfer.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        motorTransfer.direction = DcMotorSimple.Direction.FORWARD
+        motorTransfer.direction = DcMotorSimple.Direction.REVERSE
         motorTransfer.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         val encoderTransfer : Encoder = RawEncoder(motorTransfer)
@@ -59,7 +63,7 @@ class TransferTuning : LinearOpMode() {
             timeKeep.resetDeltaTime()
 
             position = encoderTransfer.getPositionAndVelocity().position
-            targetPos = TransferTuningConfig.targetPos
+            targetPos = TransferTuningConfig.targetPos * TransferTuningConfig.multiplier + TransferTuningConfig.offset
             motorTransfer.power = TransferTuningConfig.controller.calculate(position, targetPos, timeKeep.deltaTime)
 
             telemetry.addData("transfer target pos", TransferTuningConfig.targetPos)

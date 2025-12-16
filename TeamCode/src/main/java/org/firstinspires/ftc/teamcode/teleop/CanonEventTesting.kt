@@ -12,19 +12,18 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import org.firstinspires.ftc.teamcode.library.TimeKeep
+import org.firstinspires.ftc.teamcode.library.buttons.ButtonReader
 import org.firstinspires.ftc.teamcode.robot.Robot
 import org.firstinspires.ftc.teamcode.teleop.prepPositions.OuttakeTest
 
 @TeleOp
 class CanonEventTesting : LinearOpMode(){
     @Config
-    data object teleConfig {
-        @JvmField var sampleWindow = 0.1
-        @JvmField var TICKS_PER_REV = 8192.0
-        @JvmField var targetRPM = 3400
-
-        @JvmField var intakePower = 0.0
-        @JvmField var targetPos = 0.0
+    data object CanonEventConfig {
+        @JvmField var fingerPos = 1.0
+        @JvmField var pos = 0.0
+        @JvmField var multiplier = 1.0
+        @JvmField var offset = 100.0
     }
 
     override fun runOpMode() {
@@ -37,6 +36,14 @@ class CanonEventTesting : LinearOpMode(){
         var rpm = 0.0
         val timeKeep = TimeKeep()
         var curr = 170
+        val set = ButtonReader { gamepad1.a }
+        val right = ButtonReader { gamepad1.b}
+        val left = ButtonReader { gamepad1.x}
+        val up = ButtonReader {gamepad1.dpad_up}
+        val down = ButtonReader {gamepad1.dpad_down}
+        val buttons = listOf(set, right, left,up,down)
+
+        robot.transfer.finger.position = 1.0
 
         waitForStart()
 
@@ -44,25 +51,44 @@ class CanonEventTesting : LinearOpMode(){
             timeKeep.resetDeltaTime()
             val currentTime = now()
             val dt = currentTime - lastTime
+            buttons.forEach { it.readValue() }
 
-            robot.transfer.targetPosition = teleConfig.targetPos
+            if (up.wasJustPressed())
+                robot.transfer.finger.position= 0.7
 
-            robot.transfer.update(timeKeep.deltaTime)
+            if (down.wasJustPressed())
+                robot.transfer.finger.position = 1.0
+
+            if (set.wasJustPressed())
+                robot.transfer.goToPos(curr.toDouble(), CanonEventConfig.multiplier,CanonEventConfig.offset)
+
+            if (right.wasJustPressed()){
+                curr+=170;
+                robot.transfer.goToPos(curr.toDouble(), CanonEventConfig.multiplier,CanonEventConfig.offset)
+            }
+
+            if (left.wasJustPressed()){
+                curr-=170;
+                robot.transfer.goToPos(curr.toDouble(), CanonEventConfig.multiplier,CanonEventConfig.offset)
+            }
+
 
             telemetry.addData("curr", curr)
-            telemetry.addData("a was pressed", gamepad2.a)
-            telemetry.addData("b was pressed", gamepad2.b)
+            telemetry.addData("a was pressed (set)", gamepad1.a)
+            telemetry.addData("x was pressed (left)", gamepad1.x)
+            telemetry.addData("b was pressed (right)", gamepad1.b)
+            telemetry.addData("up was pressed (set)", gamepad1.dpad_up)
+            telemetry.addData("down was pressed (left)", gamepad1.dpad_down)
             telemetry.addData("pos", robot.transfer.position)
+            telemetry.addData("fingir pos", robot.transfer.finger.position)
             telemetry.addData("target pos", robot.transfer.targetPosition)
             telemetry.addData("power trans", robot.transfer.power)
             telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
             telemetry.addData("fps", 1.s / timeKeep.deltaTime)
             telemetry.update()
 
+            robot.transfer.update(timeKeep.deltaTime)
             lastTime = currentTime
-
-
-
         }
     }
 }
