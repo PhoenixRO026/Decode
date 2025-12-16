@@ -60,17 +60,19 @@ class Shooter(
     var power
         get() = _power
         set(value) {
-            if (currentMode != Mode.RAW_POWER && value == 0.0) return
             if (rpm < 0 ) {
                 rpm = abs(rpm)
                 return
             }
             _power = value
-            currentMode = Mode.RAW_POWER
         }
 
+    fun goToRmp(rpm : Int = 0) {
+        outtakeTargetRpm= rpm
+    }
+
     fun update(deltaTime: Duration) {
-        _power = ShooterConfig.controller.calculate(rpm.toDouble(), outtakeTargetRpm.toDouble(), deltaTime)
+        power = ShooterConfig.controller.calculate(rpm.toDouble(), outtakeTargetRpm.toDouble(), deltaTime)
     }
 
 

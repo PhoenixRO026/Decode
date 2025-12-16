@@ -24,6 +24,8 @@ class CanonEventTesting : LinearOpMode(){
         @JvmField var pos = 0.0
         @JvmField var multiplier = 1.0
         @JvmField var offset = 100.0
+
+        @JvmField var shooterTargetRpm = 0
     }
 
     override fun runOpMode() {
@@ -41,6 +43,8 @@ class CanonEventTesting : LinearOpMode(){
         val left = ButtonReader { gamepad1.x}
         val up = ButtonReader {gamepad1.dpad_up}
         val down = ButtonReader {gamepad1.dpad_down}
+        val increse = ButtonReader {gamepad1.left_bumper}
+        val decrese = ButtonReader {gamepad1.right_bumper}
         val buttons = listOf(set, right, left,up,down)
 
         robot.transfer.finger.position = 1.0
@@ -72,6 +76,9 @@ class CanonEventTesting : LinearOpMode(){
                 robot.transfer.goToPos(curr.toDouble(), CanonEventConfig.multiplier,CanonEventConfig.offset)
             }
 
+            if (increse.wasJustPressed()){
+                robot.shooter.goToRmp(CanonEventConfig.shooterTargetRpm)
+            }
 
             telemetry.addData("curr", curr)
             telemetry.addData("a was pressed (set)", gamepad1.a)
@@ -87,8 +94,19 @@ class CanonEventTesting : LinearOpMode(){
             telemetry.addData("fps", 1.s / timeKeep.deltaTime)
             telemetry.update()
 
+            robot.shooter.update(timeKeep.deltaTime)
             robot.transfer.update(timeKeep.deltaTime)
             lastTime = currentTime
+
+            robot.drive.isSlowMode = gamepad1.right_trigger >= 0.2
+            robot.drive.driveFieldCentric(
+                -gamepad1.left_stick_y.toDouble(),
+                -gamepad1.left_stick_x.toDouble(),
+                -gamepad1.right_stick_x.toDouble()
+            )
+            if (gamepad1.y) {
+                robot.drive.resetFieldCentric()
+            }
         }
     }
 }
