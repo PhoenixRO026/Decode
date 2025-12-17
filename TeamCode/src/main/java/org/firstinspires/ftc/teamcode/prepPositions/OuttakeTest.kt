@@ -57,7 +57,7 @@ class OuttakeTest : LinearOpMode() {
                 lastResetTime = currentTime
             }
 
-            robot.shooter.outtakeTargetRpm = outtakeConfig.targetRPM
+            robot.shooter.targetRpm = outtakeConfig.targetRPM
 
             robot.shooter.update(timeKeep.deltaTime)
 

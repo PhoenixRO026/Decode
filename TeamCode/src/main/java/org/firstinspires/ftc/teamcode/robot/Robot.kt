@@ -37,7 +37,7 @@ class Robot(
         motorShooterBottom.direction = DcMotorSimple.Direction.REVERSE
         motorShooterBottom.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
-        val encoderOuttake : Encoder = RawEncoder(mecanumDrive.rightBack)
+        val encoderOuttake : Encoder = RawEncoder(mecanumDrive.rightFront)
 
         val motorIntake = hardwareMap.get(DcMotorEx::class.java, "motorIntake")
 

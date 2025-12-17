@@ -22,7 +22,6 @@ class CanonEventTele : LinearOpMode(){
         @JvmField var sampleWindow = 0.1
         @JvmField var TICKS_PER_REV = 8192.0
         @JvmField var targetRPM = 3400
-
         @JvmField var intakePower = 0.0
         @JvmField var targetPos = 0.0
     }
@@ -50,12 +49,12 @@ class CanonEventTele : LinearOpMode(){
                 val revs = pos / teleConfig.TICKS_PER_REV
                 rpm = (revs / elapsed) * 60.0
 
-                robot.drive.mecanumDrive.rightBack.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-                robot.drive.mecanumDrive.rightBack.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+                robot.drive.mecanumDrive.rightFront.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+                robot.drive.mecanumDrive.rightFront.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
                 lastResetTime = currentTime
             }
 
-            robot.shooter.outtakeTargetRpm = teleConfig.targetRPM
+            robot.shooter.targetRpm = teleConfig.targetRPM
 
             robot.intake.power = teleConfig.intakePower
             robot.transfer.targetPosition = teleConfig.targetPos

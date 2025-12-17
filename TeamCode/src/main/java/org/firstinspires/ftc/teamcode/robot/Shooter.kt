@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.SequentialAction
 import com.acmerobotics.roadrunner.ftc.Encoder
 import com.commonlibs.units.Duration
 import com.commonlibs.units.SleepAction
+import com.commonlibs.units.rpm
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
@@ -32,22 +33,10 @@ class Shooter(
         )
         @JvmField var targetRpmTolerance = 50
     }
-    enum class Mode {
-        PID,
-        RAW_POWER
-    }
 
-    private var currentMode = Mode.RAW_POWER
+    var rpm = 0
 
-    private var rpm = 0
-
-    private var offset = 0.0
-
-    var outtakeTargetRpm = rpm
-        set(value) {
-            field = value
-            currentMode = Mode.PID
-        }
+    var targetRpm = 0
 
     private var _power
         get() = motorTop.power
@@ -60,19 +49,19 @@ class Shooter(
     var power
         get() = _power
         set(value) {
-            if (rpm < 0 ) {
-                rpm = abs(rpm)
-                return
-            }
-            _power = value
+            _power = value.coerceIn(-1.0 , 1.0)
         }
 
     fun goToRmp(rpm : Int = 0) {
-        outtakeTargetRpm= rpm
+        targetRpm= rpm
+    }
+
+    fun updateRpm(newRpm : Int = 0) {
+        rpm = newRpm
     }
 
     fun update(deltaTime: Duration) {
-        power = ShooterConfig.controller.calculate(rpm.toDouble(), outtakeTargetRpm.toDouble(), deltaTime)
+        power = ShooterConfig.controller.calculate(rpm.toDouble(), targetRpm.toDouble(), deltaTime)
     }
 
 
