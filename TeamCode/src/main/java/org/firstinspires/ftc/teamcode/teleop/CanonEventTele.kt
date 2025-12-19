@@ -54,7 +54,7 @@ class CanonEventTele : LinearOpMode(){
                 lastResetTime = currentTime
             }
 
-            robot.shooter.targetRpm = teleConfig.targetRPM
+            robot.shooter.targetRpm = teleConfig.targetRPM.toDouble()
 
             robot.intake.power = teleConfig.intakePower
             robot.transfer.targetPosition = teleConfig.targetPos

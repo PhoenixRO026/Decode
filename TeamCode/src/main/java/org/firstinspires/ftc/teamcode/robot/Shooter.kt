@@ -26,19 +26,19 @@ class Shooter(
     data object ShooterConfig {
         @JvmField
         var controller = PIDController(
-            kP = 0.015,
-            kD = 0.00069420,
-            kI = 0.0001,
-            stabilityThreshold = 0.2
+            kP = 0.009,
+            kD = 0.0035,
+            kI = 0.000005,
+            stabilityThreshold = 50.0
         )
         @JvmField var targetRpmTolerance = 50
     }
 
-    var rpm = 0
+    var rpm = 0.0
 
-    var targetRpm = 0
+    var targetRpm = 0.0
 
-    private var _power
+    var _power
         get() = motorTop.power
         set(value) {
             motorTop.power = value
@@ -49,19 +49,19 @@ class Shooter(
     var power
         get() = _power
         set(value) {
-            _power = value.coerceIn(-1.0 , 1.0)
+            if (targetRpm == 0.0)
+                _power = 0.0
+            else {
+                _power = value.coerceIn(-1.0, 1.0)
+            }
         }
 
-    fun goToRmp(rpm : Int = 0) {
+    fun goToRmp(rpm : Double) {
         targetRpm= rpm
     }
 
-    fun updateRpm(newRpm : Int = 0) {
-        rpm = newRpm
-    }
-
     fun update(deltaTime: Duration) {
-        power = ShooterConfig.controller.calculate(rpm.toDouble(), targetRpm.toDouble(), deltaTime)
+        power = ShooterConfig.controller.calculate(rpm, targetRpm, deltaTime)
     }
 
 

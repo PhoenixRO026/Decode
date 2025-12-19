@@ -21,11 +21,12 @@ import kotlin.math.abs
 class CanonEventTesting : LinearOpMode(){
     @Config
     data object CanonEventConfig {
-        @JvmField var intakePos = 0.0
-        @JvmField var shooterPos = 0.0
-        @JvmField var multiplier = 1.0
-        @JvmField var shooterOffset = 100.0
+        @JvmField var pos = 179.0
+        @JvmField var multiplier = 0.0
+        @JvmField var shooterOffset = 89.5
         @JvmField var intakeOffset = 0.0
+        @JvmField var sampleWindow = 0.1
+        @JvmField var TICKS_PER_REV = 8192.0
 
         @JvmField var shooterTargetRpm = 0
     }
@@ -38,16 +39,17 @@ class CanonEventTesting : LinearOpMode(){
         var lastTime = now()
         var lastResetTime = now()
         val timeKeep = TimeKeep()
-        var rpm = 0
+        var rpm = 0.0
+        var lastPos : Boolean = false // false = intake true = shooter
 
-        val intakeRight = ButtonReader { gamepad2.a }
-        val intakeLeft = ButtonReader { gamepad2.b}
-        val shootRight = ButtonReader { gamepad2.y}
+        val intakeRight = ButtonReader { gamepad2.y}
+        val intakeLeft = ButtonReader { gamepad2.a}
+        val shootRight = ButtonReader { gamepad2.b}
         val shootLeft = ButtonReader { gamepad2.x}
         val fingerUp = ButtonReader {gamepad2.dpad_up}
         val fingerDown = ButtonReader {gamepad2.dpad_down}
-        val highRpm = ButtonReader {gamepad2.left_bumper}
-        val lowRpm = ButtonReader {gamepad2.right_bumper}
+        val highRpm = ButtonReader {gamepad2.right_bumper}
+        val lowRpm = ButtonReader {gamepad2.left_bumper}
         val buttons = listOf(intakeRight, intakeLeft, shootRight, shootLeft, fingerUp, fingerDown, highRpm, lowRpm)
 
         robot.transfer.finger.position = 1.0
@@ -57,19 +59,7 @@ class CanonEventTesting : LinearOpMode(){
         while (opModeIsActive()) {
             timeKeep.resetDeltaTime()
             val currentTime = now()
-            val dt = currentTime - lastTime
             buttons.forEach { it.readValue() }
-
-            if (currentTime - lastResetTime >= outtakeConfig.sampleWindow) {
-                val pos = robot.shooter.rpm
-                val elapsed = currentTime - lastResetTime
-                val revs = pos / outtakeConfig.TICKS_PER_REV
-                rpm = abs((revs / elapsed) * 60.0).toInt()
-
-                robot.shooter.updateRpm(rpm)
-
-                lastResetTime = currentTime
-            }
 
             /// Drive
 
@@ -92,32 +82,30 @@ class CanonEventTesting : LinearOpMode(){
                 robot.transfer.finger.position = 0.9
 
             if (intakeRight.wasJustPressed()){
-                CanonEventConfig.multiplier ++
-                robot.transfer.goToPos(CanonEventConfig.intakePos, CanonEventConfig.multiplier,CanonEventConfig.intakeOffset)
+                if (lastPos) {
+                    CanonEventConfig.multiplier++
+                }
+                robot.transfer.goToPos(CanonEventConfig.pos, CanonEventConfig.multiplier,CanonEventConfig.intakeOffset)
+                lastPos = false
             }
 
             if (intakeLeft.wasJustPressed()){
-                CanonEventConfig.multiplier --
-                robot.transfer.goToPos(CanonEventConfig.shooterPos, CanonEventConfig.multiplier,CanonEventConfig.intakeOffset)
+                if (lastPos) {
+                    CanonEventConfig.multiplier--
+                }
+                robot.transfer.goToPos(CanonEventConfig.pos, CanonEventConfig.multiplier,CanonEventConfig.intakeOffset)
+                lastPos = false
             }
 
             if (shootRight.wasJustPressed()){
                 CanonEventConfig.multiplier ++
-                robot.transfer.goToPos(CanonEventConfig.shooterPos, CanonEventConfig.multiplier,CanonEventConfig.shooterOffset)
+                robot.transfer.goToPos(CanonEventConfig.pos, CanonEventConfig.multiplier,CanonEventConfig.shooterOffset)
+                lastPos = true
             }
-
             if (shootLeft.wasJustPressed()){
                 CanonEventConfig.multiplier --
-                robot.transfer.goToPos(CanonEventConfig.shooterPos, CanonEventConfig.multiplier,CanonEventConfig.shooterOffset)
-            }
-
-            /// Shooter
-
-            if (highRpm.wasJustPressed()){ /// shoot far
-                robot.shooter.goToRmp(CanonEventConfig.shooterTargetRpm)
-            }
-            else if (lowRpm.wasJustPressed()) { /// shoot close
-                robot.shooter.goToRmp(2000)
+                robot.transfer.goToPos(CanonEventConfig.pos, CanonEventConfig.multiplier,CanonEventConfig.shooterOffset)
+                lastPos = true
             }
 
             /// Intake
@@ -132,13 +120,36 @@ class CanonEventTesting : LinearOpMode(){
                 robot.intake.power = 0.0
             }
 
+            /// Shooter
+
+            if (currentTime - lastResetTime >= CanonEventConfig.sampleWindow) {
+                val pos = robot.shooter.encoder.getPositionAndVelocity().position
+                val elapsed = currentTime - lastResetTime
+                val revs = pos / CanonEventConfig.TICKS_PER_REV
+                robot.shooter.rpm = ((revs / elapsed) * 60.0)
+
+                robot.shooter.motorBottom.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+                robot.shooter.motorBottom.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+
+                lastResetTime = currentTime
+            }
+
+            if (highRpm.wasJustPressed()){ /// shoot far
+                robot.shooter.goToRmp(CanonEventConfig.shooterTargetRpm.toDouble())
+            }
+            else if (lowRpm.wasJustPressed()) { /// shoot close
+                robot.shooter.goToRmp(2500.0)
+            }
+
+            robot.shooter.update(timeKeep.deltaTime)
+
             telemetry.addData("a was pressed (set)", gamepad1.a)
             telemetry.addData("x was pressed (left)", gamepad1.x)
             telemetry.addData("b was pressed (right)", gamepad1.b)
             telemetry.addData("up was pressed (set)", gamepad1.dpad_up)
             telemetry.addData("down was pressed (left)", gamepad1.dpad_down)
             telemetry.addData("shooter power", robot.shooter.power)
-            telemetry.addData("rpm", rpm)
+            telemetry.addData("rpm", robot.shooter.rpm)
             telemetry.addData("target rpm", robot.shooter.targetRpm)
             telemetry.addData("pos", robot.transfer.position)
             telemetry.addData("fingir pos", robot.transfer.finger.position)
@@ -148,10 +159,9 @@ class CanonEventTesting : LinearOpMode(){
             telemetry.addData("fps", 1.s / timeKeep.deltaTime)
             telemetry.update()
 
-            robot.shooter.update(timeKeep.deltaTime)
+
             robot.transfer.update(timeKeep.deltaTime)
             lastTime = currentTime
-
 
         }
     }

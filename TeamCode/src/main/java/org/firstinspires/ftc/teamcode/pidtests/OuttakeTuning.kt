@@ -26,7 +26,7 @@ class OuttakeTuning : LinearOpMode() {
     data object OuttakeTuningConfig {
         @JvmField
         var controller = PIDController(
-            kP = 0.0004,
+            kP = 0.009,
             kD = 0.0035,
             kI = 0.000005,
             stabilityThreshold = 50.0
@@ -50,7 +50,7 @@ class OuttakeTuning : LinearOpMode() {
         motorShooterBottom.direction = DcMotorSimple.Direction.FORWARD
         motorShooterBottom.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.FLOAT
 
-        val servo = hardwareMap.get(Servo::class.java, "servo")
+        val servo = hardwareMap.get(Servo::class.java, "finger")
 
         val shooterEncoder = RawEncoder(motorShooterBottom)
 
