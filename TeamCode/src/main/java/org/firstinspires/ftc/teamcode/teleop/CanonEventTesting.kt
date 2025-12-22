@@ -76,7 +76,7 @@ class CanonEventTesting : LinearOpMode(){
             /// Transfer
 
             if (fingerUp.wasJustPressed()) /// finger
-                robot.transfer.finger.position= 0.6
+                robot.transfer.finger.position= 0.5
 
             if (fingerDown.wasJustPressed())
                 robot.transfer.finger.position = 0.9
