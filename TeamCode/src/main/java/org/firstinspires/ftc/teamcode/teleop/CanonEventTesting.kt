@@ -82,17 +82,13 @@ class CanonEventTesting : LinearOpMode(){
                 robot.transfer.finger.position = 0.9
 
             if (intakeRight.wasJustPressed()){
-                if (lastPos) {
                     CanonEventConfig.multiplier++
-                }
                 robot.transfer.goToPos(CanonEventConfig.pos, CanonEventConfig.multiplier,CanonEventConfig.intakeOffset)
                 lastPos = false
             }
 
             if (intakeLeft.wasJustPressed()){
-                if (lastPos) {
                     CanonEventConfig.multiplier--
-                }
                 robot.transfer.goToPos(CanonEventConfig.pos, CanonEventConfig.multiplier,CanonEventConfig.intakeOffset)
                 lastPos = false
             }
