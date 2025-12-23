@@ -26,7 +26,7 @@ class Shooter(
     data object ShooterConfig {
         @JvmField
         var controller = PIDController(
-            kP = 0.009,
+            kP = 0.01,
             kD = 0.0035,
             kI = 0.000005,
             stabilityThreshold = 50.0

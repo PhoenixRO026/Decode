@@ -23,7 +23,7 @@ class CanonEventTesting : LinearOpMode(){
     data object CanonEventConfig {
         @JvmField var pos = 179.0
         @JvmField var multiplier = 0.0
-        @JvmField var shooterOffset = 89.5
+        @JvmField var shooterOffset = 110.0
         @JvmField var intakeOffset = 0.0
         @JvmField var sampleWindow = 0.1
         @JvmField var TICKS_PER_REV = 8192.0
@@ -79,27 +79,31 @@ class CanonEventTesting : LinearOpMode(){
                 robot.transfer.finger.position= 0.5
 
             if (fingerDown.wasJustPressed())
-                robot.transfer.finger.position = 0.9
+                robot.transfer.finger.position = 0.95
 
             if (intakeRight.wasJustPressed()){
-                    CanonEventConfig.multiplier++
-                robot.transfer.goToPos(CanonEventConfig.pos, CanonEventConfig.multiplier,CanonEventConfig.intakeOffset)
-                lastPos = false
-            }
-
-            if (intakeLeft.wasJustPressed()){
                     CanonEventConfig.multiplier--
                 robot.transfer.goToPos(CanonEventConfig.pos, CanonEventConfig.multiplier,CanonEventConfig.intakeOffset)
                 lastPos = false
             }
 
+            if (intakeLeft.wasJustPressed()){
+                    CanonEventConfig.multiplier++
+                robot.transfer.goToPos(CanonEventConfig.pos, CanonEventConfig.multiplier,CanonEventConfig.intakeOffset)
+                lastPos = false
+            }
+
             if (shootRight.wasJustPressed()){
-                CanonEventConfig.multiplier ++
+                if(lastPos) {
+                    CanonEventConfig.multiplier--
+                }
                 robot.transfer.goToPos(CanonEventConfig.pos, CanonEventConfig.multiplier,CanonEventConfig.shooterOffset)
                 lastPos = true
             }
             if (shootLeft.wasJustPressed()){
-                CanonEventConfig.multiplier --
+                if (lastPos) {
+                    CanonEventConfig.multiplier++
+                }
                 robot.transfer.goToPos(CanonEventConfig.pos, CanonEventConfig.multiplier,CanonEventConfig.shooterOffset)
                 lastPos = true
             }
