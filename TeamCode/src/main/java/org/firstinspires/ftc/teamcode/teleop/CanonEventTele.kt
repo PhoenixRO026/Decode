@@ -8,6 +8,7 @@ import com.commonlibs.units.Pose
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
 import com.commonlibs.units.s
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot
 import org.firstinspires.ftc.teamcode.teleop.prepPositions.OuttakeTest
 
 @TeleOp
+@Disabled
 class CanonEventTele : LinearOpMode(){
     @Config
     data object teleConfig {
