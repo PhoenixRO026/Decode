@@ -56,16 +56,18 @@ class Robot(
         motorTransfer.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         val encoderTransfer : Encoder = RawEncoder(motorTransfer)
-        encoderTransfer.direction = DcMotorSimple.Direction.REVERSE
+        encoderTransfer.direction = DcMotorSimple.Direction.FORWARD
 
         val finger = hardwareMap.get(Servo::class.java, "finger")
 
+        val voltageSensor = hardwareMap.voltageSensor.iterator().next()
 
         drive = Drive(mecanumDrive)
         shooter = Shooter(
             motorTop = motorShooterTop,
             motorBottom = motorShooterBottom,
-            encoder = encoderOuttake
+            encoder = encoderOuttake,
+            voltageSensor = voltageSensor
         )
         transfer = Spindexer(
             motor = motorTransfer,

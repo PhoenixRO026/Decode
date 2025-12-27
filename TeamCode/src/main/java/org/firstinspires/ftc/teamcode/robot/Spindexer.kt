@@ -22,9 +22,9 @@ class Spindexer(
     data object transferConfig {
         @JvmField
         var controller = PIDController(
-            kP = 0.01,
-            kD = 0.0005,
-            kI = 0.01,
+            kP = 0.003,
+            kD = 0.0001,
+            kI = 0.02,
             stabilityThreshold = 50.0
         )
     }

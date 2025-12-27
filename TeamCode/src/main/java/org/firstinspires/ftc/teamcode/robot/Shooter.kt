@@ -12,23 +12,26 @@ import com.commonlibs.units.rpm
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
+import com.qualcomm.robotcore.hardware.VoltageSensor
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
+import org.firstinspires.ftc.teamcode.teleop.tests.OuttakeTuning.OuttakeTuningConfig
 import kotlin.math.abs
 
 class Shooter(
     val motorTop: DcMotorEx,
     val motorBottom: DcMotorEx,
-    val encoder: Encoder
+    val encoder: Encoder,
+    val voltageSensor: VoltageSensor
 )
 {
     @Config
     data object ShooterConfig {
         @JvmField
         var controller = PIDController(
-            kP = 0.01,
-            kD = 0.0035,
-            kI = 0.000005,
+            kP = 0.002,
+            kD = 0.00004,
+            kI = 0.018,
             stabilityThreshold = 50.0
         )
         @JvmField var targetRpmTolerance = 50
@@ -39,7 +42,7 @@ class Shooter(
         var kV = 0.002146
     }
 
-    val rpm get() = encoder.getPositionAndVelocity().velocity / 8192.0 * 60
+    val rpm get() = encoder.getPositionAndVelocity().velocity / 28.0 * 60
 
     var targetRpm = 0.0
 
@@ -66,7 +69,13 @@ class Shooter(
     }
 
     fun update(deltaTime: Duration) {
-        power = ShooterConfig.controller.calculate(rpm, targetRpm, deltaTime)
+        val voltage = voltageSensor.voltage
+
+        val pidPower = ShooterConfig.controller.calculate(rpm, targetRpm, deltaTime)
+
+        val feedforwardPower = ShooterConfig.kS + ShooterConfig.kV * targetRpm
+
+        power = pidPower + feedforwardPower / voltage
     }
 
 
