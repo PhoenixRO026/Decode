@@ -21,7 +21,8 @@ import kotlin.math.abs
 class CanonEventTesting : LinearOpMode(){
     @Config
     data object CanonEventConfig {
-        @JvmField var pos = 179.0
+        @JvmField var ticksPerRev = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0)
+        @JvmField var pos = ticksPerRev / 3.0
         @JvmField var multiplier = 0.0
         @JvmField var shooterOffset = 110.0
         @JvmField var intakeOffset = 0.0
@@ -121,18 +122,18 @@ class CanonEventTesting : LinearOpMode(){
             }
 
             /// Shooter
-
-            if (currentTime - lastResetTime >= CanonEventConfig.sampleWindow) {
+            //TODO: DON'T CALCULATE RPMS YOURSELF, USE THE VELOCITY PROVIDED BY THE MOTOR
+            /*if (currentTime - lastResetTime >= CanonEventConfig.sampleWindow) {
                 val pos = robot.shooter.encoder.getPositionAndVelocity().position
                 val elapsed = currentTime - lastResetTime
                 val revs = pos / CanonEventConfig.TICKS_PER_REV
                 robot.shooter.rpm = ((revs / elapsed) * 60.0)
 
-                robot.shooter.motorBottom.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-                robot.shooter.motorBottom.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+                //robot.shooter.motorBottom.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+                //robot.shooter.motorBottom.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
 
                 lastResetTime = currentTime
-            }
+            }*/
 
             if (highRpm.wasJustPressed()){ /// shoot far
                 robot.shooter.goToRmp(CanonEventConfig.shooterTargetRpm.toDouble())
@@ -157,6 +158,7 @@ class CanonEventTesting : LinearOpMode(){
             telemetry.addData("power trans", robot.transfer.power)
             telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
             telemetry.addData("fps", 1.s / timeKeep.deltaTime)
+            telemetry.addData("multiplier", CanonEventConfig.multiplier)
             telemetry.update()
 
 

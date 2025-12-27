@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot
 
 import com.acmerobotics.roadrunner.ftc.Encoder
+import com.acmerobotics.roadrunner.ftc.OverflowEncoder
 import com.acmerobotics.roadrunner.ftc.RawEncoder
 import com.commonlibs.units.Pose
 import com.commonlibs.units.cm
@@ -30,14 +31,14 @@ class Robot(
         val motorShooterBottom = hardwareMap.get(DcMotorEx::class.java, "motorShooterBottom")
 
         motorShooterTop.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        motorShooterTop.direction = DcMotorSimple.Direction.REVERSE
+        motorShooterTop.direction = DcMotorSimple.Direction.FORWARD
         motorShooterTop.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         motorShooterBottom.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        motorShooterBottom.direction = DcMotorSimple.Direction.FORWARD
+        motorShooterBottom.direction = DcMotorSimple.Direction.REVERSE
         motorShooterBottom.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
-        val encoderOuttake : Encoder = RawEncoder(motorShooterBottom)
+        val encoderOuttake : Encoder = OverflowEncoder(RawEncoder(mecanumDrive.rightBack))
 
         encoderOuttake.direction =DcMotorSimple.Direction.REVERSE
 
@@ -49,11 +50,13 @@ class Robot(
 
         val motorTransfer = hardwareMap.get(DcMotorEx::class.java, "motorTransfer")
 
+        motorTransfer.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         motorTransfer.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         motorTransfer.direction = DcMotorSimple.Direction.REVERSE
         motorTransfer.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         val encoderTransfer : Encoder = RawEncoder(motorTransfer)
+        encoderTransfer.direction = DcMotorSimple.Direction.REVERSE
 
         val finger = hardwareMap.get(Servo::class.java, "finger")
 

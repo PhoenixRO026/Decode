@@ -32,9 +32,14 @@ class Shooter(
             stabilityThreshold = 50.0
         )
         @JvmField var targetRpmTolerance = 50
+
+        @JvmField
+        var kS = 0.8
+        @JvmField
+        var kV = 0.002146
     }
 
-    var rpm = 0.0
+    val rpm get() = encoder.getPositionAndVelocity().velocity / 8192.0 * 60
 
     var targetRpm = 0.0
 
@@ -57,7 +62,7 @@ class Shooter(
         }
 
     fun goToRmp(rpm : Double) {
-        targetRpm= rpm
+        targetRpm = rpm
     }
 
     fun update(deltaTime: Duration) {
