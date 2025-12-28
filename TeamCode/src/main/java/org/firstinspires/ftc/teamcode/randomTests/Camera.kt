@@ -5,16 +5,15 @@ import android.util.Size
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.SequentialAction
-import com.acmerobotics.roadrunner.SleepAction
 import com.commonlibs.units.SleepAction
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.WhiteBalanceControl
+import org.firstinspires.ftc.teamcode.teleop.CameraConfig
 import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor
 import org.firstinspires.ftc.vision.opencv.ColorRange
@@ -59,7 +58,7 @@ class DetectArtifactColorRobust : LinearOpMode() {
         // PURPLE: use a custom HSV range that EXCLUDES very low V (brightness) values (i.e. black)
         // Note: OpenCV HSV H range is 0..180, S and V are 0..255
         // The H/S window here targets purples/magentas while enforcing V >= 40 (raised to taste)
-        val purpleMin = Scalar(120.0, 60.0, CameraTuning.V)   // H=120, S=60, V=40 (V=40 excludes near-black)
+        val purpleMin = Scalar(120.0, 60.0, CameraConfig.V)   // H=120, S=60, V=40 (V=40 excludes near-black)
         val purpleMax = Scalar(170.0, 255.0, 255.0) // H=170, S max, V max
 
         val purpleRange = ColorRange(ColorSpace.HSV, purpleMin, purpleMax)
@@ -105,11 +104,11 @@ class DetectArtifactColorRobust : LinearOpMode() {
             },
             SleepAction(0.5.s),
             InstantAction {
-                exposureCtrl.setExposure(CameraTuning.whiteCv, TimeUnit.MILLISECONDS)
+                exposureCtrl.setExposure(CameraConfig.whiteValue.toLong(), TimeUnit.MILLISECONDS)
             },
             SleepAction(0.5.s),
             InstantAction {
-                gainCtrl.setGain(CameraTuning.desiredGain)
+                gainCtrl.setGain(CameraConfig.desiredGain)
             }
         )
 
@@ -133,9 +132,9 @@ class DetectArtifactColorRobust : LinearOpMode() {
             telemetry.addData("WB Mode", whiteBalanceCtrl.mode)
             telemetry.addData("WB Temp Actual", whiteBalanceCtrl.whiteBalanceTemperature) // Show actual temp
             telemetry.addLine()
-            telemetry.addData("Exposure Desired", CameraTuning.desiredExposureMs)
-            telemetry.addData("Gain Desired", CameraTuning.desiredGain)
-            telemetry.addData("WB Temp Desired", CameraTuning.whiteCv) // Show desired temp
+            telemetry.addData("Exposure Desired", CameraConfig.desiredExposureMs)
+            telemetry.addData("Gain Desired", CameraConfig.desiredGain)
+            telemetry.addData("WB Temp Desired", CameraConfig.whiteValue) // Show desired temp
             telemetry.addLine(" ")
 
             val greenBlobs = greenLocator.blobs
