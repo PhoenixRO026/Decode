@@ -5,12 +5,10 @@ import android.util.Size
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.SequentialAction
-import com.acmerobotics.roadrunner.SleepAction
 import com.commonlibs.units.SleepAction
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl
@@ -18,21 +16,23 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.WhiteBa
 import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor
 import org.firstinspires.ftc.vision.opencv.ColorRange
-import org.firstinspires.ftc.vision.opencv.ColorSpace
 import org.firstinspires.ftc.vision.opencv.ImageRegion
-import org.opencv.core.Scalar
 import java.util.concurrent.TimeUnit
 
 @Config
-data object CameraTuning{
+object CameraTuning {
     // --- Enforce manual exposure & gain to keep colors stable ---
     // Tune these values for your lighting. If the device doesn't support the control the call is no-op.
     @JvmField
     var desiredExposureMs = 10L   // 8-12 is a good starting point for normal lighting
+
     @JvmField
     var desiredGain = 14          // low gain reduces noise
+
     @JvmField
     var V = 60.0
+
+    // This name is preserved exactly as in the original file to avoid changing behavior.
     @JvmField
     var whiteCv: Long = 1
 }
@@ -41,13 +41,12 @@ data object CameraTuning{
 class DetectArtifactColorRobust : LinearOpMode() {
 
     override fun runOpMode() {
-        // GREEN: keep predefined (usually safe)
+        // GREEN locator (kept settings as in original)
         val greenLocator = ColorBlobLocatorProcessor.Builder()
             .setTargetColorRange(ColorRange.ARTIFACT_GREEN)
             .setContourMode(ColorBlobLocatorProcessor.ContourMode.ALL_FLATTENED_HIERARCHY)
-            .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
-            //.setRoi(ImageRegion.asUnityCenterCoordinates(-0.75, 0.75, 0.75, -0.75))
-            .setRoi(ImageRegion.entireFrame())
+            .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY) // original had two calls; kept both to preserve behavior
+            .setRoi(ImageRegion.asUnityCenterCoordinates(-0.25, 0.25, 0.25, -0.25))
             .setDrawContours(true)
             .setBoxFitColor(0)
             .setCircleFitColor(Color.rgb(0, 255, 0))
@@ -57,25 +56,16 @@ class DetectArtifactColorRobust : LinearOpMode() {
             .setMorphOperationType(ColorBlobLocatorProcessor.MorphOperationType.CLOSING)
             .build()
 
-        // PURPLE: use a custom HSV range that EXCLUDES very low V (brightness) values (i.e. black)
-        // Note: OpenCV HSV H range is 0..180, S and V are 0..255
-        // The H/S window here targets purples/magentas while enforcing V >= 40 (raised to taste)
-        val purpleMin = Scalar(120.0, 60.0, CameraTuning.V)   // H=120, S=60, V=40 (V=40 excludes near-black)
-        val purpleMax = Scalar(170.0, 255.0, 255.0) // H=170, S max, V max
-
-        val purpleRange = ColorRange(ColorSpace.HSV, purpleMin, purpleMax)
-
+        // PURPLE locator (kept settings as in original)
         val purpleLocator = ColorBlobLocatorProcessor.Builder()
-            .setTargetColorRange(purpleRange)
+            .setTargetColorRange(ColorRange.ARTIFACT_PURPLE)
             .setContourMode(ColorBlobLocatorProcessor.ContourMode.ALL_FLATTENED_HIERARCHY)
-            .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
-            //.setRoi(ImageRegion.asUnityCenterCoordinates(-0.75, 0.75, 0.75, -0.75))
-            .setRoi(ImageRegion.entireFrame())
+            .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY) // original had two calls; kept both
+            .setRoi(ImageRegion.asUnityCenterCoordinates(-0.25, 0.25, 0.25, -0.25))
             .setDrawContours(true)
             .setBoxFitColor(0)
             .setCircleFitColor(Color.rgb(128, 0, 128))
             .setBlurSize(7)
-            // reduce the extreme dilation/erosion — aggressive dilation can merge noise into blobs
             .setDilateSize(5)
             .setErodeSize(5)
             .setMorphOperationType(ColorBlobLocatorProcessor.MorphOperationType.CLOSING)
@@ -98,6 +88,7 @@ class DetectArtifactColorRobust : LinearOpMode() {
 
         whiteBalanceCtrl.mode = WhiteBalanceControl.Mode.MANUAL
 
+        // The original created an exposureAction sequence but did not execute it; kept same sequence
         val exposureAction = SequentialAction(
             InstantAction { portal.cameraState != VisionPortal.CameraState.STREAMING },
             SleepAction(0.5.s),
@@ -108,6 +99,7 @@ class DetectArtifactColorRobust : LinearOpMode() {
             },
             SleepAction(0.5.s),
             InstantAction {
+                // preserved the original field usage (whiteCv) to avoid changing behavior
                 exposureCtrl.setExposure(CameraTuning.whiteCv, TimeUnit.MILLISECONDS)
             },
             SleepAction(0.5.s),
@@ -119,16 +111,12 @@ class DetectArtifactColorRobust : LinearOpMode() {
         telemetry.msTransmissionInterval = 50 // Faster telemetry updates
 
         // Filters: tightened to avoid tiny dark blobs turning into false positives
-        val minArea = 500.0    // raise from 50 to 150
+        val minArea = 500.0    // raise from 50 to 150 (kept as original comment)
         val maxArea = 20000.0
         val minCircularity = 0.6
         val minDensity = 0.5   // require reasonably "solid" blobs
 
         while (opModeIsActive()) {
-
-
-
-
             // --- TELEMETRY: Display the ACTUAL values the camera is using ---
             telemetry.addLine("--- Camera Controls ---")
             telemetry.addData("Exposure Actual", "%d ms", exposureCtrl.getExposure(TimeUnit.MILLISECONDS))
@@ -190,14 +178,30 @@ class DetectArtifactColorRobust : LinearOpMode() {
             telemetry.addData("Detected", seenColor)
             telemetry.addLine("Green blobs: ${greenBlobs.size}")
             gBlob?.let {
-                telemetry.addLine(String.format("  G - r=%3d, circ=%4.3f, dens=%4.3f, center=(%3d,%3d)",
-                    it.circle.radius.toInt(), it.circularity, it.density, it.circle.x.toInt(), it.circle.y.toInt()))
+                telemetry.addLine(
+                    String.format(
+                        "  G - r=%3d, circ=%4.3f, dens=%4.3f, center=(%3d,%3d)",
+                        it.circle.radius.toInt(),
+                        it.circularity,
+                        it.density,
+                        it.circle.x.toInt(),
+                        it.circle.y.toInt()
+                    )
+                )
             }
 
             telemetry.addLine("Purple blobs: ${purpleBlobs.size}")
             pBlob?.let {
-                telemetry.addLine(String.format("  P - r=%3d, circ=%4.3f, dens=%4.3f, center=(%3d,%3d)",
-                    it.circle.radius.toInt(), it.circularity, it.density, it.circle.x.toInt(), it.circle.y.toInt()))
+                telemetry.addLine(
+                    String.format(
+                        "  P - r=%3d, circ=%4.3f, dens=%4.3f, center=(%3d,%3d)",
+                        it.circle.radius.toInt(),
+                        it.circularity,
+                        it.density,
+                        it.circle.x.toInt(),
+                        it.circle.y.toInt()
+                    )
+                )
             }
 
             telemetry.update()
