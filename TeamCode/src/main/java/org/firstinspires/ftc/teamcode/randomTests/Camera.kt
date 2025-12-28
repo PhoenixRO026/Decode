@@ -45,7 +45,8 @@ class DetectArtifactColorRobust : LinearOpMode() {
             .setTargetColorRange(ColorRange.ARTIFACT_GREEN)
             .setContourMode(ColorBlobLocatorProcessor.ContourMode.ALL_FLATTENED_HIERARCHY)
             .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
-            .setRoi(ImageRegion.asUnityCenterCoordinates(-0.75, 0.75, 0.75, -0.75))
+            //.setRoi(ImageRegion.asUnityCenterCoordinates(-0.75, 0.75, 0.75, -0.75))
+            .setRoi(ImageRegion.entireFrame())
             .setDrawContours(true)
             .setBoxFitColor(0)
             .setCircleFitColor(Color.rgb(0, 255, 0))
@@ -67,7 +68,8 @@ class DetectArtifactColorRobust : LinearOpMode() {
             .setTargetColorRange(purpleRange)
             .setContourMode(ColorBlobLocatorProcessor.ContourMode.ALL_FLATTENED_HIERARCHY)
             .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)
-            .setRoi(ImageRegion.asUnityCenterCoordinates(-0.75, 0.75, 0.75, -0.75))
+            //.setRoi(ImageRegion.asUnityCenterCoordinates(-0.75, 0.75, 0.75, -0.75))
+            .setRoi(ImageRegion.entireFrame())
             .setDrawContours(true)
             .setBoxFitColor(0)
             .setCircleFitColor(Color.rgb(128, 0, 128))
@@ -93,6 +95,7 @@ class DetectArtifactColorRobust : LinearOpMode() {
         var gainCtrl = portal.getCameraControl(GainControl::class.java)
         var whiteBalanceCtrl = portal.getCameraControl(WhiteBalanceControl::class.java)
 
+        whiteBalanceCtrl.mode = WhiteBalanceControl.Mode.MANUAL
 
         val exposureAction = SequentialAction(
             InstantAction { portal.cameraState != VisionPortal.CameraState.STREAMING },
