@@ -21,9 +21,9 @@ class BoringDrive : LinearOpMode(){
         @JvmField var ticksPerRev = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0)
         @JvmField var pos = ticksPerRev / 3.0
         @JvmField var multiplier = 0.0
-        @JvmField var shooterOffset = 94.3
+        @JvmField var shooterOffset = 94.0
         @JvmField var intakeOffset = 0.0
-        @JvmField var shooterTargetRpm = 0
+        @JvmField var shooterTargetRpm = 3300
     }
 
     override fun runOpMode() {
@@ -41,7 +41,8 @@ class BoringDrive : LinearOpMode(){
         val fingerDown = ButtonReader {gamepad2.dpad_down}
         val highRpm = ButtonReader {gamepad2.right_bumper}
         val lowRpm = ButtonReader {gamepad2.left_bumper}
-        val buttons = listOf(intakeRight, intakeLeft, shootRight, shootLeft, fingerUp, fingerDown, highRpm, lowRpm)
+        val stopShooter = ButtonReader {gamepad2.dpad_left}
+        val buttons = listOf(intakeRight, intakeLeft, shootRight, shootLeft, fingerUp, fingerDown, highRpm, lowRpm, stopShooter)
 
         robot.transfer.finger.position = 1.0
 
@@ -116,6 +117,9 @@ class BoringDrive : LinearOpMode(){
             }
             else if (lowRpm.wasJustPressed()) { /// shoot close
                 robot.shooter.goToRmp(2500.0)
+            }
+            else if (stopShooter.wasJustPressed()) { /// stop shoot
+                robot.shooter.goToRmp(0.0)
             }
 
             robot.shooter.update(timeKeep.deltaTime)
