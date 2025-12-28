@@ -27,6 +27,11 @@ class Spindexer(
             kI = 0.02,
             stabilityThreshold = 50.0
         )
+
+        @JvmField
+        val fingerUpPosition = 0.5
+        @JvmField
+        val fingerDownPosition = 0.95
     }
 
     val position get() = encoder.getPositionAndVelocity().position
@@ -46,6 +51,12 @@ class Spindexer(
             motor.power = value.coerceIn(-1.0, 1.0)
         }
 
+    fun fingerUp() {
+        fingerPosition = transferConfig.fingerUpPosition
+    }
+    fun fingerDown() {
+        fingerPosition = transferConfig.fingerDownPosition
+    }
     var targetPosition : Double = position
 
 
