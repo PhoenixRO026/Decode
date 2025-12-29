@@ -21,6 +21,7 @@ fun main() {
     val middleIntakePose = Pose(12.inch, -35.inch, 270.0.deg)
     val leftIntakePose = Pose(-12.inch, -35.inch, 270.0.deg)
     val endPose = Pose(16.inch, -54.inch, 0.0.deg)
+    val shootingTime = 4.2
 
     val meepMeep = MeepMeep(600)
 
@@ -34,7 +35,7 @@ fun main() {
 
     myBot.runAction(myBot.drive.actionBuilder(startPose.pose2d).ex()
         .splineToLinearHeading(smallTrianglePose, 50.deg)
-        .waitSeconds(1.0)
+        .waitSeconds(shootingTime)
 
         .strafeToLinearHeading(rightIntakePose)
         .waitSeconds(1.0)
@@ -42,7 +43,7 @@ fun main() {
         .waitSeconds(1.0)
         .lineToY(-45.inch)
         .strafeToLinearHeading(smallTrianglePose)
-        .waitSeconds(1.0)
+        .waitSeconds(shootingTime)
 
         .strafeToLinearHeading(middleIntakePose)
         .setTangent(-90.deg)
@@ -50,6 +51,7 @@ fun main() {
         .waitSeconds(1.0)
         .lineToY(-45.inch)
         .strafeToLinearHeading(bigTrianglePose)
+        .waitSeconds(shootingTime)
 
         .strafeToLinearHeading(leftIntakePose)
         .setTangent(-90.deg)
@@ -57,6 +59,7 @@ fun main() {
         .waitSeconds(1.0)
         .lineToY(-45.inch)
         .strafeToLinearHeading(bigTrianglePose)
+        .waitSeconds(shootingTime)
 
         .strafeToLinearHeading(endPose)
 
