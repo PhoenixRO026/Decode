@@ -1,14 +1,6 @@
-package org.firstinspires.ftc.teamcode.robot
+package org.firstinspires.ftc.teamcode.robot_old
 
-import android.graphics.Color
-import com.acmerobotics.roadrunner.InstantAction
-import com.acmerobotics.roadrunner.ParallelAction
-import com.acmerobotics.roadrunner.RaceAction
-import com.acmerobotics.roadrunner.SequentialAction
-import com.commonlibs.units.SleepAction
-import com.commonlibs.units.s
 import com.qualcomm.robotcore.hardware.DcMotorEx
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor
 import org.firstinspires.ftc.robotcore.external.Telemetry
 
 class Intake(

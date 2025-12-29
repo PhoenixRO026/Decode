@@ -10,12 +10,9 @@ import com.commonlibs.units.deg
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.DcMotor
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.buttons.ButtonReader
-import org.firstinspires.ftc.teamcode.robot.Robot
-import org.firstinspires.ftc.teamcode.teleop.prepPositions.OuttakeTest.outtakeConfig
-import kotlin.math.abs
+import org.firstinspires.ftc.teamcode.robot_old.Robot
 
 @TeleOp
 class CanonEventTesting : LinearOpMode(){

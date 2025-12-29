@@ -1,93 +1,109 @@
 package org.firstinspires.ftc.teamcode.robot
 
 import com.acmerobotics.dashboard.config.Config
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket
-import com.acmerobotics.roadrunner.Action
-import com.acmerobotics.roadrunner.ftc.Encoder
+import com.commonlibs.units.Angle
 import com.commonlibs.units.Duration
-import com.qualcomm.robotcore.hardware.DcMotor
+import com.commonlibs.units.deg
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.Servo
-import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
-import kotlin.math.abs
+import kotlin.math.absoluteValue
+import kotlin.math.roundToInt
 
 class Spindexer(
     val motor: DcMotorEx,
-    val encoder: Encoder,
     val finger: Servo
-)
-{
+) {
     @Config
-    data object transferConfig {
+    data object SpindexerConfig {
         @JvmField
-        var controller = PIDController(
-            kP = 0.003,
-            kD = 0.0001,
-            kI = 0.02,
-            stabilityThreshold = 50.0
+        var pidController = PIDController(
+            kP = 0.0,
+            kI = 0.0,
+            kD = 0.0
         )
+        @JvmField
+        var fingerUpPosition = 0.5
+        @JvmField
+        var fingerDownPosition = 0.95
+        @JvmField
+        var TICKS_PER_REV = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0)
 
         @JvmField
-        val fingerUpPosition = 0.5
-        @JvmField
-        val fingerDownPosition = 0.95
+        var SHOOTER_OFFSET_DEG = 20.0
     }
 
-    val position get() = encoder.getPositionAndVelocity().position
+    enum class Position(val deg: Angle) {
+        INTAKE_1(0.deg),
+        INTAKE_2(120.deg),
+        INTAKE_3(240.deg),
+        SHOOTER_1(SpindexerConfig.SHOOTER_OFFSET_DEG.deg),
+        SHOOTER_2(SpindexerConfig.SHOOTER_OFFSET_DEG.deg + 120.deg),
+        SHOOTER_3(SpindexerConfig.SHOOTER_OFFSET_DEG.deg + 240.deg),
+        CUSTOM(0.deg)
+    }
 
-    var fingerPosition : Double = 0.5
-        get() = finger.position
+    val positionTicks get() = motor.currentPosition
+
+    val positionDegrees get() =
+        ((positionTicks / SpindexerConfig.TICKS_PER_REV * 360.0) % 360.0).deg
+
+    private var currentPosition = Position.INTAKE_1
+
+    private var _targetTicks = positionTicks
+
+    var targetTicks
+        get() = _targetTicks
         set(value) {
-            val clampedVal = value.coerceIn(0.0, 1.0)
-            //if (clampedVal == field) return
-            field = clampedVal
-            finger.position = field
+            _targetTicks = value
+            currentPosition = Position.CUSTOM
         }
 
-    var power: Double
-        get() = motor.power
+    private var _targetDegrees = positionDegrees
         set(value) {
-            motor.power = value.coerceIn(-1.0, 1.0)
+            val targetDegs = value
+            val errorDegs = targetDegs - positionDegrees
+            val correctionDegs = if (errorDegs.asDeg.absoluteValue > 180) {
+                180.deg - errorDegs
+            } else errorDegs
+            val spins = positionTicks % SpindexerConfig.TICKS_PER_REV +
+                    if (correctionDegs.asDeg > 360) 1 else
+                        if (correctionDegs.asDeg < 0) -1 else 0
+            _targetTicks = ((spins + targetDegs.asRev) * SpindexerConfig.TICKS_PER_REV)
+                .roundToInt()
+            field = value
         }
+
+    var targetDegrees
+        get() = _targetDegrees
+        set(value) {
+            _targetDegrees = value
+            currentPosition = Position.CUSTOM
+        }
+
+
+    var targetPosition
+        get() = currentPosition
+        set(value) {
+            _targetDegrees = value.deg
+            currentPosition = value
+        }
+
+    var fingerPos by finger::position
+
+    var _power by motor::power
+
+    val power get() = _power
 
     fun fingerUp() {
-        fingerPosition = transferConfig.fingerUpPosition
+        fingerPos = SpindexerConfig.fingerUpPosition
     }
     fun fingerDown() {
-        fingerPosition = transferConfig.fingerDownPosition
-    }
-    var targetPosition : Double = position
-
-
-    fun goToPos(pos: Double, multiplier: Double = 1.0, offset: Double= 0.0) {
-        targetPosition= pos * multiplier + offset
-    }
-
-    fun goToPosAction(pos: Double) = object : Action {
-        var init = true
-        override fun run(p: TelemetryPacket): Boolean {
-            if (init) {
-                init = false
-                targetPosition = pos
-            }
-            p.addLine("waiting for spindexer")
-            return abs(targetPosition - position) > 5
-        }
+        fingerPos = SpindexerConfig.fingerDownPosition
     }
 
     fun update(deltaTime: Duration) {
-        power = transferConfig.controller.calculate(
-            position,
-            targetPosition,
-            deltaTime
-        )
-    }
-
-    fun addTelemetry(telemetry: Telemetry) {
-        telemetry.addData("transfer power", power)
-        telemetry.addData("spindexer pos", motor.currentPosition)
-        telemetry.addData("finger pos", fingerPosition)
-        //telemetry.addData("lift current", rightMotor.getCurrent(CurrentUnit.AMPS) + leftMotor.getCurrent(CurrentUnit.AMPS))
+        _power = SpindexerConfig.pidController
+            .calculate(positionTicks.toDouble(), targetTicks.toDouble(), deltaTime)
     }
 }
