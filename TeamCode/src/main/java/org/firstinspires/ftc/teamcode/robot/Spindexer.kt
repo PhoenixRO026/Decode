@@ -40,7 +40,7 @@ class Spindexer(
         get() = finger.position
         set(value) {
             val clampedVal = value.coerceIn(0.0, 1.0)
-            if (clampedVal == field) return
+            //if (clampedVal == field) return
             field = clampedVal
             finger.position = field
         }

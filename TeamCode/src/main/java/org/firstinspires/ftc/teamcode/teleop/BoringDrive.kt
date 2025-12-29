@@ -21,7 +21,7 @@ class BoringDrive : LinearOpMode(){
         @JvmField var ticksPerRev = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0)
         @JvmField var pos = ticksPerRev / 3.0
         @JvmField var multiplier = 0.0
-        @JvmField var shooterOffset = 94.0
+        @JvmField var shooterOffset = 95.0
         @JvmField var intakeOffset = 0.0
         @JvmField var shooterTargetRpm = 3300
     }
@@ -65,6 +65,13 @@ class BoringDrive : LinearOpMode(){
             }
 
             /// Transfer
+
+           /* if (fingerUp.wasJustPressed())
+                robot.transfer.finger.position = 0.5
+
+            if (fingerDown.wasJustPressed())
+                robot.transfer.finger.position = 0.95*/
+
 
             if (fingerUp.wasJustPressed())
                 robot.transfer.fingerUp()

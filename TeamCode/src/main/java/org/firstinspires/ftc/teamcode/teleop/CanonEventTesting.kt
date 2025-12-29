@@ -24,7 +24,7 @@ class CanonEventTesting : LinearOpMode(){
         @JvmField var ticksPerRev = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0)
         @JvmField var pos = ticksPerRev / 3.0
         @JvmField var multiplier = 0.0
-        @JvmField var shooterOffset = 94.0
+        @JvmField var shooterOffset = 93.0
         @JvmField var intakeOffset = 0.0
         @JvmField var sampleWindow = 0.1
         @JvmField var TICKS_PER_REV = 8192.0
