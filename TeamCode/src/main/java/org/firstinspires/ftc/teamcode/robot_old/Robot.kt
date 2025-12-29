@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
 import kotlin.jvm.java
 
@@ -23,6 +24,7 @@ class Robot(
     val shooter: Shooter
     val transfer: Spindexer
     val intake: Intake
+    val camera: CameraCore
 
     init {
         val mecanumDrive = MecanumDrive(hardwareMap, pose.pose2d)
@@ -60,6 +62,8 @@ class Robot(
 
         val finger = hardwareMap.get(Servo::class.java, "finger")
 
+        val webcam = hardwareMap.get(WebcamName::class.java, "Webcam 1")
+
         val voltageSensor = hardwareMap.voltageSensor.iterator().next()
 
         drive = Drive(mecanumDrive)
@@ -77,6 +81,10 @@ class Robot(
         intake = Intake(
             motor = motorIntake
         )
+        camera = CameraCore(
+            camera = webcam
+        )
+
 
     }
 }
