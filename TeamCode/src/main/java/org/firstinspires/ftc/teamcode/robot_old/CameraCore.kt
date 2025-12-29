@@ -1,10 +1,8 @@
-package org.firstinspires.ftc.teamcode.robot // Or your preferred package for utility classes
+package org.firstinspires.ftc.teamcode.robot_old
 
 import android.util.Size
-import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.vision.VisionPortal
-import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor
 import org.firstinspires.ftc.vision.opencv.ImageRegion
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor
 
@@ -30,7 +28,7 @@ class CameraCore(
                 )
                 .build()
 
-        val portal: VisionPortal? = VisionPortal.Builder()
+        val portal: VisionPortal = VisionPortal.Builder()
             .addProcessor(colorSensor)
             .setCameraResolution(Size(320, 240))
             .setCamera(camera)

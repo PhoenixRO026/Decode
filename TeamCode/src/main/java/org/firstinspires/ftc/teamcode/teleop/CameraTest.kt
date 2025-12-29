@@ -4,10 +4,7 @@ import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.WhiteBalanceControl
-import org.firstinspires.ftc.teamcode.robot.Robot
-import org.firstinspires.ftc.vision.VisionPortal
+import org.firstinspires.ftc.teamcode.robot_old.Robot
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor
 import java.util.concurrent.TimeUnit
 
@@ -49,7 +46,7 @@ class CameraTest : LinearOpMode() {
                 telemetry.addData("Error", e.message)
             }
         }*/
-            val exposureCtrl = robot.camera.portal!!.getCameraControl(ExposureControl::class.java)
+            val exposureCtrl = robot.camera.portal.getCameraControl(ExposureControl::class.java)
             exposureCtrl.setExposure(CameraConfig.desiredExposureMs, TimeUnit.MILLISECONDS)
 
 
