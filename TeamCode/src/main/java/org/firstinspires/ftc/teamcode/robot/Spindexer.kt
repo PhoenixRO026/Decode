@@ -12,7 +12,8 @@ import kotlin.math.roundToInt
 
 class Spindexer(
     val motor: DcMotorEx,
-    val finger: Servo
+    val finger: Servo,
+    val storage: BallStorage
 ) {
     @Config
     data object SpindexerConfig {
@@ -33,25 +34,19 @@ class Spindexer(
         var SHOOTER_OFFSET_DEG = 20.0
     }
 
-    enum class Position(val deg: Angle) {
-        INTAKE_1(0.deg),
-        INTAKE_2(120.deg),
-        INTAKE_3(240.deg),
-        SHOOTER_1(SpindexerConfig.SHOOTER_OFFSET_DEG.deg),
-        SHOOTER_2(SpindexerConfig.SHOOTER_OFFSET_DEG.deg + 120.deg),
-        SHOOTER_3(SpindexerConfig.SHOOTER_OFFSET_DEG.deg + 240.deg),
-        CUSTOM(0.deg)
+    enum class Position(val angle: Angle, val index: Int) {
+        INTAKE_1(0.deg, 0),
+        INTAKE_2(120.deg, 1),
+        INTAKE_3(240.deg, 2),
+        SHOOTER_1(SpindexerConfig.SHOOTER_OFFSET_DEG.deg + 120.deg, 0),
+        SHOOTER_2(SpindexerConfig.SHOOTER_OFFSET_DEG.deg + 240.deg, 1),
+        SHOOTER_3(SpindexerConfig.SHOOTER_OFFSET_DEG.deg, 2),
+        CUSTOM(0.deg, 0)
     }
 
-    fun getClosestIntakePos(): Position {
-        return when(positionDegrees.asDeg) {
-            in 60.0..<180.0 -> Position.INTAKE_2
-            in 180.0..<300.0 -> Position.INTAKE_3
-            else -> Position.INTAKE_1
-        }
-    }
+    val positionTicks get() = motor.currentPosition - ticksOffset
 
-    val positionTicks get() = motor.currentPosition
+    private var ticksOffset = motor.currentPosition
 
     val positionDegrees get() =
         ((positionTicks / SpindexerConfig.TICKS_PER_REV * 360.0) % 360.0).deg
@@ -93,7 +88,7 @@ class Spindexer(
     var targetPosition
         get() = currentPosition
         set(value) {
-            _targetDegrees = value.deg
+            _targetDegrees = value.angle
             currentPosition = value
         }
 
@@ -102,6 +97,34 @@ class Spindexer(
     var _power by motor::power
 
     val power get() = _power
+
+    private fun getClosestIntakePos(currentAngle: Angle = positionDegrees): Position {
+        return when {
+            currentAngle.diffTo(Position.INTAKE_2.angle).asDeg.absoluteValue <= 60 -> Position.INTAKE_2
+            currentAngle.diffTo(Position.INTAKE_3.angle).asDeg.absoluteValue <= 60 -> Position.INTAKE_3
+            else -> Position.INTAKE_1
+        }
+    }
+
+    private fun getClosestShooterPos(currentAngle: Angle = positionDegrees): Position {
+        return when {
+            currentAngle.diffTo(Position.SHOOTER_2.angle).asDeg.absoluteValue <= 60 -> Position.SHOOTER_2
+            currentAngle.diffTo(Position.SHOOTER_3.angle).asDeg.absoluteValue <= 60 -> Position.SHOOTER_3
+            else -> Position.SHOOTER_1
+        }
+    }
+
+
+
+    fun greenToShooter() {
+        if (!storage.hasGreen()) return
+        targetPosition = storage.getClosestGreenShooterPosition(positionDegrees)
+    }
+
+    fun purpleToShooter() {
+        if (!storage.hasPurple()) return
+        targetPosition = storage.getClosestPurpleShooterPosition(positionDegrees)
+    }
 
     fun fingerUp() {
         fingerPos = SpindexerConfig.fingerUpPosition
@@ -113,5 +136,11 @@ class Spindexer(
     fun update(deltaTime: Duration) {
         _power = SpindexerConfig.pidController
             .calculate(positionTicks.toDouble(), targetTicks.toDouble(), deltaTime)
+    }
+
+    fun resetPos() {
+        ticksOffset = motor.currentPosition
+        _targetTicks = 0
+        currentPosition = Position.INTAKE_1
     }
 }

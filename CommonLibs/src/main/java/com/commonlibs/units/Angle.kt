@@ -4,6 +4,7 @@ package com.commonlibs.units
 
 import com.acmerobotics.roadrunner.Rotation2d
 import kotlin.math.PI
+import kotlin.math.absoluteValue
 
 data class Angle(@JvmField var asDeg: Double) {
     val asRev get() = asDeg.degToRev()
@@ -23,6 +24,14 @@ data class Angle(@JvmField var asDeg: Double) {
     override fun toString() = "$asDeg " + if (asDeg == 1.0) "degree" else "degrees"
 
     fun coerceIn(minAng: Angle, maxAng: Angle) = Angle(asDeg.coerceIn(minAng.asDeg, maxAng.asDeg))
+
+    fun diffTo(other: Angle) : Angle {
+        val rawDiff = ((this.asDeg) % 360) - ((other.asDeg) % 360)
+        val diffDeg = if (rawDiff.absoluteValue > 180) {
+            (180 - rawDiff) % 360
+        } else rawDiff
+        return diffDeg.deg
+    }
 }
 
 fun Number.degToRev() = toDouble() / 360.0
