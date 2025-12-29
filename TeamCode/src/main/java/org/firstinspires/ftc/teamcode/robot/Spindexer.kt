@@ -43,6 +43,14 @@ class Spindexer(
         CUSTOM(0.deg)
     }
 
+    fun getClosestIntakePos(): Position {
+        return when(positionDegrees.asDeg) {
+            in 60.0..<180.0 -> Position.INTAKE_2
+            in 180.0..<300.0 -> Position.INTAKE_3
+            else -> Position.INTAKE_1
+        }
+    }
+
     val positionTicks get() = motor.currentPosition
 
     val positionDegrees get() =
