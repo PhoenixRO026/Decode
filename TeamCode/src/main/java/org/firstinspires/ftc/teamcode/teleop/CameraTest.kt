@@ -3,9 +3,11 @@ package org.firstinspires.ftc.teamcode.teleop
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.WhiteBalanceControl
+import org.firstinspires.ftc.teamcode.robot.CameraCore
 import org.firstinspires.ftc.teamcode.robot.Robot
 import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor
@@ -14,7 +16,7 @@ import java.util.concurrent.TimeUnit
 @Config
 data object CameraConfig{
     @JvmField
-    var desiredExposureMs : Long = 20
+    var desiredExposureMs : Long = 16
     @JvmField
     var desiredGain = 25
     @JvmField
@@ -31,26 +33,8 @@ class CameraTest : LinearOpMode() {
 
         waitForStart()
 
-        /*if (opModeIsActive()) {
-            val exposureCtrl = robot.camera.portal!!.getCameraControl(ExposureControl::class.java)
-            val gainCtrl = robot.camera.portal.getCameraControl(GainControl::class.java)
-            val whiteBalanceCtrl =
-                robot.camera.portal.getCameraControl(WhiteBalanceControl::class.java)
-
-            // Set camera controls to manual
-            try {
-                if (exposureCtrl.isModeSupported(ExposureControl.Mode.Manual)) {
-                    exposureCtrl.mode = ExposureControl.Mode.Manual
-                }
-                // WhiteBalanceControl does not have isModeSupported, so we just try it
-                whiteBalanceCtrl.mode = WhiteBalanceControl.Mode.MANUAL
-            } catch (e: Exception) {
-                telemetry.addLine("Error setting manual camera modes. Camera may be stuck in AUTO.")
-                telemetry.addData("Error", e.message)
-            }
-        }*/
-            val exposureCtrl = robot.camera.portal!!.getCameraControl(ExposureControl::class.java)
-            exposureCtrl.setExposure(CameraConfig.desiredExposureMs, TimeUnit.MILLISECONDS)
+        val exposureCtrl = robot.camera.portal!!.getCameraControl(ExposureControl::class.java)
+        exposureCtrl.setExposure(CameraConfig.desiredExposureMs, TimeUnit.MILLISECONDS)
 
 
             telemetry.msTransmissionInterval = 50

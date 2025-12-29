@@ -10,9 +10,12 @@ import com.commonlibs.units.deg
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.buttons.ButtonReader
 import org.firstinspires.ftc.teamcode.robot.Robot
+import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor
+import java.util.concurrent.TimeUnit
 
 @TeleOp
 class BoringDrive : LinearOpMode(){
@@ -33,6 +36,7 @@ class BoringDrive : LinearOpMode(){
         val timeKeep = TimeKeep()
         var lastPos : Boolean = false // false = intake true = shooter
 
+
         val intakeRight = ButtonReader { gamepad2.y}
         val intakeLeft = ButtonReader { gamepad2.a}
         val shootRight = ButtonReader { gamepad2.b}
@@ -45,6 +49,13 @@ class BoringDrive : LinearOpMode(){
         val buttons = listOf(intakeRight, intakeLeft, shootRight, shootLeft, fingerUp, fingerDown, highRpm, lowRpm, stopShooter)
 
         robot.transfer.finger.position = 1.0
+
+        while (opModeInInit()){
+            robot.camera.portal.getProcessorEnabled(robot.camera.colorSensor)
+        }
+
+        val exposureCtrl = robot.camera.portal.getCameraControl(ExposureControl::class.java)
+        exposureCtrl.setExposure(CameraConfig.desiredExposureMs, TimeUnit.MILLISECONDS)
 
         waitForStart()
 
@@ -130,6 +141,11 @@ class BoringDrive : LinearOpMode(){
             }
 
             robot.shooter.update(timeKeep.deltaTime)
+
+            val result: PredominantColorProcessor.Result = robot.camera.colorSensor.getAnalysis()
+
+
+            telemetry.addData("Best Match", result.closestSwatch)
 
             telemetry.addData("a was pressed (set)", gamepad1.a)
             telemetry.addData("x was pressed (left)", gamepad1.x)

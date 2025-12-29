@@ -19,8 +19,7 @@ class CameraCore(
 ) {
         val colorSensor =
             PredominantColorProcessor.Builder()
-                //.setRoi(ImageRegion.asUnityCenterCoordinates(-0.25, 0.25, 0.25, -0.25))
-                .setRoi(ImageRegion.entireFrame())
+                .setRoi(ImageRegion.asUnityCenterCoordinates(-0.5, 0.25, 1.0, -0.5))
                 .setSwatches(
                     PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
                     PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
@@ -30,9 +29,10 @@ class CameraCore(
                 )
                 .build()
 
-        val portal: VisionPortal? = VisionPortal.Builder()
+        val portal: VisionPortal = VisionPortal.Builder()
             .addProcessor(colorSensor)
             .setCameraResolution(Size(320, 240))
             .setCamera(camera)
             .build()
+
 }
