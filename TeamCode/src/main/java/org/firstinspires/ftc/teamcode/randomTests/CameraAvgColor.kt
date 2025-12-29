@@ -18,21 +18,16 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package org.firstinspires.ftc.robotcontroller.external.samples
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
-
-import android.provider.ContactsContract;
-import android.util.Size;
-
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.opencv.ImageRegion;
-import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
+import android.util.Size
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import org.firstinspires.ftc.robotcore.external.Telemetry
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
+import org.firstinspires.ftc.vision.VisionPortal
+import org.firstinspires.ftc.vision.opencv.ImageRegion
+import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor
 
 /*
  * This OpMode illustrates how to use a video source (camera) as a color sensor
@@ -59,14 +54,10 @@ import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-
 //@Disabled
 @TeleOp(name = "Concept: Vision Color-Sensor", group = "Concept")
-public class ConceptVisionColorSensor extends LinearOpMode
-{
-    @Override
-    public void runOpMode()
-    {
+class ConceptVisionColorSensor : LinearOpMode() {
+    override fun runOpMode() {
         /* Build a "Color Sensor" vision processor based on the PredominantColorProcessor class.
          *
          * - Focus the color sensor by defining a RegionOfInterest (ROI) which you want to inspect.
@@ -89,16 +80,16 @@ public class ConceptVisionColorSensor extends LinearOpMode
          *     This will force any other colored region into one of these colors.
          *     eg: Green may be reported as YELLOW, as this may be the "closest" match.
          */
-        PredominantColorProcessor colorSensor = new PredominantColorProcessor.Builder()
-                //.setRoi(ImageRegion.asUnityCenterCoordinates(-0.25, 0.25, 0.25, -0.25))
-                .setRoi(ImageRegion.entireFrame())
-                .setSwatches(
-                        PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
-                        PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
-                        PredominantColorProcessor.Swatch.ORANGE,
-                        PredominantColorProcessor.Swatch.BLACK,
-                        PredominantColorProcessor.Swatch.WHITE)
-                .build();
+        val colorSensor = PredominantColorProcessor.Builder()
+            .setRoi(ImageRegion.asUnityCenterCoordinates(-0.25, 0.25, 0.25, -0.25))
+            .setSwatches(
+                PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
+                PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
+                PredominantColorProcessor.Swatch.ORANGE,
+                PredominantColorProcessor.Swatch.BLACK,
+                PredominantColorProcessor.Swatch.WHITE
+            )
+            .build()
 
         /*
          * Build a vision portal to run the Color Sensor process.
@@ -112,19 +103,18 @@ public class ConceptVisionColorSensor extends LinearOpMode
          *  or
          *      .setCamera(BuiltinCameraDirection.BACK)    ... for a Phone Camera
          */
-        VisionPortal portal = new VisionPortal.Builder()
-                .addProcessor(colorSensor)
-                .setCameraResolution(new Size(320, 240))
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .build();
+        val portal = VisionPortal.Builder()
+            .addProcessor(colorSensor)
+            .setCameraResolution(Size(160, 90))
+            .setCamera(hardwareMap.get<WebcamName?>(WebcamName::class.java, "Webcam 1"))
+            .build()
 
-        telemetry.setMsTransmissionInterval(100);  // Speed up telemetry updates, for debugging.
-        telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
+        telemetry.setMsTransmissionInterval(100) // Speed up telemetry updates, for debugging.
+        telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE)
 
         // WARNING:  To view the stream preview on the Driver Station, this code runs in INIT mode.
-        while (opModeIsActive() || opModeInInit())
-        {
-            telemetry.addLine("Preview on/off: 3 dots, Camera Stream\n");
+        while (opModeIsActive() || opModeInInit()) {
+            telemetry.addLine("Preview on/off: 3 dots, Camera Stream\n")
 
             // Request the most recent color analysis.  This will return the closest matching
             // colorSwatch and the predominant color in the RGB, HSV and YCrCb color spaces.
@@ -139,20 +129,31 @@ public class ConceptVisionColorSensor extends LinearOpMode
             //    if (result.closestSwatch == PredominantColorProcessor.Swatch.RED) {.. some code ..}
             //  or:
             //    if (result.RGB[0] > 128) {... some code  ...}
-
-            PredominantColorProcessor.Result result = colorSensor.getAnalysis();
+            val result = colorSensor.getAnalysis()
 
             // Display the Color Sensor result.
-            telemetry.addData("Best Match", result.closestSwatch);
-            telemetry.addLine(String.format("RGB   (%3d, %3d, %3d)",
-                                            result.RGB[0], result.RGB[1], result.RGB[2]));
-            telemetry.addLine(String.format("HSV   (%3d, %3d, %3d)",
-                                            result.HSV[0], result.HSV[1], result.HSV[2]));
-            telemetry.addLine(String.format("YCrCb (%3d, %3d, %3d)",
-                                            result.YCrCb[0], result.YCrCb[1], result.YCrCb[2]));
-            telemetry.update();
+            telemetry.addData("Best Match", result.closestSwatch)
+            telemetry.addLine(
+                String.format(
+                    "RGB   (%3d, %3d, %3d)",
+                    result.RGB[0], result.RGB[1], result.RGB[2]
+                )
+            )
+            telemetry.addLine(
+                String.format(
+                    "HSV   (%3d, %3d, %3d)",
+                    result.HSV[0], result.HSV[1], result.HSV[2]
+                )
+            )
+            telemetry.addLine(
+                String.format(
+                    "YCrCb (%3d, %3d, %3d)",
+                    result.YCrCb[0], result.YCrCb[1], result.YCrCb[2]
+                )
+            )
+            telemetry.update()
 
-            sleep(20);
+            sleep(20)
         }
     }
 }
