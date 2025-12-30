@@ -4,8 +4,12 @@ import com.acmerobotics.dashboard.config.Config
 import com.commonlibs.units.Angle
 import com.commonlibs.units.Duration
 import com.commonlibs.units.deg
+import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
+import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
+import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
 import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
@@ -13,7 +17,7 @@ import kotlin.math.roundToInt
 class Spindexer(
     val motor: DcMotorEx,
     val finger: Servo,
-    val storage: BallStorage
+    val storage: BallStorage = BallStorage()
 ) {
     @Config
     data object SpindexerConfig {
@@ -32,6 +36,16 @@ class Spindexer(
 
         @JvmField
         var SHOOTER_OFFSET_DEG = 20.0
+    }
+
+    constructor(hardwareMap: HardwareMap) : this(
+        motor = hardwareMap.get(DcMotorEx::class.java, "motorTransfer"),
+        finger = hardwareMap.get(Servo::class.java, "finger")
+    ) {
+        motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        motor.direction = DcMotorSimple.Direction.REVERSE
+        motor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        motor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
     }
 
     enum class Position(val angle: Angle, val index: Int) {
@@ -140,5 +154,20 @@ class Spindexer(
         ticksOffset = motor.currentPosition
         _targetTicks = 0
         currentPosition = Position.INTAKE_1
+    }
+
+    fun init() {
+        fingerDown()
+    }
+
+    fun addTelemetry(telemetry: Telemetry) {
+        telemetry.addLine("==== Spindexer ====")
+        telemetry.addData("current pos deg", positionDegrees)
+        telemetry.addData("target pos deg", targetDegrees)
+        telemetry.addData("current pos state", currentPosition)
+        telemetry.addData("current pos ticks", positionTicks)
+        telemetry.addData("target pos ticks", targetTicks)
+        telemetry.addData("power", power)
+        storage.addTelemetry(telemetry)
     }
 }

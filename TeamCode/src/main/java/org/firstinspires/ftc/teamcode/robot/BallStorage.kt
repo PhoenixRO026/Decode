@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot
 
 import com.commonlibs.units.Angle
+import org.firstinspires.ftc.robotcore.external.Telemetry
 import kotlin.math.absoluteValue
 
 class BallStorage(
@@ -46,5 +47,12 @@ class BallStorage(
             1 -> Spindexer.Position.SHOOTER_2
             else -> Spindexer.Position.SHOOTER_3
         }
+    }
+
+    fun addTelemetry(telemetry: Telemetry) {
+        telemetry.addLine("==== Storage ====")
+        telemetry.addData("storage 1", array[0])
+        telemetry.addData("storage 2", array[1])
+        telemetry.addData("storage 3", array[2])
     }
 }

@@ -2,11 +2,9 @@
 package com.meep
 
 import com.commonlibs.roadrunnerext.ex
-import com.commonlibs.units.Distance2d
 import com.commonlibs.units.Pose
 import com.commonlibs.units.deg
 import com.commonlibs.units.inch
-import com.commonlibs.units.s
 import com.noahbres.meepmeep.MeepMeep
 import com.noahbres.meepmeep.MeepMeep.Background
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder

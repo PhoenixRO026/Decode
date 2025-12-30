@@ -28,7 +28,7 @@ class BoringDrive : LinearOpMode(){
     override fun runOpMode() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
-        val robot = Robot(hardwareMap,Pose(0.0.cm, 0.0.cm, 0.0.deg))
+        val robot = Robot(hardwareMap, Pose(0.0.cm, 0.0.cm, 0.0.deg))
         val timeKeep = TimeKeep()
         var lastPos : Boolean = false // false = intake true = shooter
 
