@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.MecanumKinematics
 import com.acmerobotics.roadrunner.MinVelConstraint
 import com.acmerobotics.roadrunner.RaceAction
 import com.acmerobotics.roadrunner.SequentialAction
+import com.acmerobotics.roadrunner.SleepAction
 import com.acmerobotics.roadrunner.VelConstraint
 import com.acmerobotics.roadrunner.ftc.runBlocking
 import com.commonlibs.units.Pose
@@ -70,14 +71,22 @@ class TestingAuto : LinearOpMode() {
             robot.shooter.goToRpmAction(0.0)
         )
 
+        fun getBall() = SequentialAction (
+            robot.intake.startIntakeAction(),
+            robot.transfer.goToPosAction(pos, 3.0, 0.0),
+            robot.transfer.goToPosAction(pos, 2.0, 0.0),
+            robot.transfer.goToPosAction(pos, 1.0, 0.0),
+            robot.intake.stopIntakeAction()
+        )
+
         val action = SequentialAction(
             SequentialAction(
-                robot.transfer.goToPosAction(pos, 1.0, shooterOffset),
-                SleepAction(1.s),
-                robot.transfer.goToPosAction(pos, 2.0, shooterOffset),
-                SleepAction(1.s),
-                robot.transfer.goToPosAction(pos, 3.0, shooterOffset),
-                SleepAction(1.s),
+                robot.transfer.goToPosAction(pos, 3.0, 0.0),
+                SleepAction(0.25.s),
+                robot.transfer.goToPosAction(pos, 2.0, 0.0),
+                SleepAction(0.25.s),
+                robot.transfer.goToPosAction(pos, 1.0, 0.0),
+                SleepAction(0.25.s)
             ),
             robot.drive.actionBuilder(startPose)
 
