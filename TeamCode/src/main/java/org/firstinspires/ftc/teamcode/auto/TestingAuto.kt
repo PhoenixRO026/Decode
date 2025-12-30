@@ -4,12 +4,15 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.canvas.Canvas
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.AngularVelConstraint
+import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.MecanumKinematics
 import com.acmerobotics.roadrunner.MinVelConstraint
+import com.acmerobotics.roadrunner.RaceAction
 import com.acmerobotics.roadrunner.SequentialAction
 import com.acmerobotics.roadrunner.VelConstraint
 import com.acmerobotics.roadrunner.ftc.runBlocking
 import com.commonlibs.units.Pose
+import com.commonlibs.units.SleepAction
 import com.commonlibs.units.deg
 import com.commonlibs.units.inch
 import com.commonlibs.units.s
@@ -19,7 +22,7 @@ import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.robot.Robot
 
 @Autonomous
-class Auto : LinearOpMode() {
+class TestingAuto : LinearOpMode() {
     val startPose = Pose(63.inch, -11.inch, 180.0.deg)
     val smallTrianglePose = Pose(57.inch, -10.inch, 210.0.deg)
     val bigTrianglePose = Pose(-14.inch, -14.inch, 225.0.deg)
@@ -38,8 +41,8 @@ class Auto : LinearOpMode() {
     var pos = ticksPerRev / 3.0
 
     override fun runOpMode() {
-        val robot = Robot(hardwareMap, startPose)
         val timeKeep = TimeKeep()
+        val robot = Robot(hardwareMap, startPose)
 
         val kinematics = MecanumKinematics(
             15.0,
@@ -55,51 +58,30 @@ class Auto : LinearOpMode() {
 
         fun shoot() = SequentialAction(
             robot.shooter.goToRpmAction(rpmFar),
-            robot.transfer.goToPosAction(pos, 1.0, shooterOffset),
+            robot.transfer.goToPosAction(pos, 1.0, 0.0),
             robot.transfer.shootAction(),
 
-            robot.transfer.goToPosAction(pos, 2.0, shooterOffset),
+            robot.transfer.goToPosAction(pos, 2.0, 0.0),
             robot.transfer.shootAction(),
 
-            robot.transfer.goToPosAction(pos, 3.0, shooterOffset),
+            robot.transfer.goToPosAction(pos, 3.0, 0.0),
             robot.transfer.shootAction(),
 
             robot.shooter.goToRpmAction(0.0)
         )
 
         val action = SequentialAction(
+            SequentialAction(
+                robot.transfer.goToPosAction(pos, 1.0, shooterOffset),
+                SleepAction(1.s),
+                robot.transfer.goToPosAction(pos, 2.0, shooterOffset),
+                SleepAction(1.s),
+                robot.transfer.goToPosAction(pos, 3.0, shooterOffset),
+                SleepAction(1.s),
+            ),
             robot.drive.actionBuilder(startPose)
-                .splineToLinearHeading(smallTrianglePose, 50.deg)
-                .afterTime(0.0.s, shoot())
-                .waitSeconds(shootingTime)
-//                .strafeToLinearHeading(rightIntakePose)
-//                .waitSeconds(0.5)
-//                .lineToY(-40.inch)
-//                .waitSeconds(0.5)
-//                .lineToY(-45.inch)
-//                .strafeToLinearHeading(smallTrianglePose)
-//                .waitSeconds(shootingTime)
-//
-//                .strafeToLinearHeading(middleIntakePose)
-//                .setTangent(-90.deg)
-//                .lineToY(-40.inch)
-//                .waitSeconds(0.5)
-//                .lineToY(-45.inch)
-//                .strafeToLinearHeading(bigTrianglePose)
-//                .waitSeconds(shootingTime)
-//
-//                .strafeToLinearHeading(leftIntakePose)
-//                .setTangent(-90.deg)
-//                .lineToY(-40.inch)
-//                .waitSeconds(0.5)
-//                .lineToY(-45.inch)
-//                .strafeToLinearHeading(bigTrianglePose)
-//                .waitSeconds(shootingTime)
-//
-//                .strafeToLinearHeading(endPose)
 
                 .build()
-
         )
 
         waitForStart()
@@ -112,7 +94,6 @@ class Auto : LinearOpMode() {
         while (b && opModeIsActive()) {
             timeKeep.resetDeltaTime()
             robot.transfer.update(timeKeep.deltaTime)
-            robot.shooter.update(timeKeep.deltaTime)
 
             val p = TelemetryPacket()
             p.fieldOverlay().operations.addAll(c.operations)

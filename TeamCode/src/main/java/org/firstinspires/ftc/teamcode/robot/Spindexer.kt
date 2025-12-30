@@ -4,8 +4,11 @@ import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.InstantAction
+import com.acmerobotics.roadrunner.SequentialAction
 import com.acmerobotics.roadrunner.ftc.Encoder
 import com.commonlibs.units.Duration
+import com.commonlibs.units.SleepAction
+import com.commonlibs.units.s
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.Servo
@@ -59,19 +62,26 @@ class Spindexer(
     fun fingerDown() {
         fingerPosition = transferConfig.fingerDownPosition
     }
+
+    fun shootAction() = SequentialAction(
+        InstantAction { fingerUp() },
+        SleepAction(1.s),
+        InstantAction {fingerDown()},
+        SleepAction(1.s)
+    )
     var targetPosition : Double = position
 
 
     fun goToPos(pos: Double, multiplier: Double = 1.0, offset: Double= 0.0) {
-        targetPosition= pos * multiplier + offset
+        targetPosition = pos * multiplier + offset
     }
 
-    fun goToPosAction(pos: Double) = object : Action {
+    fun goToPosAction(pos: Double, multiplier: Double = 1.0, offset: Double = 1.0) = object : Action {
         var init = true
         override fun run(p: TelemetryPacket): Boolean {
             if (init) {
                 init = false
-                targetPosition = pos
+                goToPos(pos, multiplier, offset)
             }
             p.addLine("waiting for spindexer")
             return abs(targetPosition - position) > 5

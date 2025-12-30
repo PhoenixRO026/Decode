@@ -28,6 +28,8 @@ class Intake(
             motor.power = value
         }
 
+    fun startIntakeAction() = InstantAction { power = 1.0 }
+    fun stopIntakeAction() = InstantAction { power = 0.0 }
 
     fun addTelemetry(telemetry: Telemetry) {
         telemetry.addData("Outtake power", power)

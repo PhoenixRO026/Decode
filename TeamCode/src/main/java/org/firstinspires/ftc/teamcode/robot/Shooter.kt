@@ -1,21 +1,14 @@
 package org.firstinspires.ftc.teamcode.robot
 
 import com.acmerobotics.dashboard.config.Config
-import com.acmerobotics.roadrunner.InstantAction
-import com.acmerobotics.roadrunner.ParallelAction
-import com.acmerobotics.roadrunner.RaceAction
-import com.acmerobotics.roadrunner.SequentialAction
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.ftc.Encoder
 import com.commonlibs.units.Duration
-import com.commonlibs.units.SleepAction
-import com.commonlibs.units.rpm
-import com.commonlibs.units.s
-import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.VoltageSensor
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
-import org.firstinspires.ftc.teamcode.teleop.tests.OuttakeTuning.OuttakeTuningConfig
 import kotlin.math.abs
 
 class Shooter(
@@ -40,6 +33,8 @@ class Shooter(
         var kS = 0.8
         @JvmField
         var kV = 0.002146
+
+        var targetRpmTolerence = 100.0
     }
 
     val rpm get() = encoder.getPositionAndVelocity().velocity / 28.0 * 60
@@ -66,6 +61,17 @@ class Shooter(
 
     fun goToRmp(rpm : Double) {
         targetRpm = rpm
+    }
+
+    fun goToRpmAction(rpm: Double) = object : Action {
+        var init = true
+        override fun run(p: TelemetryPacket): Boolean {
+            if (init) {
+                init = false
+                goToRmp(rpm)
+            }
+            return abs(targetRpm - rpm) > ShooterConfig.targetRpmTolerance
+        }
     }
 
     fun update(deltaTime: Duration) {
