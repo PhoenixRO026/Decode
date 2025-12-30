@@ -114,8 +114,6 @@ class Spindexer(
         }
     }
 
-
-
     fun greenToShooter() {
         if (!storage.hasGreen()) return
         targetPosition = storage.getClosestGreenShooterPosition(positionDegrees)
