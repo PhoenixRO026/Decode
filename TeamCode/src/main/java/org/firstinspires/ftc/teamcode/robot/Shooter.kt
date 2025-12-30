@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.robot
 
 import com.acmerobotics.dashboard.config.Config
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.ftc.Encoder
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder
 import com.acmerobotics.roadrunner.ftc.RawEncoder
+import com.commonlibs.roadrunnerext.ActionWithInit
+import com.commonlibs.units.AngularVelocity
 import com.commonlibs.units.Duration
 import com.commonlibs.units.rpm
 import com.qualcomm.robotcore.hardware.DcMotor
@@ -12,6 +16,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
+import kotlin.math.absoluteValue
 
 class Shooter(
     val motorTop: DcMotorEx,
@@ -34,6 +39,8 @@ class Shooter(
         var kV = 0.0
         @JvmField
         var TICKS_PER_REV = 28
+        @JvmField
+        var targetRpmTolerance = 30
     }
 
     constructor(hardwareMap: HardwareMap) : this(
@@ -97,4 +104,13 @@ class Shooter(
         telemetry.addData("power", power)
         telemetry.addData("voltage", voltage)
     }
+
+    //ACTIONS
+    fun waitForRpmAction(targetRpm: AngularVelocity) = ActionWithInit(
+        init = { this.targetRpm = targetRpm },
+        run = {
+            it.addLine("Waiting for rpm to reach target")
+            (targetRpm - rpm).asRpm.absoluteValue > ShooterConfig.targetRpmTolerance
+        }
+    )
 }
