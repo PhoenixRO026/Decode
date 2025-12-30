@@ -77,10 +77,12 @@ class Shooter(
             motorBottom.power = value
         }
 
+    private var voltage = voltageProvider()
+
     val power get() = _power
 
     fun update(deltaTime: Duration) {
-        val voltage = voltageProvider()
+        voltage = voltageProvider()
         val pidPower = ShooterConfig.pidController
             .calculate(rpm.asRpm, targetRpm.asRpm, deltaTime)
         val feedforwardPower = ShooterConfig.kS + ShooterConfig.kV * targetRpm.asRpm
@@ -93,5 +95,6 @@ class Shooter(
         telemetry.addData("current rpm", rpm)
         telemetry.addData("target rpm", targetRpm)
         telemetry.addData("power", power)
+        telemetry.addData("voltage", voltage)
     }
 }
