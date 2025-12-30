@@ -8,12 +8,7 @@ import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor
 import org.firstinspires.ftc.vision.opencv.ImageRegion
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor
 
-/**
- * A dedicated class to encapsulate the setup and management of the FTC VisionPortal.
- * This makes camera initialization reusable and cleans up the OpMode.
- *
- * @param hardwareMap The HardwareMap from the OpMode, used to get the webcam.
- */
+
 class CameraCore(
     val camera : WebcamName
 ) {
