@@ -40,7 +40,9 @@ class Robot(
         motorShooterBottom.direction = DcMotorSimple.Direction.REVERSE
         motorShooterBottom.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
-        val encoderOuttake : Encoder = OverflowEncoder(RawEncoder(mecanumDrive.rightBack))
+
+        val encoderOuttake : Encoder = RawEncoder(mecanumDrive.rightBack)
+        //val encoderOuttake : Encoder = OverflowEncoder(RawEncoder(mecanumDrive.rightBack))
 
         encoderOuttake.direction =DcMotorSimple.Direction.REVERSE
 

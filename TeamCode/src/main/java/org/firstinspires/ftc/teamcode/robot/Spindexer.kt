@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
+import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.ftc.Encoder
 import com.commonlibs.units.Duration
 import com.qualcomm.robotcore.hardware.DcMotor
@@ -40,7 +41,8 @@ class Spindexer(
         get() = finger.position
         set(value) {
             val clampedVal = value.coerceIn(0.0, 1.0)
-            //if (clampedVal == field) return
+            //
+            // if (clampedVal == field) return
             field = clampedVal
             finger.position = field
         }
@@ -74,6 +76,10 @@ class Spindexer(
             p.addLine("waiting for spindexer")
             return abs(targetPosition - position) > 5
         }
+    }
+
+    fun spinAction(pos: Double) = InstantAction {
+        goToPos(pos, 1.0, 0.0)
     }
 
     fun update(deltaTime: Duration) {

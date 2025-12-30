@@ -10,12 +10,15 @@ import com.commonlibs.units.deg
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.buttons.ButtonReader
 import org.firstinspires.ftc.teamcode.robot.Robot
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor
 import java.util.concurrent.TimeUnit
+
+
 
 @TeleOp
 class BoringDrive : LinearOpMode(){
@@ -24,7 +27,7 @@ class BoringDrive : LinearOpMode(){
         @JvmField var ticksPerRev = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0)
         @JvmField var pos = ticksPerRev / 3.0
         @JvmField var multiplier = 0.0
-        @JvmField var shooterOffset = 94.09
+        @JvmField var shooterOffset = 94.0
         @JvmField var intakeOffset = 0.0
         @JvmField var shooterTargetRpm = 3300
     }
