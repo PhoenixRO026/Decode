@@ -33,9 +33,8 @@ class Spindexer(
         var fingerDownPosition = 0.95
         @JvmField
         var TICKS_PER_REV = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0)
-
         @JvmField
-        var SHOOTER_OFFSET_DEG = 20.0
+        var shooterOffsetDeg = 20.0
     }
 
     constructor(hardwareMap: HardwareMap) : this(
@@ -52,9 +51,9 @@ class Spindexer(
         INTAKE_1(0.deg, 0),
         INTAKE_2(120.deg, 1),
         INTAKE_3(240.deg, 2),
-        SHOOTER_1(SpindexerConfig.SHOOTER_OFFSET_DEG.deg + 120.deg, 0),
-        SHOOTER_2(SpindexerConfig.SHOOTER_OFFSET_DEG.deg + 240.deg, 1),
-        SHOOTER_3(SpindexerConfig.SHOOTER_OFFSET_DEG.deg, 2),
+        SHOOTER_1(SpindexerConfig.shooterOffsetDeg.deg + 120.deg, 0),
+        SHOOTER_2(SpindexerConfig.shooterOffsetDeg.deg + 240.deg, 1),
+        SHOOTER_3(SpindexerConfig.shooterOffsetDeg.deg, 2),
         CUSTOM(0.deg, 0)
     }
 

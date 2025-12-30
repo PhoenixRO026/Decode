@@ -26,6 +26,7 @@ data class PIDController(
     @JvmField var zeroTargetReset: Boolean = true,
     @JvmField var derivativeFilter: LowPassFilter = LowPassFilter(),
     @JvmField var stabilityThreshold: Double = 0.0,
+    @JvmField var resetIntegralSumOnCrossover: Boolean = true
 ) {
     private var previousTime = 0.ms
     private var init = true
@@ -56,7 +57,7 @@ data class PIDController(
     }
 
     private fun integrate(error: Double, target: Double, dt: Double, derivative: Double) {
-        if (crossOverDetected(error)) {
+        if (crossOverDetected(error) && resetIntegralSumOnCrossover) {
             innerIntegralSum = 0.0
         }
 

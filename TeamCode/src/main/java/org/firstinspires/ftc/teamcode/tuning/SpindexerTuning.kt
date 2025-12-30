@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.robot.Spindexer
 @TeleOp(group = "tuning")
 class SpindexerTuning : LinearOpMode(){
     data object SpindexerTuningConfig {
+        //ATTENTION!: put the tuned values in the spindexer class, not here!!!
         @JvmField
         var kP = Spindexer.SpindexerConfig.pidController.kP
         @JvmField

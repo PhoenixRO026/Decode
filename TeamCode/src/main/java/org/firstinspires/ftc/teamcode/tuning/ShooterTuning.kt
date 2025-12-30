@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.robot.Shooter
 @TeleOp(group = "tuning")
 class ShooterTuning : LinearOpMode(){
     data object ShooterTuningConfig {
+        //ATTENTION!: put the tuned values in the shooter class, not here!!!
         @JvmField
         var kP = Shooter.ShooterConfig.pidController.kP
         @JvmField

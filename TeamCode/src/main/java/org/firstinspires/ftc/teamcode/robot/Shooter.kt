@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot
 
 import com.acmerobotics.dashboard.config.Config
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket
-import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.ftc.Encoder
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder
 import com.acmerobotics.roadrunner.ftc.RawEncoder
@@ -31,7 +29,8 @@ class Shooter(
             kP = 0.0,
             kI = 0.0,
             kD = 0.0,
-            zeroTargetReset = false
+            zeroTargetReset = false,
+            resetIntegralSumOnCrossover = false
         )
         @JvmField
         var kS = 0.0
@@ -41,6 +40,10 @@ class Shooter(
         var TICKS_PER_REV = 28
         @JvmField
         var targetRpmTolerance = 30
+        @JvmField
+        var lowRpm = 2500.0
+        @JvmField
+        var highRpm = 3500.0
     }
 
     constructor(hardwareMap: HardwareMap) : this(
@@ -76,6 +79,11 @@ class Shooter(
     val rpm get() = (ticksPerSec / ShooterConfig.TICKS_PER_REV * 60.0).rpm
 
     var targetRpm = 0.0.rpm
+        set(value) {
+            if (value == 0.0.rpm)
+                _power = 0.0
+            field = value
+        }
 
     private var _power
         get() = motorTop.power
@@ -89,6 +97,7 @@ class Shooter(
     val power get() = _power
 
     fun update(deltaTime: Duration) {
+        if (targetRpm == 0.0.rpm) return
         voltage = voltageProvider()
         val pidPower = ShooterConfig.pidController
             .calculate(rpm.asRpm, targetRpm.asRpm, deltaTime)
@@ -105,6 +114,19 @@ class Shooter(
         telemetry.addData("voltage", voltage)
     }
 
+    //Instant Functions
+    fun turnOff() {
+        targetRpm = 0.0.rpm
+    }
+
+    fun setLowRpm() {
+        targetRpm = ShooterConfig.lowRpm.rpm
+    }
+
+    fun setHighRpm() {
+        targetRpm = ShooterConfig.highRpm.rpm
+    }
+
     //ACTIONS
     fun waitForRpmAction(targetRpm: AngularVelocity) = ActionWithInit(
         init = { this.targetRpm = targetRpm },
@@ -113,4 +135,8 @@ class Shooter(
             (targetRpm - rpm).asRpm.absoluteValue > ShooterConfig.targetRpmTolerance
         }
     )
+
+    fun lowRpmAction() = waitForRpmAction(ShooterConfig.lowRpm.rpm)
+
+    fun highRpmAction() = waitForRpmAction(ShooterConfig.highRpm.rpm)
 }
