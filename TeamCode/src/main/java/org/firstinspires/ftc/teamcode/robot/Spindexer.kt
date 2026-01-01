@@ -88,10 +88,6 @@ class Spindexer(
         }
     }
 
-    fun spinAction(pos: Double) = InstantAction {
-        goToPos(pos, 1.0, 0.0)
-    }
-
     fun update(deltaTime: Duration) {
         power = transferConfig.controller.calculate(
             position,

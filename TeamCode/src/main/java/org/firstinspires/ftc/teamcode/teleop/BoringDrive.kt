@@ -18,8 +18,6 @@ import org.firstinspires.ftc.teamcode.robot.Robot
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor
 import java.util.concurrent.TimeUnit
 
-
-
 @TeleOp
 class BoringDrive : LinearOpMode(){
     @Config
@@ -79,14 +77,6 @@ class BoringDrive : LinearOpMode(){
             }
 
             /// Transfer
-
-           /* if (fingerUp.wasJustPressed())
-                robot.transfer.finger.position = 0.5
-
-            if (fingerDown.wasJustPressed())
-                robot.transfer.finger.position = 0.95*/
-
-
             if (fingerUp.wasJustPressed())
                 robot.transfer.fingerUp()
 
