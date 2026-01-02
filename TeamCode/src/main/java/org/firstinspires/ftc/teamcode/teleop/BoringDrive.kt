@@ -3,6 +3,11 @@ package org.firstinspires.ftc.teamcode.teleop
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.acmerobotics.roadrunner.Action
+import com.acmerobotics.roadrunner.InstantAction
+import com.acmerobotics.roadrunner.ParallelAction
+import com.acmerobotics.roadrunner.RaceAction
 import com.acmerobotics.roadrunner.SequentialAction
 import com.acmerobotics.roadrunner.now
 import com.commonlibs.units.Pose
@@ -33,13 +38,14 @@ class BoringDrive : LinearOpMode(){
         @JvmField var shooterTargetRpm = 3300
     }
 
+    var intakeAction : Action? = null
+
     override fun runOpMode() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
         val robot = Robot(hardwareMap,Pose(0.0.cm, 0.0.cm, 0.0.deg))
         val timeKeep = TimeKeep()
         var lastPos : Boolean = false // false = intake true = shooter
-
 
         val intakeRight = ButtonReader { gamepad2.y}
         val intakeLeft = ButtonReader { gamepad2.a}
@@ -138,38 +144,35 @@ class BoringDrive : LinearOpMode(){
 
             robot.shooter.update(timeKeep.deltaTime)
 
-            val result: PredominantColorProcessor.Result = robot.camera.colorSensor.getAnalysis()
-
-            if (result.closestSwatch == PredominantColorProcessor.Swatch.ARTIFACT_GREEN || result.closestSwatch == PredominantColorProcessor.Swatch.ARTIFACT_PURPLE){
-                if (robot.camera.ball3 == CameraCore.Balls.NONE){
-                    robot.camera.ball3 = robot.camera.ball2
-                    robot.camera.ball2 = robot.camera.ball1
-                    if (result.closestSwatch == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
-                        robot.camera.ball1 = CameraCore.Balls.ARTIFACT_GREEN
-                    else
-                        robot.camera.ball1 = CameraCore.Balls.ARTIFACT_PURPLE
-                    if (robot.camera.ball3 == CameraCore.Balls.NONE){
-                        BoringDriveConfig.multiplier--
-                        SequentialAction(
-                            robot.transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier, BoringDriveConfig.intakeOffset),
-                            SleepAction(20.s)
-                        )
-                        lastPos = false
-                    }
-                    else{
-                        if(lastPos) {
-                            BoringDriveConfig.multiplier--
-                        }
-                        robot.transfer.goToPos(BoringDriveConfig.pos, BoringDriveConfig.multiplier,BoringDriveConfig.shooterOffset)
-                        lastPos = true
-                    }
-                }
+            if(gamepad2.dpad_right) {
+                intakeAction = SequentialAction(
+                    InstantAction{ BoringDriveConfig.multiplier++},
+                    ParallelAction(
+                        InstantAction{robot.intake.power = 1.0},
+                        robot.transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier, BoringDriveConfig.intakeOffset),
+                    ),
+                    RaceAction(
+                        robot.camera.waitForColors(),
+                        SleepAction(5.s)
+                    ),
+                    InstantAction{ BoringDriveConfig.multiplier++},
+                    robot.transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier, BoringDriveConfig.intakeOffset),
+                    RaceAction(
+                        robot.camera.waitForColors(),
+                        SleepAction(5.s)
+                    ),
+                    InstantAction{ BoringDriveConfig.multiplier++},
+                    robot.transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier, BoringDriveConfig.intakeOffset),
+                    RaceAction(
+                        robot.camera.waitForColors(),
+                        SleepAction(5.s)
+                    ),
+                )
             }
 
 
-
-
-            telemetry.addData("Best Match", result.closestSwatch)
+            runActions()
+            telemetry.addData("Best Match", robot.camera.colorSensor.getAnalysis().closestSwatch)
             telemetry.addData("ball1", robot.camera.ball1)
             telemetry.addData("ball2", robot.camera.ball2)
             telemetry.addData("ball3", robot.camera.ball3)
@@ -193,4 +196,13 @@ class BoringDrive : LinearOpMode(){
             robot.transfer.update(timeKeep.deltaTime)
         }
     }
+
+    private fun runActions() {
+        intakeAction?.let {
+            if (!it.run(TelemetryPacket())) {
+                intakeAction = null
+            }
+        }
+    }
+
 }
