@@ -20,15 +20,15 @@ import org.firstinspires.ftc.teamcode.robot.Robot
 
 @Autonomous
 class BigTriangleBlue : LinearOpMode() {
-    val startPose = Pose(63.inch, -11.inch, 180.0.deg)
+    val startPose = Pose(-50.inch, -50.7.inch, 54.0.deg)
     val smallTrianglePose = Pose(57.inch, -10.inch, 200.0.deg)
-    val bigTrianglePose = Pose(-6.inch, -6.inch, 225.0.deg)
+    val bigTrianglePose = Pose(-10.inch, -10.inch, 225.0.deg)
 
     val rightIntakePose = Pose(36.inch, -30.inch, 270.0.deg)
     val middleIntakePose = Pose(12.inch, -30.inch, 270.0.deg)
     val leftIntakePose = Pose(-12.inch, -30.inch, 270.0.deg)
 
-    val endPose = Pose(16.inch, -54.inch, 0.0.deg)
+    val endPose = Pose(10.inch, -58.inch, 220.0.deg)
 
     val rpmFar = 3300.0
     val rpmClose = 2500.0
@@ -88,7 +88,7 @@ class BigTriangleBlue : LinearOpMode() {
                 .strafeToLinearHeading(leftIntakePose)
                 .setTangent(90.deg)
                 .afterTime(0.s, getBall())
-                .lineToY(45.inch, slowSpeed)
+                .lineToY(-45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .strafeToLinearHeading(bigTrianglePose)
                 .build(),
@@ -96,9 +96,9 @@ class BigTriangleBlue : LinearOpMode() {
 
             robot.drive.actionBuilder(bigTrianglePose)
                 .strafeToLinearHeading(middleIntakePose)
-                .setTangent(90.deg)
+                .setTangent(-90.deg)
                 .afterTime(0.s, getBall())
-                .lineToY(45.inch, slowSpeed)
+                .lineToY(-45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .strafeToLinearHeading(bigTrianglePose)
                 .build(),
@@ -106,9 +106,9 @@ class BigTriangleBlue : LinearOpMode() {
 
             robot.drive.actionBuilder(bigTrianglePose)
                 .strafeToLinearHeading(rightIntakePose)
-                .setTangent(90.deg)
+                .setTangent(-90.deg)
                 .afterTime(0.s, getBall())
-                .lineToY(45.inch, slowSpeed)
+                .lineToY(-45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .strafeToLinearHeading(smallTrianglePose)
                 .build(),
