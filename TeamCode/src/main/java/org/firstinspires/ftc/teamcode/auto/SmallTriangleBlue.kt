@@ -86,9 +86,9 @@ class SmallTriangleBlue : LinearOpMode() {
             robot.drive.actionBuilder(startPose)
                 //.splineToLinearHeading(smallTrianglePose, 70.deg)
                 .strafeToLinearHeading(smallTrianglePose)
-                .stopAndAdd(shoot(rpmFar))
                 .build(),
-
+            robot.drive.correctionAction(smallTrianglePose, 1.s),
+            shoot(rpmFar),
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(smallTrianglePose)
                 .strafeToLinearHeading(rightIntakePose)
