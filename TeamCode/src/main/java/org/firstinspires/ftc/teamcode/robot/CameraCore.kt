@@ -45,14 +45,14 @@ class CameraCore(
         .setCamera(camera)
         .build()
 
-    lateinit var sensorColor : PredominantColorProcessor.Result
+    var sensorColor = PredominantColorProcessor.Result()
 
     fun updateColor() {
         sensorColor = colorSensor.getAnalysis()
     }
 
     private fun waitForColor(color: PredominantColorProcessor.Swatch, maxTime : Duration = 10.s) = RaceAction(
-        Action {
+        {
             updateColor()
             it.addLine("waiting for color")
             sensorColor.closestSwatch != color

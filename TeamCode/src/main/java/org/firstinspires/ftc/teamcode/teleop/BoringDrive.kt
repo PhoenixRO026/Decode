@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.ParallelAction
 import com.acmerobotics.roadrunner.RaceAction
 import com.acmerobotics.roadrunner.SequentialAction
+import com.acmerobotics.roadrunner.ftc.runBlocking
 import com.acmerobotics.roadrunner.now
 import com.commonlibs.units.Pose
 import com.commonlibs.units.SleepAction
@@ -56,7 +57,9 @@ class BoringDrive : LinearOpMode(){
         val highRpm = ButtonReader {gamepad2.right_bumper}
         val lowRpm = ButtonReader {gamepad2.left_bumper}
         val stopShooter = ButtonReader {gamepad2.dpad_left}
-        val buttons = listOf(intakeRight, intakeLeft, shootRight, shootLeft, fingerUp, fingerDown, highRpm, lowRpm, stopShooter)
+        val dpadRight = ButtonReader {gamepad2.dpad_right}
+        val buttons = listOf(intakeRight, intakeLeft, shootRight, shootLeft, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, dpadRight)
+
 
         robot.transfer.finger.position = 1.0
 
@@ -134,35 +137,41 @@ class BoringDrive : LinearOpMode(){
 
             robot.shooter.update(timeKeep.deltaTime)
 
-            if(gamepad2.dpad_right) {
+
+
+            if(dpadRight.wasJustPressed()) {
                 intakeAction = SequentialAction(
                     InstantAction{robot.intake.power = 1.0},
                     InstantAction{ BoringDriveConfig.multiplier++},
                     robot.transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier, BoringDriveConfig.intakeOffset),
                     RaceAction(
                         robot.camera.waitForColors(),
-                        SleepAction(5.s)
+                        SleepAction(10.s)
                     ),
+                    //SleepAction(0.1.s),
                     InstantAction{ BoringDriveConfig.multiplier++},
-                    robot.transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier, BoringDriveConfig.intakeOffset),
+                    robot.transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier + 1, BoringDriveConfig.intakeOffset),
                     RaceAction(
                         robot.camera.waitForColors(),
-                        SleepAction(5.s)
+                        SleepAction(10.s)
                     ),
+                    //SleepAction(0.1.s),
                     InstantAction{ BoringDriveConfig.multiplier++},
-                    robot.transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier, BoringDriveConfig.intakeOffset),
+                    robot.transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier + 2, BoringDriveConfig.intakeOffset),
                     RaceAction(
                         robot.camera.waitForColors(),
-                        SleepAction(5.s)
+                        SleepAction(10.s)
                     ),
                     InstantAction{robot.intake.power = 0.0},
+                    SleepAction(0.5 .s),
+                    robot.transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier + 2, BoringDriveConfig.shooterOffset)
                 )
             }
 
 
             runActions()
-            telemetry.addData("Best Match", robot.camera.colorSensor.getAnalysis().closestSwatch)
-            telemetry.addData("ball1", robot.camera.ball1)
+            telemetry.addData("Best Match", robot.camera.sensorColor.closestSwatch)
+            /*telemetry.addData("ball1", robot.camera.ball1)
             telemetry.addData("ball2", robot.camera.ball2)
             telemetry.addData("ball3", robot.camera.ball3)
             telemetry.addData("a was pressed (set)", gamepad1.a)
@@ -172,14 +181,15 @@ class BoringDrive : LinearOpMode(){
             telemetry.addData("down was pressed (left)", gamepad1.dpad_down)
             telemetry.addData("shooter power", robot.shooter.power)
             telemetry.addData("rpm", robot.shooter.rpm)
-            telemetry.addData("target rpm", robot.shooter.targetRpm)
+            telemetry.addData("target rpm", robot.shooter.targetRpm)*/
             telemetry.addData("pos", robot.transfer.position)
-            telemetry.addData("fingir pos", robot.transfer.finger.position)
+            //telemetry.addData("fingir pos", robot.transfer.finger.position)
             telemetry.addData("target pos", robot.transfer.targetPosition)
             telemetry.addData("power trans", robot.transfer.power)
             telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
             telemetry.addData("fps", 1.s / timeKeep.deltaTime)
             telemetry.addData("multiplier", BoringDriveConfig.multiplier)
+            telemetry.addData("action", intakeAction)
             telemetry.update()
 
             robot.transfer.update(timeKeep.deltaTime)
@@ -188,9 +198,11 @@ class BoringDrive : LinearOpMode(){
 
     private fun runActions() {
         intakeAction?.let {
-            if (!it.run(TelemetryPacket())) {
+            val p = TelemetryPacket()
+            if (!it.run(p)) {
                 intakeAction = null
             }
+            FtcDashboard.getInstance().sendTelemetryPacket(p)
         }
     }
 

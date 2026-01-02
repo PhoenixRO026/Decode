@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.Vector2d
 import com.commonlibs.roadrunnerext.ex
 import com.commonlibs.units.Duration
 import com.commonlibs.units.Pose
+import com.commonlibs.units.deg
 import com.commonlibs.units.pose
 import com.commonlibs.units.rotate
 import com.commonlibs.units.s
@@ -46,11 +47,10 @@ class Drive(
             Vector2d(
                 forward * currentSpeed,
                 left * currentSpeed
-            ).rotate(-heading),
+            ).rotate(-heading.deg),
             rotate * currentSpeed
         )
 
         mecanumDrive.setDrivePowers(driveVec)
     }
-    // i am confused
 }
