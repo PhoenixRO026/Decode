@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop
 
+/*
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
@@ -80,11 +81,13 @@ class JustDrive : LinearOpMode(){
 
             /// Transfer
 
-            /* if (fingerUp.wasJustPressed())
+            */
+/* if (fingerUp.wasJustPressed())
                  robot.transfer.finger.position = 0.5
 
              if (fingerDown.wasJustPressed())
-                 robot.transfer.finger.position = 0.95*/
+                 robot.transfer.finger.position = 0.95*//*
+
 
 
             if (fingerUp.wasJustPressed()){
@@ -174,4 +177,4 @@ class JustDrive : LinearOpMode(){
             robot.transfer.update(timeKeep.deltaTime)
         }
     }
-}
+}*/

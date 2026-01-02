@@ -18,6 +18,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.robot.Robot
 
+/*
 @Autonomous
 class BigTriangleRed : LinearOpMode() {
     val startPose = Pose(-50.inch, 50.7.inch, -54.0.deg)
@@ -139,4 +140,4 @@ class BigTriangleRed : LinearOpMode() {
             dash.sendTelemetryPacket(p)
         }
     }
-}
+}*/

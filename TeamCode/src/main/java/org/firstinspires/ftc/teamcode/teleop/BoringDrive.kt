@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop
 
+/*
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
@@ -147,7 +148,8 @@ class BoringDrive : LinearOpMode(){
 
             runActions()
             telemetry.addData("Best Match", robot.camera.sensorColor.closestSwatch)
-            /*telemetry.addData("ball1", robot.camera.ball1)
+            */
+/*telemetry.addData("ball1", robot.camera.ball1)
             telemetry.addData("ball2", robot.camera.ball2)
             telemetry.addData("ball3", robot.camera.ball3)
             telemetry.addData("a was pressed (set)", gamepad1.a)
@@ -157,7 +159,8 @@ class BoringDrive : LinearOpMode(){
             telemetry.addData("down was pressed (left)", gamepad1.dpad_down)
             telemetry.addData("shooter power", robot.shooter.power)
             telemetry.addData("rpm", robot.shooter.rpm)
-            telemetry.addData("target rpm", robot.shooter.targetRpm)*/
+            telemetry.addData("target rpm", robot.shooter.targetRpm)*//*
+
             telemetry.addData("pos", robot.transfer.position)
             //telemetry.addData("fingir pos", robot.transfer.finger.position)
             telemetry.addData("target pos", robot.transfer.targetPosition)
@@ -182,4 +185,4 @@ class BoringDrive : LinearOpMode(){
         }
     }
 
-}
+}*/

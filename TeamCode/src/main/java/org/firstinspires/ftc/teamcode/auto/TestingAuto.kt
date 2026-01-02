@@ -22,6 +22,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.robot.Robot
 
+/*
 @Autonomous
 class TestingAuto : LinearOpMode() {
     val startPose = Pose(63.inch, -11.inch, 180.0.deg)
@@ -112,4 +113,4 @@ class TestingAuto : LinearOpMode() {
             dash.sendTelemetryPacket(p)
         }
     }
-}
+}*/

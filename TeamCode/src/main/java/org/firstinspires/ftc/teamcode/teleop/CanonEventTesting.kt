@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop
 
+/*
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
@@ -120,7 +121,8 @@ class CanonEventTesting : LinearOpMode(){
 
             /// Shooter
             //TODO: DON'T CALCULATE RPMS YOURSELF, USE THE VELOCITY PROVIDED BY THE MOTOR
-            /*if (currentTime - lastResetTime >= CanonEventConfig.sampleWindow) {
+            */
+/*if (currentTime - lastResetTime >= CanonEventConfig.sampleWindow) {
                 val pos = robot.shooter.encoder.getPositionAndVelocity().position
                 val elapsed = currentTime - lastResetTime
                 val revs = pos / CanonEventConfig.TICKS_PER_REV
@@ -130,7 +132,8 @@ class CanonEventTesting : LinearOpMode(){
                 //robot.shooter.motorBottom.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
 
                 lastResetTime = currentTime
-            }*/
+            }*//*
+
 
             if (highRpm.wasJustPressed()){ /// shoot far
                 robot.shooter.goToRmp(CanonEventConfig.shooterTargetRpm.toDouble())
@@ -164,4 +167,4 @@ class CanonEventTesting : LinearOpMode(){
 
         }
     }
-}
+}*/

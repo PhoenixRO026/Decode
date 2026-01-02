@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.auto
 
+/*
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.canvas.Canvas
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
@@ -139,4 +140,4 @@ class BigTriangleBlue : LinearOpMode() {
             dash.sendTelemetryPacket(p)
         }
     }
-}
+}*/

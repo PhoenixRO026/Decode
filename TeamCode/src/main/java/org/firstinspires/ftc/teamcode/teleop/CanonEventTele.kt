@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleop
 
+/*
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
@@ -75,7 +76,8 @@ class CanonEventTele : LinearOpMode(){
             telemetry.update()
 
             lastTime = currentTime
-            /*
+            */
+/*
             robot.drive.isSlowMode = gamepad1.right_trigger >= 0.2
             robot.drive.driveFieldCentric(
                 -gamepad1.left_stick_y.toDouble(),
@@ -84,8 +86,9 @@ class CanonEventTele : LinearOpMode(){
             )
             if (gamepad1.y) {
                 robot.drive.resetFieldCentric()
-            }*/
+            }*//*
+
 
         }
     }
-}
+}*/
