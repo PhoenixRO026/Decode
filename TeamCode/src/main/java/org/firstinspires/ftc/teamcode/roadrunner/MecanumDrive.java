@@ -317,7 +317,7 @@ public final class MecanumDrive {
 
             Pose2d error = target.minusExp(localizer.getPose());
 
-            if ((error.position.norm() < 0.5 && robotVelRobot.linearVel.norm() < 1 && error.heading.toDouble() < Math.toRadians(5)) || t >= maxTimeS) {
+            if ((error.position.norm() < 0.5 && robotVelRobot.linearVel.norm() < 1 && error.heading.toDouble() < Math.toRadians(2)) || t >= maxTimeS) {
                 leftFront.setPower(0);
                 leftBack.setPower(0);
                 rightBack.setPower(0);
