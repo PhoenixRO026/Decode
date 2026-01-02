@@ -12,22 +12,32 @@ import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor
 class CameraCore(
     val camera : WebcamName
 ) {
-        val colorSensor =
-            PredominantColorProcessor.Builder()
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-0.5, 0.25, 1.0, -0.5))
-                .setSwatches(
-                    PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
-                    PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
-                    PredominantColorProcessor.Swatch.ORANGE,
-                    PredominantColorProcessor.Swatch.BLACK,
-                    PredominantColorProcessor.Swatch.WHITE
-                )
-                .build()
+    enum class Balls{
+        NONE,
+        ARTIFACT_GREEN,
+        ARTIFACT_PURPLE
+    }
 
-        val portal: VisionPortal = VisionPortal.Builder()
-            .addProcessor(colorSensor)
-            .setCameraResolution(Size(320, 240))
-            .setCamera(camera)
+    var ball1 : Balls = Balls.NONE
+    var ball2 : Balls = Balls.NONE
+    var ball3 : Balls = Balls.NONE
+
+    val colorSensor =
+        PredominantColorProcessor.Builder()
+            .setRoi(ImageRegion.asUnityCenterCoordinates(-0.5, 0.25, 1.0, -0.5))
+            .setSwatches(
+                PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
+                PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,
+                PredominantColorProcessor.Swatch.ORANGE,
+                PredominantColorProcessor.Swatch.BLACK,
+                PredominantColorProcessor.Swatch.WHITE
+            )
             .build()
+
+    val portal: VisionPortal = VisionPortal.Builder()
+        .addProcessor(colorSensor)
+        .setCameraResolution(Size(320, 240))
+        .setCamera(camera)
+        .build()
 
 }
