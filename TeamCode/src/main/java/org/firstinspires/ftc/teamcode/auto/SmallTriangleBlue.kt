@@ -126,6 +126,7 @@ class SmallTriangleBlue : LinearOpMode() {
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .strafeToLinearHeading(bigTrianglePose)
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
+                .afterTime(0.0.s, robot.transfer.goToPosAction(pos, 1.0, 0.0))
                 .build(),
             shoot(),
 

@@ -47,7 +47,7 @@ class Drive(
             Vector2d(
                 forward * currentSpeed,
                 left * currentSpeed
-            ).rotate(-heading.deg),
+            ).rotate(-heading),
             rotate * currentSpeed
         )
 

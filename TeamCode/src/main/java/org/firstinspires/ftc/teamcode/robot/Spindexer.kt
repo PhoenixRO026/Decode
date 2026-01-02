@@ -66,7 +66,7 @@ class Spindexer(
     fun shootAction() = SequentialAction(
         InstantAction { fingerUp() },
         SleepAction(0.5.s),
-        InstantAction {fingerDown()},
+        InstantAction { fingerDown() },
         SleepAction(0.5.s)
     )
     var targetPosition : Double = position

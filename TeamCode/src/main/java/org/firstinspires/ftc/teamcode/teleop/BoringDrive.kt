@@ -75,18 +75,19 @@ class BoringDrive : LinearOpMode(){
         while (opModeIsActive()) {
             timeKeep.resetDeltaTime()
             buttons.forEach { it.readValue() }
+            robot.drive.updatePoseEstimate()
 
             /// Drive
 
+            if (gamepad1.y) {
+                robot.drive.resetFieldCentric()
+            }
             robot.drive.isSlowMode = gamepad1.right_trigger >= 0.2
             robot.drive.driveFieldCentric(
                 -gamepad1.left_stick_y.toDouble(),
                 -gamepad1.left_stick_x.toDouble(),
                 -gamepad1.right_stick_x.toDouble()
             )
-            if (gamepad1.y) {
-                robot.drive.resetFieldCentric()
-            }
 
             /// Transfer
             if (fingerUp.wasJustPressed())
