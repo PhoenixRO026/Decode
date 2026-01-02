@@ -121,16 +121,6 @@ class BoringDrive : LinearOpMode(){
 
             /// Intake
 
-            if (gamepad1.left_bumper) {
-                robot.intake.power = 1.0
-            }
-            else if (gamepad1.right_bumper) {
-                robot.intake.power = -1.0
-            }
-            else {
-                robot.intake.power = 0.0
-            }
-
 
             if (highRpm.wasJustPressed()){ /// shoot far
                 robot.shooter.goToRmp(BoringDriveConfig.shooterTargetRpm.toDouble())
@@ -146,15 +136,7 @@ class BoringDrive : LinearOpMode(){
 
             if(gamepad2.dpad_right) {
                 intakeAction = SequentialAction(
-                    InstantAction{ BoringDriveConfig.multiplier++},
-                    ParallelAction(
-                        InstantAction{robot.intake.power = 1.0},
-                        robot.transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier, BoringDriveConfig.intakeOffset),
-                    ),
-                    RaceAction(
-                        robot.camera.waitForColors(),
-                        SleepAction(5.s)
-                    ),
+                    InstantAction{robot.intake.power = 1.0},
                     InstantAction{ BoringDriveConfig.multiplier++},
                     robot.transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier, BoringDriveConfig.intakeOffset),
                     RaceAction(
@@ -167,6 +149,13 @@ class BoringDrive : LinearOpMode(){
                         robot.camera.waitForColors(),
                         SleepAction(5.s)
                     ),
+                    InstantAction{ BoringDriveConfig.multiplier++},
+                    robot.transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier, BoringDriveConfig.intakeOffset),
+                    RaceAction(
+                        robot.camera.waitForColors(),
+                        SleepAction(5.s)
+                    ),
+                    InstantAction{robot.intake.power = 0.0},
                 )
             }
 
