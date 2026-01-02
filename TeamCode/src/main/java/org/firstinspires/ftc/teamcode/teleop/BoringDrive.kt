@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode.teleop
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
+import com.acmerobotics.roadrunner.SequentialAction
 import com.acmerobotics.roadrunner.now
 import com.commonlibs.units.Pose
+import com.commonlibs.units.SleepAction
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
 import com.commonlibs.units.s
@@ -14,6 +16,7 @@ import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.buttons.ButtonReader
+import org.firstinspires.ftc.teamcode.robot.CameraCore
 import org.firstinspires.ftc.teamcode.robot.Robot
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor
 import java.util.concurrent.TimeUnit
@@ -137,9 +140,39 @@ class BoringDrive : LinearOpMode(){
 
             val result: PredominantColorProcessor.Result = robot.camera.colorSensor.getAnalysis()
 
+            if (result.closestSwatch == PredominantColorProcessor.Swatch.ARTIFACT_GREEN || result.closestSwatch == PredominantColorProcessor.Swatch.ARTIFACT_PURPLE){
+                if (robot.camera.ball3 == CameraCore.Balls.NONE){
+                    robot.camera.ball3 = robot.camera.ball2
+                    robot.camera.ball2 = robot.camera.ball1
+                    if (result.closestSwatch == PredominantColorProcessor.Swatch.ARTIFACT_GREEN)
+                        robot.camera.ball1 = CameraCore.Balls.ARTIFACT_GREEN
+                    else
+                        robot.camera.ball1 = CameraCore.Balls.ARTIFACT_PURPLE
+                    if (robot.camera.ball3 == CameraCore.Balls.NONE){
+                        BoringDriveConfig.multiplier--
+                        SequentialAction(
+                            robot.transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier, BoringDriveConfig.intakeOffset),
+                            SleepAction(20.s)
+                        )
+                        lastPos = false
+                    }
+                    else{
+                        if(lastPos) {
+                            BoringDriveConfig.multiplier--
+                        }
+                        robot.transfer.goToPos(BoringDriveConfig.pos, BoringDriveConfig.multiplier,BoringDriveConfig.shooterOffset)
+                        lastPos = true
+                    }
+                }
+            }
+
+
+
 
             telemetry.addData("Best Match", result.closestSwatch)
-
+            telemetry.addData("ball1", robot.camera.ball1)
+            telemetry.addData("ball2", robot.camera.ball2)
+            telemetry.addData("ball3", robot.camera.ball3)
             telemetry.addData("a was pressed (set)", gamepad1.a)
             telemetry.addData("x was pressed (left)", gamepad1.x)
             telemetry.addData("b was pressed (right)", gamepad1.b)
