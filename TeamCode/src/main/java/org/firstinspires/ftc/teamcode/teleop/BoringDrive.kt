@@ -141,32 +141,7 @@ class BoringDrive : LinearOpMode(){
 
 
             if(dpadRight.wasJustPressed()) {
-                intakeAction = SequentialAction(
-                    InstantAction{robot.intake.power = 1.0},
-                    InstantAction{ BoringDriveConfig.multiplier++},
-                    robot.transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier, BoringDriveConfig.intakeOffset),
-                    RaceAction(
-                        robot.camera.waitForColors(),
-                        SleepAction(10.s)
-                    ),
-                    //SleepAction(0.1.s),
-                    InstantAction{ BoringDriveConfig.multiplier++},
-                    robot.transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier + 1, BoringDriveConfig.intakeOffset),
-                    RaceAction(
-                        robot.camera.waitForColors(),
-                        SleepAction(10.s)
-                    ),
-                    //SleepAction(0.1.s),
-                    InstantAction{ BoringDriveConfig.multiplier++},
-                    robot.transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier + 2, BoringDriveConfig.intakeOffset),
-                    RaceAction(
-                        robot.camera.waitForColors(),
-                        SleepAction(10.s)
-                    ),
-                    InstantAction{robot.intake.power = 0.0},
-                    SleepAction(0.5 .s),
-                    robot.transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier + 2, BoringDriveConfig.shooterOffset)
-                )
+                intakeAction = robot.intakeBalls()
             }
 
 

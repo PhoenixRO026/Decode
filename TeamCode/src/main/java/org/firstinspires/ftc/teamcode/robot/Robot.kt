@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode.robot
 
+import com.acmerobotics.roadrunner.InstantAction
+import com.acmerobotics.roadrunner.RaceAction
+import com.acmerobotics.roadrunner.SequentialAction
 import com.acmerobotics.roadrunner.ftc.Encoder
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder
 import com.acmerobotics.roadrunner.ftc.RawEncoder
 import com.commonlibs.units.Pose
+import com.commonlibs.units.SleepAction
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
+import com.commonlibs.units.s
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
@@ -13,6 +18,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
+import org.firstinspires.ftc.teamcode.teleop.BoringDrive.BoringDriveConfig
 import kotlin.jvm.java
 
 class Robot(
@@ -25,6 +31,33 @@ class Robot(
     val transfer: Spindexer
     val intake: Intake
     val camera: CameraCore
+
+    fun intakeBalls() = SequentialAction(
+        InstantAction{intake.power = 1.0},
+        InstantAction{ BoringDriveConfig.multiplier++},
+        transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier, BoringDriveConfig.intakeOffset),
+        RaceAction(
+            camera.waitForColors(),
+            SleepAction(10.s)
+        ),
+        //SleepAction(0.1.s),
+        InstantAction{ BoringDriveConfig.multiplier++},
+        transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier + 1, BoringDriveConfig.intakeOffset),
+        RaceAction(
+            camera.waitForColors(),
+            SleepAction(10.s)
+        ),
+        //SleepAction(0.1.s),
+        InstantAction{ BoringDriveConfig.multiplier++},
+        transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier + 2, BoringDriveConfig.intakeOffset),
+        RaceAction(
+            camera.waitForColors(),
+            SleepAction(10.s)
+        ),
+        InstantAction{intake.power = 0.0},
+        SleepAction(0.5 .s),
+        transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier + 2, BoringDriveConfig.shooterOffset)
+    )
 
     init {
         val mecanumDrive = MecanumDrive(hardwareMap, pose.pose2d)
