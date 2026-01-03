@@ -30,7 +30,7 @@ class SmallTriangleBlue : LinearOpMode() {
     val middleIntakePose = Pose(12.inch, -30.inch, 270.0.deg)
     val leftIntakePose = Pose(-12.inch, -29.inch, 270.0.deg)
 
-    val endPose = Pose(16.inch, -54.inch, 0.0.deg)
+    val endPose = Pose(20.inch, -44.inch, 0.0.deg)
 
     val rpmFar = 3260.0
     val rpmClose = 2490.0
@@ -161,7 +161,7 @@ class SmallTriangleBlue : LinearOpMode() {
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
                 .strafeToLinearHeading(bigTrianglePose)
                 .build(),
-            robot.shootBalls(rpmClose, 2),
+            robot.shootBalls(rpmClose, 0),
 
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(bigTrianglePose)
@@ -172,7 +172,7 @@ class SmallTriangleBlue : LinearOpMode() {
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .strafeToLinearHeading(bigTrianglePose)
                 .build(),
-            robot.shootBalls(rpmClose,2),
+            robot.shootBalls(rpmClose,1),
 
             robot.drive.actionBuilder(bigTrianglePose)
                 .strafeToLinearHeading(endPose)
@@ -253,10 +253,16 @@ class SmallTriangleBlue : LinearOpMode() {
             running = action.run(packet)
 
             dash.sendTelemetryPacket(packet)
-
+            telemetry.addLine("===== Camera =====")
             telemetry.addData("case id", robot.camera.detectAprilTagCase())
             telemetry.addData("color", robot.camera.colorSensor.getAnalysis())
+            telemetry.addLine(" ")
+            telemetry.addLine("===== Shooter =====")
             telemetry.addData("rpm", robot.shooter.rpm)
+            telemetry.addLine(" ")
+            telemetry.addLine("===== Transfer =====")
+            telemetry.addData("pos", robot.transfer.position)
+            telemetry.addData("target pos", robot.transfer.targetPosition)
             telemetry.update()
         }
     }

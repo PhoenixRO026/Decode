@@ -49,21 +49,21 @@ class Robot(
             camera.waitForColors(),
             SleepAction(3.s)
         ),
-        SleepAction(0.25.s),
+        SleepAction(0.5.s),
         transfer.goToPosAction(BoringDriveConfig.pos, (multiplier + 1).toDouble(), 0.0),
         RaceAction(
             camera.waitForColors(),
             SleepAction(3.s)
         ),
-        SleepAction(0.25.s),
+        SleepAction(0.5.s),
         transfer.goToPosAction(BoringDriveConfig.pos, (multiplier + 2).toDouble(), 0.0),
         RaceAction(
             camera.waitForColors(),
             SleepAction(3.s)
         ),
-        SleepAction(0.25.s),
+        SleepAction(0.5.s),
         InstantAction{intake.power = 0.0},
-        transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier, 0.0)
+        transfer.goToPosAction(BoringDriveConfig.pos, 0.0, BoringDriveConfig.shooterOffset)
     )
 
     fun shootBalls(rpm : Double, multiplier : Int) = SequentialAction(
