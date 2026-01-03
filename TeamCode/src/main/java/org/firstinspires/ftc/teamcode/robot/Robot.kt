@@ -97,7 +97,8 @@ class Robot(
 
         val finger = hardwareMap.get(Servo::class.java, "finger")
 
-        val webcam = hardwareMap.get(WebcamName::class.java, "Webcam 1")
+        val webcamColor = hardwareMap.get(WebcamName::class.java, "Webcam 1")
+        val webcamAprilTag = hardwareMap.get(WebcamName::class.java, "Webcam 2")
 
         val voltageSensor = hardwareMap.voltageSensor.iterator().next()
 
@@ -117,7 +118,8 @@ class Robot(
             motor = motorIntake
         )
         camera = CameraCore(
-            camera = webcam
+            cameraColor = webcamColor,
+            cameraAprilTag = webcamAprilTag
         )
 
 
