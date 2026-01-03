@@ -48,12 +48,12 @@ class CameraCore(
         val currentDetections: List<AprilTagDetection> = aprilTag.detections
         for (detection in currentDetections) {
             if (detection.metadata != null) {
-                if (detection.id > 20 && detection.id < 24){
+                if (detection.id > 20 && detection.id < 24) {
                     id = detection.id
                 }
             }
         }
-
+        return id
     }
 
     fun stopStream() {
