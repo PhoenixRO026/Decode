@@ -43,29 +43,27 @@ class Robot(
     )
 
     fun intakeBalls(multiplier : Int) = SequentialAction(
-        InstantAction{intake.power = 1.0},
+        InstantAction{intake.power = 0.75},
         transfer.goToPosAction(BoringDriveConfig.pos, multiplier.toDouble(), BoringDriveConfig.intakeOffset),
         RaceAction(
             camera.waitForColors(),
-            SleepAction(5.s)
+            SleepAction(3.s)
         ),
-        //SleepAction(0.1.s),
-        InstantAction{ BoringDriveConfig.multiplier++},
-        transfer.goToPosAction(BoringDriveConfig.pos, (multiplier + 1).toDouble(), BoringDriveConfig.intakeOffset),
+        SleepAction(0.25.s),
+        transfer.goToPosAction(BoringDriveConfig.pos, (multiplier + 1).toDouble(), 0.0),
         RaceAction(
             camera.waitForColors(),
-            SleepAction(5.s)
+            SleepAction(3.s)
         ),
-        //SleepAction(0.1.s),
-        InstantAction{ BoringDriveConfig.multiplier++},
-        transfer.goToPosAction(BoringDriveConfig.pos, (multiplier + 2).toDouble(), BoringDriveConfig.intakeOffset),
+        SleepAction(0.25.s),
+        transfer.goToPosAction(BoringDriveConfig.pos, (multiplier + 2).toDouble(), 0.0),
         RaceAction(
             camera.waitForColors(),
-            SleepAction(5.s)
+            SleepAction(3.s)
         ),
+        SleepAction(0.25.s),
         InstantAction{intake.power = 0.0},
-        SleepAction(0.5 .s),
-        transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier + 2, BoringDriveConfig.shooterOffset)
+        transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier, 0.0)
     )
 
     fun shootBalls(rpm : Double, multiplier : Int) = SequentialAction(
@@ -77,7 +75,7 @@ class Robot(
         transfer.goToPosAction(BoringDriveConfig.pos, (multiplier + 2).toDouble(), BoringDriveConfig.shooterOffset),
         shootBall(rpm),
         SleepAction(0.5 .s),
-        transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier, BoringDriveConfig.intakeOffset),
+        transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier, 0.0),
         shooter.goToRpmAction(0.0),
     )
 
