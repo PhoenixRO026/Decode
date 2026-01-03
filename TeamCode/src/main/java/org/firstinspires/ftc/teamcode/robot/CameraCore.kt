@@ -33,6 +33,16 @@ class CameraCore(
     var ball2 : Balls = Balls.NONE
     var ball3 : Balls = Balls.NONE
 
+    var sensorColor = PredominantColorProcessor.Result()
+
+    val viewIds: IntArray =
+        VisionPortal.makeMultiPortalView(2, VisionPortal.MultiPortalLayout.HORIZONTAL)
+
+    // We extract the two view IDs from the array to make our lives a little easier later.
+    // NB: the array is 2 long because we asked for 2 portals up above.
+    val portal1ViewId: Int = viewIds[0]
+    val portal2ViewId: Int = viewIds[1]
+
     val aprilTag = AprilTagProcessor.Builder()
         .build()
 
@@ -41,6 +51,7 @@ class CameraCore(
         .setCameraResolution(Size(1280, 960))
         .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
         .addProcessor(aprilTag)
+        .setLiveViewContainerId(portal2ViewId)
         .build()
 
     fun detectAprilTagCase() : Int {
@@ -80,9 +91,8 @@ class CameraCore(
         .addProcessor(colorSensor)
         .setCameraResolution(Size(320, 240))
         .setCamera(cameraColor)
+        .setLiveViewContainerId(portal1ViewId)
         .build()
-
-    var sensorColor = PredominantColorProcessor.Result()
 
     fun updateColor() {
         sensorColor = colorSensor.getAnalysis()

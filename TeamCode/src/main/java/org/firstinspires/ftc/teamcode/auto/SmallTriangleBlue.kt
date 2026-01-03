@@ -268,6 +268,8 @@ class SmallTriangleBlue : LinearOpMode() {
             running = action.run(packet)
 
             dash.sendTelemetryPacket(packet)
+
+            telemetry.addData("case id", robot.camera.detectAprilTagCase())
         }
     }
 }
