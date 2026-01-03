@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot
 import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.RaceAction
 import com.acmerobotics.roadrunner.SequentialAction
+import com.acmerobotics.roadrunner.SleepAction
 import com.acmerobotics.roadrunner.ftc.Encoder
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder
 import com.acmerobotics.roadrunner.ftc.RawEncoder
@@ -32,6 +33,15 @@ class Robot(
     val intake: Intake
     val camera: CameraCore
 
+    fun shootBall() = SequentialAction(
+        shooter.goToRpmAction(2500.0),
+        SleepAction(0.5.s),
+        InstantAction{transfer.fingerUp()},
+        SleepAction(0.5.s),
+        InstantAction{transfer.fingerDown()},
+        SleepAction(0.5.s),
+    )
+
     fun intakeBalls() = SequentialAction(
         InstantAction{intake.power = 1.0},
         InstantAction{ BoringDriveConfig.multiplier++},
@@ -57,6 +67,22 @@ class Robot(
         InstantAction{intake.power = 0.0},
         SleepAction(0.5 .s),
         transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier + 2, BoringDriveConfig.shooterOffset)
+    )
+
+    fun shootBalls() = SequentialAction(
+        shooter.goToRpmAction(2500.0),
+        InstantAction{ BoringDriveConfig.multiplier++},
+        transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier, BoringDriveConfig.shooterOffset),
+        shootBall(),
+        InstantAction{ BoringDriveConfig.multiplier++},
+        transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier + 1, BoringDriveConfig.shooterOffset),
+        shootBall(),
+        InstantAction{ BoringDriveConfig.multiplier++},
+        transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier + 2, BoringDriveConfig.shooterOffset),
+        shootBall(),
+        SleepAction(0.5 .s),
+        transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier + 2, BoringDriveConfig.intakeOffset),
+        shooter.goToRpmAction(0.0),
     )
 
     init {
