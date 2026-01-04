@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.ParallelAction
 import com.acmerobotics.roadrunner.RaceAction
 import com.acmerobotics.roadrunner.SequentialAction
+import com.acmerobotics.roadrunner.SleepAction
 import com.commonlibs.units.SleepAction
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.hardware.DcMotorEx
@@ -30,6 +31,12 @@ class Intake(
 
     fun startIntakeAction() = InstantAction { power = 0.75 }
     fun stopIntakeAction() = InstantAction { power = 0.0 }
+
+    fun spew() = SequentialAction (
+        InstantAction{ power = -1.0 },
+        SleepAction(0.5.s),
+        stopIntakeAction()
+    )
 
     fun addTelemetry(telemetry: Telemetry) {
         telemetry.addData("Outtake power", power)

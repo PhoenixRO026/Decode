@@ -3,14 +3,12 @@ package org.firstinspires.ftc.teamcode.teleop
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
-import com.acmerobotics.roadrunner.now
 import com.commonlibs.units.Pose
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.buttons.ButtonReader
@@ -21,9 +19,9 @@ import java.util.concurrent.TimeUnit
 
 
 @TeleOp
-class JustDrive : LinearOpMode(){
+class JustDriveDuo : LinearOpMode(){
     @Config
-    data object JustDriveConfig {
+    data object JustDriveDuoConfig {
         @JvmField var ticksPerRev = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0)
         @JvmField var pos = ticksPerRev / 3.0
         @JvmField var multiplier = 0
@@ -87,40 +85,40 @@ class JustDrive : LinearOpMode(){
                  robot.transfer.finger.position = 0.95*/
 
 
-            if (fingerUp.wasJustPressed()){
+            if (fingerUp.wasJustPressed())
                 robot.transfer.fingerUp()
-                sleep(1000)
+            if (fingerDown.wasJustPressed())
                 robot.transfer.fingerDown()
-            }
+
 
 
             //if (fingerDown.wasJustPressed())
 
 
             if (intakeRight.wasJustPressed()){
-                JustDriveConfig.multiplier--
-                robot.transfer.goToPos(JustDriveConfig.pos, JustDriveConfig.multiplier, JustDriveConfig.intakeOffset)
+                JustDriveDuoConfig.multiplier--
+                robot.transfer.goToPos(JustDriveDuoConfig.pos, JustDriveDuoConfig.multiplier, JustDriveDuoConfig.intakeOffset)
                 lastPos = false
             }
 
             if (intakeLeft.wasJustPressed()){
-                JustDriveConfig.multiplier++
-                robot.transfer.goToPos(JustDriveConfig.pos, JustDriveConfig.multiplier, JustDriveConfig.intakeOffset)
+                JustDriveDuoConfig.multiplier++
+                robot.transfer.goToPos(JustDriveDuoConfig.pos, JustDriveDuoConfig.multiplier, JustDriveDuoConfig.intakeOffset)
                 lastPos = false
             }
 
             if (shootRight.wasJustPressed()){
                 if(lastPos) {
-                    JustDriveConfig.multiplier--
+                    JustDriveDuoConfig.multiplier--
                 }
-                robot.transfer.goToPos(JustDriveConfig.pos, JustDriveConfig.multiplier,JustDriveConfig.shooterOffset)
+                robot.transfer.goToPos(JustDriveDuoConfig.pos, JustDriveDuoConfig.multiplier,JustDriveDuoConfig.shooterOffset)
                 lastPos = true
             }
             if (shootLeft.wasJustPressed()){
                 if (lastPos) {
-                    JustDriveConfig.multiplier++
+                    JustDriveDuoConfig.multiplier++
                 }
-                robot.transfer.goToPos(JustDriveConfig.pos, JustDriveConfig.multiplier,JustDriveConfig.shooterOffset)
+                robot.transfer.goToPos(JustDriveDuoConfig.pos, JustDriveDuoConfig.multiplier,JustDriveDuoConfig.shooterOffset)
                 lastPos = true
             }
 
@@ -138,7 +136,7 @@ class JustDrive : LinearOpMode(){
 
 
             if (highRpm.wasJustPressed()){ /// shoot far
-                robot.shooter.goToRmp(JustDriveConfig.shooterTargetRpm.toDouble())
+                robot.shooter.goToRmp(JustDriveDuoConfig.shooterTargetRpm.toDouble())
             }
             else if (lowRpm.wasJustPressed()) { /// shoot close
                 robot.shooter.goToRmp(2500.0)
@@ -168,7 +166,7 @@ class JustDrive : LinearOpMode(){
             telemetry.addData("power trans", robot.transfer.power)
             telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
             telemetry.addData("fps", 1.s / timeKeep.deltaTime)
-            telemetry.addData("multiplier", JustDriveConfig.multiplier)
+            telemetry.addData("multiplier", JustDriveDuoConfig.multiplier)
             telemetry.update()
 
             robot.transfer.update(timeKeep.deltaTime)

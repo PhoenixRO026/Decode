@@ -46,6 +46,7 @@ class InterestingDrive : LinearOpMode(){
         val lowRpm = ButtonReader {gamepad2.left_bumper}
         val stopShooter = ButtonReader {gamepad2.dpad_left}
         val dpadRight = ButtonReader {gamepad2.dpad_right}
+        val spew = ButtonReader {gamepad1.right_trigger >= 0.2}
         val stopButton = ButtonReader {gamepad2.touchpad}
 
         val buttons = listOf(shootRight, shootLeft, highRpm, lowRpm, stopShooter, dpadRight)
@@ -105,10 +106,10 @@ class InterestingDrive : LinearOpMode(){
             /// Shooter
 
             if (highRpm.wasJustPressed()) {
-                shootAction = robot.shootBalls(InterestingDriveConfig.rpmFar, InterestingDriveConfig.multiplier)
+                shootAction = robot.shootTeleBalls(InterestingDriveConfig.rpmFar, InterestingDriveConfig.multiplier)
             }
             else if (lowRpm.wasJustPressed()) {
-                shootAction = robot.shootBalls(InterestingDriveConfig.rpmClose, InterestingDriveConfig.multiplier)
+                shootAction = robot.shootTeleBalls(InterestingDriveConfig.rpmClose, InterestingDriveConfig.multiplier)
             }
             else if (stopShooter.wasJustPressed()) { /// stop shoot
                 robot.shooter.goToRmp(0.0)
@@ -118,8 +119,11 @@ class InterestingDrive : LinearOpMode(){
             /// Intake
 
             if(dpadRight.wasJustPressed()) {
-                intakeAction = robot.intakeBalls(0)
+                intakeAction = robot.intakeTeleBalls(0)
                 shootOffset = false
+            }
+            else if(spew.wasJustPressed()) {
+                intakeAction = robot.intake.spew()
             }
 
             /// Stop

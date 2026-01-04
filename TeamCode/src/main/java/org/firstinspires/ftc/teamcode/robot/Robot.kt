@@ -50,25 +50,60 @@ class Robot(
             camera.waitForColors(),
             SleepAction(3.s)
         ),
-        SleepAction(0.5.s),
+        SleepAction(0.25.s),
         transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 1, 0.0),
         RaceAction(
             camera.waitForColors(),
             SleepAction(3.s)
         ),
-        SleepAction(0.5.s),
+        SleepAction(0.25.s),
         transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 2, 0.0),
         RaceAction(
             camera.waitForColors(),
             SleepAction(3.s)
         ),
-        SleepAction(0.5.s),
+        SleepAction(0.25.s),
         InstantAction{intake.power = 0.0},
         transfer.goToPosAction(BoringDriveConfig.pos, 0, BoringDriveConfig.shooterOffset)
     )
 
     fun shootBalls(rpm : Double, multiplier : Int) = SequentialAction(
         shooter.goToRpmAction(rpm),
+        transfer.goToPosAction(BoringDriveConfig.pos, multiplier, BoringDriveConfig.shooterOffset),
+        shootBall(rpm),
+        transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 1, BoringDriveConfig.shooterOffset),
+        shootBall(rpm),
+        transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 2, BoringDriveConfig.shooterOffset),
+        shootBall(rpm),
+        SleepAction(0.5 .s),
+        transfer.goToPosAction(BoringDriveConfig.pos, 0, 0.0),
+        shooter.goToRpmAction(0.0),
+    )
+
+    fun intakeTeleBalls(multiplier : Int) = SequentialAction(
+        InstantAction{intake.power = 0.75},
+        transfer.goToPosAction(BoringDriveConfig.pos, multiplier, BoringDriveConfig.intakeOffset),
+        RaceAction(
+            camera.waitForColors(),
+            SleepAction(3.s)
+        ),
+        transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 1, 0.0),
+        RaceAction(
+            camera.waitForColors(),
+            SleepAction(3.s)
+        ),
+        transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 2, 0.0),
+        RaceAction(
+            camera.waitForColors(),
+            SleepAction(3.s)
+        ),
+        InstantAction{intake.power = 0.0},
+        transfer.goToPosAction(BoringDriveConfig.pos, 0, BoringDriveConfig.shooterOffset)
+    )
+
+    fun shootTeleBalls(rpm : Double, multiplier : Int) = SequentialAction(
+        shooter.goToRpmAction(rpm),
+        SleepAction(0.5.s),
         transfer.goToPosAction(BoringDriveConfig.pos, multiplier, BoringDriveConfig.shooterOffset),
         shootBall(rpm),
         transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 1, BoringDriveConfig.shooterOffset),
