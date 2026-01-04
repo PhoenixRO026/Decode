@@ -5,60 +5,50 @@ import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
-import com.acmerobotics.roadrunner.InstantAction
-import com.acmerobotics.roadrunner.ParallelAction
-import com.acmerobotics.roadrunner.RaceAction
-import com.acmerobotics.roadrunner.SequentialAction
-import com.acmerobotics.roadrunner.ftc.runBlocking
-import com.acmerobotics.roadrunner.now
 import com.commonlibs.units.Pose
-import com.commonlibs.units.SleepAction
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.buttons.ButtonReader
-import org.firstinspires.ftc.teamcode.robot.CameraCore
 import org.firstinspires.ftc.teamcode.robot.Robot
-import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor
 import java.util.concurrent.TimeUnit
 
 @TeleOp
-class BoringDrive : LinearOpMode(){
+class InterestingDrive : LinearOpMode(){
     @Config
-    data object BoringDriveConfig {
+    data object InterestingDriveConfig {
         @JvmField var ticksPerRev = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0)
         @JvmField var pos = ticksPerRev / 3.0
         @JvmField var multiplier = 0
         @JvmField var shooterOffset = 94.0
         @JvmField var intakeOffset = 0.0
-        @JvmField var shooterTargetRpm = 3300
+        @JvmField val rpmFar = 3260.0
+        @JvmField val rpmClose = 2490.0
     }
 
     var intakeAction : Action? = null
+    var shootAction : Action? = null
 
     override fun runOpMode() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
         val robot = Robot(hardwareMap,Pose(0.0.cm, 0.0.cm, 0.0.deg))
         val timeKeep = TimeKeep()
-        var lastPos : Boolean = false // false = intake true = shooter
+        var shootOffset : Boolean = false // false = intake true = shooter
 
-        val intakeRight = ButtonReader { gamepad2.y}
-        val intakeLeft = ButtonReader { gamepad2.a}
         val shootRight = ButtonReader { gamepad2.b}
         val shootLeft = ButtonReader { gamepad2.x}
-        val fingerUp = ButtonReader {gamepad2.dpad_up}
-        val fingerDown = ButtonReader {gamepad2.dpad_down}
         val highRpm = ButtonReader {gamepad2.right_bumper}
         val lowRpm = ButtonReader {gamepad2.left_bumper}
         val stopShooter = ButtonReader {gamepad2.dpad_left}
         val dpadRight = ButtonReader {gamepad2.dpad_right}
-        val buttons = listOf(intakeRight, intakeLeft, shootRight, shootLeft, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, dpadRight)
+        val stopButton = ButtonReader {gamepad2.touchpad}
+
+        val buttons = listOf(shootRight, shootLeft, highRpm, lowRpm, stopShooter, dpadRight)
 
 
         robot.transfer.finger.position = 1.0
@@ -90,84 +80,66 @@ class BoringDrive : LinearOpMode(){
             )
 
             /// Transfer
-            if (fingerUp.wasJustPressed())
-                robot.transfer.fingerUp()
-
-            if (fingerDown.wasJustPressed())
-                robot.transfer.fingerDown()
-
-            if (intakeRight.wasJustPressed()){
-                BoringDriveConfig.multiplier--
-                robot.transfer.goToPos(BoringDriveConfig.pos, BoringDriveConfig.multiplier, BoringDriveConfig.intakeOffset)
-                lastPos = false
-            }
-
-            if (intakeLeft.wasJustPressed()){
-                BoringDriveConfig.multiplier++
-                robot.transfer.goToPos(BoringDriveConfig.pos, BoringDriveConfig.multiplier, BoringDriveConfig.intakeOffset)
-                lastPos = false
-            }
 
             if (shootRight.wasJustPressed()){
-                if(lastPos) {
-                    BoringDriveConfig.multiplier--
+                if(shootOffset) {
+                    InterestingDriveConfig.multiplier--
+                    if (InterestingDriveConfig.multiplier == -1) {
+                        InterestingDriveConfig.multiplier = 2
+                    }
                 }
-                robot.transfer.goToPos(BoringDriveConfig.pos, BoringDriveConfig.multiplier,BoringDriveConfig.shooterOffset)
-                lastPos = true
+                robot.transfer.goToPos(InterestingDriveConfig.pos, InterestingDriveConfig.multiplier,InterestingDriveConfig.shooterOffset)
+                shootOffset = true
             }
             if (shootLeft.wasJustPressed()){
-                if (lastPos) {
-                    BoringDriveConfig.multiplier++
+                if (shootOffset) {
+                    InterestingDriveConfig.multiplier++
+                    if (InterestingDriveConfig.multiplier == 3) {
+                        InterestingDriveConfig.multiplier = 0
+                    }
                 }
-                robot.transfer.goToPos(BoringDriveConfig.pos, BoringDriveConfig.multiplier,BoringDriveConfig.shooterOffset)
-                lastPos = true
+                robot.transfer.goToPos(InterestingDriveConfig.pos, InterestingDriveConfig.multiplier,InterestingDriveConfig.shooterOffset)
+                shootOffset = true
             }
 
-            /// Intake
+            /// Shooter
 
-
-            if (highRpm.wasJustPressed()){ /// shoot far
-                robot.shooter.goToRmp(BoringDriveConfig.shooterTargetRpm.toDouble())
+            if (highRpm.wasJustPressed()) {
+                shootAction = robot.shootBalls(InterestingDriveConfig.rpmFar, InterestingDriveConfig.multiplier)
             }
-            else if (lowRpm.wasJustPressed()) { /// shoot close
-                robot.shooter.goToRmp(2500.0)
+            else if (lowRpm.wasJustPressed()) {
+                shootAction = robot.shootBalls(InterestingDriveConfig.rpmClose, InterestingDriveConfig.multiplier)
             }
             else if (stopShooter.wasJustPressed()) { /// stop shoot
                 robot.shooter.goToRmp(0.0)
             }
 
-            robot.shooter.update(timeKeep.deltaTime)
 
-
+            /// Intake
 
             if(dpadRight.wasJustPressed()) {
                 intakeAction = robot.intakeBalls(0)
+                shootOffset = false
             }
 
+            /// Stop
 
+            if (stopButton.wasJustPressed()) {
+                shootAction = robot.stopShootAction()
+                intakeAction = robot.stopIntakeAction()
+            }
             runActions()
             telemetry.addData("Best Match", robot.camera.sensorColor.closestSwatch)
-            /*telemetry.addData("ball1", robot.camera.ball1)
-            telemetry.addData("ball2", robot.camera.ball2)
-            telemetry.addData("ball3", robot.camera.ball3)
-            telemetry.addData("a was pressed (set)", gamepad1.a)
-            telemetry.addData("x was pressed (left)", gamepad1.x)
-            telemetry.addData("b was pressed (right)", gamepad1.b)
-            telemetry.addData("up was pressed (set)", gamepad1.dpad_up)
-            telemetry.addData("down was pressed (left)", gamepad1.dpad_down)
-            telemetry.addData("shooter power", robot.shooter.power)
-            telemetry.addData("rpm", robot.shooter.rpm)
-            telemetry.addData("target rpm", robot.shooter.targetRpm)*/
             telemetry.addData("pos", robot.transfer.position)
-            //telemetry.addData("fingir pos", robot.transfer.finger.position)
             telemetry.addData("target pos", robot.transfer.targetPosition)
             telemetry.addData("power trans", robot.transfer.power)
             telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
             telemetry.addData("fps", 1.s / timeKeep.deltaTime)
-            telemetry.addData("multiplier", BoringDriveConfig.multiplier)
+            telemetry.addData("multiplier", InterestingDriveConfig.multiplier)
             telemetry.addData("action", intakeAction)
             telemetry.update()
 
+            robot.shooter.update(timeKeep.deltaTime)
             robot.transfer.update(timeKeep.deltaTime)
         }
     }
@@ -177,6 +149,14 @@ class BoringDrive : LinearOpMode(){
             val p = TelemetryPacket()
             if (!it.run(p)) {
                 intakeAction = null
+            }
+            FtcDashboard.getInstance().sendTelemetryPacket(p)
+        }
+
+        shootAction?.let {
+            val p = TelemetryPacket()
+            if (!it.run(p)) {
+                shootAction = null
             }
             FtcDashboard.getInstance().sendTelemetryPacket(p)
         }

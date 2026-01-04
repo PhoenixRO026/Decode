@@ -22,7 +22,7 @@ class TransferTest : LinearOpMode(){
     data object TransferTestConfig {
         @JvmField var fingerPos = 1.0
         @JvmField var pos = 0.0
-        @JvmField var multiplier = 1.0
+        @JvmField var multiplier = 1
         @JvmField var offset = 0.0
     }
 
