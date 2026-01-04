@@ -19,7 +19,7 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder
 data object redGoal{
     val startPose = Pose(63.inch, 11.inch, 180.0.deg)
     val smallTrianglePose = Pose(55.inch, 10.inch, 158.0.deg)
-    val bigTrianglePose = Pose(-12.inch, 12.inch, 140.0.deg)
+    val bigTrianglePose = Pose(-10.inch, 10.inch, 140.0.deg)
 
     val rightIntakePose = Pose(36.inch, 30.inch, 90.0.deg)
     val middleIntakePose = Pose(12.inch, 30.inch, 90.0.deg)
