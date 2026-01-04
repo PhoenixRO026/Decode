@@ -91,7 +91,7 @@ class SmallTriangleBlue : LinearOpMode() {
                 .strafeToLinearHeading(bigTrianglePose)
                 .build(),
 
-            robot.shootBalls(rpmClose, 2),
+            robot.shootBalls(rpmClose, 1),
 
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(bigTrianglePose)
@@ -104,7 +104,7 @@ class SmallTriangleBlue : LinearOpMode() {
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
                 .build(),
 
-            robot.shootBalls(rpmClose, 0),
+            robot.shootBalls(rpmClose, 2),
 
             robot.drive.actionBuilder(bigTrianglePose)
                 .strafeToLinearHeading(endPose)
@@ -213,11 +213,23 @@ class SmallTriangleBlue : LinearOpMode() {
                 .build()
         )
 
-        val action = when(robot.camera.detectAprilTagCase()) {
+        val actionErr = SequentialAction(
+            robot.drive.actionBuilder(startPose)
+                .lineToX(58.inch)
+                .turn(720.deg)
+
+                .build()
+        )
+
+        var id : Int
+
+        val action = when (robot.camera.detectedCase) {
             21 -> actionGPP
             22 -> actionPGP
-            else -> actionPPG
+            23 -> actionPPG
+            else -> actionErr
         }
+
 
         waitForStart()
 
@@ -233,6 +245,8 @@ class SmallTriangleBlue : LinearOpMode() {
 
             val packet = TelemetryPacket()
             packet.fieldOverlay().operations.addAll(c.operations)
+
+            id = robot.camera.detectAprilTagCase()
 
             running = action.run(packet)
 

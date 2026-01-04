@@ -67,6 +67,8 @@ class CameraCore(
         return id
     }
 
+    val detectedCase = detectAprilTagCase()
+
     fun stopStream() {
         visionPortal.stopStreaming()
     }
