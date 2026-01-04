@@ -82,7 +82,7 @@ class InterestingDrive : LinearOpMode(){
 
 
             /// Drive
-            if (!goingToTarget) {
+            if(driveAction == null) {
                 if (gamepad1.y) {
                     robot.drive.resetFieldCentric()
                 }
@@ -92,25 +92,12 @@ class InterestingDrive : LinearOpMode(){
                     -gamepad1.left_stick_x.toDouble(),
                     -gamepad1.right_stick_x.toDouble()
                 )
-
-                if (shootFar.wasJustPressed()) {
-                    val startPose2d = robot.drive.mecanumDrive.localizer.pose
-                    driveAction = robot.drive.actionBuilder(startPose2d.pose)
-                        .strafeToLinearHeading(smallTrianglePose)
-                        .build()
-                    goingToTarget = true
-                }
-            } else {
-                // running an auto Action: run it each loop
-                driveAction?.let {
-                    val p = TelemetryPacket()
-                    if (!it.run(p)) {
-                        // action finished
-                        driveAction = null
-                        goingToTarget = false
-                    }
-                    FtcDashboard.getInstance().sendTelemetryPacket(p)
-                }
+            }
+            if (shootFar.wasJustPressed()) {
+                val startPose2d = robot.drive.mecanumDrive.localizer.pose
+                driveAction = robot.drive.actionBuilder(startPose2d.pose)
+                    .strafeToLinearHeading(smallTrianglePose)
+                    .build()
             }
 
             /// Transfer
@@ -195,6 +182,14 @@ class InterestingDrive : LinearOpMode(){
             val p = TelemetryPacket()
             if (!it.run(p)) {
                 shootAction = null
+            }
+            FtcDashboard.getInstance().sendTelemetryPacket(p)
+        }
+
+        driveAction?.let {
+            val p = TelemetryPacket()
+            if (!it.run(p)) {
+                driveAction = null
             }
             FtcDashboard.getInstance().sendTelemetryPacket(p)
         }

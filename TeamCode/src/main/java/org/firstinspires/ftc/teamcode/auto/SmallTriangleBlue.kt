@@ -180,7 +180,7 @@ class SmallTriangleBlue : LinearOpMode() {
                 .strafeToLinearHeading(smallTrianglePose)
                 .build(),
 
-            robot.shootBalls(rpmClose, 0),
+            robot.shootBalls(rpmClose, 2),
 
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(smallTrianglePose)
@@ -213,31 +213,22 @@ class SmallTriangleBlue : LinearOpMode() {
                 .build()
         )
 
-        val actionErr = SequentialAction(
-            robot.drive.actionBuilder(startPose)
-                .lineToX(58.inch)
-                .turn(720.deg)
+        waitForStart()
 
-                .build()
-        )
-
-        var id : Int
-
-        val action = when (robot.camera.detectedCase) {
+        val action = when (robot.camera.detectAprilTagCase()) {
             21 -> actionGPP
             22 -> actionPGP
-            23 -> actionPPG
-            else -> actionErr
+            else -> actionPPG
         }
-
-
-        waitForStart()
 
         val dash = FtcDashboard.getInstance()
         val c = Canvas()
         action.preview(c)
 
         var running = true
+
+
+
         while (running && opModeIsActive()) {
             timeKeep.resetDeltaTime()
             robot.transfer.update(timeKeep.deltaTime)
@@ -246,7 +237,6 @@ class SmallTriangleBlue : LinearOpMode() {
             val packet = TelemetryPacket()
             packet.fieldOverlay().operations.addAll(c.operations)
 
-            id = robot.camera.detectAprilTagCase()
 
             running = action.run(packet)
 
