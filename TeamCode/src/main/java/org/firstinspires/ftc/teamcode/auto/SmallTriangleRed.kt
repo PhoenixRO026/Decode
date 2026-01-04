@@ -56,13 +56,13 @@ class SmallTriangleRed : LinearOpMode() {
 
         fun shoot(rpm : Double) = SequentialAction(
             robot.shooter.goToRpmAction(rpm),
-            robot.transfer.goToPosAction(pos, 1.0, shooterOffset),
+            robot.transfer.goToPosAction(pos, 1, shooterOffset),
             robot.transfer.shootAction(),
 
-            robot.transfer.goToPosAction(pos, 2.0, shooterOffset),
+            robot.transfer.goToPosAction(pos, 2, shooterOffset),
             robot.transfer.shootAction(),
 
-            robot.transfer.goToPosAction(pos, 3.0, shooterOffset),
+            robot.transfer.goToPosAction(pos, 3, shooterOffset),
             robot.transfer.shootAction(),
 
             robot.shooter.goToRpmAction(0.0)
@@ -70,11 +70,11 @@ class SmallTriangleRed : LinearOpMode() {
 
         fun getBall() = SequentialAction (
             robot.intake.startIntakeAction(),
-            robot.transfer.goToPosAction(pos, 3.0, 0.0),
+            robot.transfer.goToPosAction(pos, 3, 0.0),
             SleepAction(0.25.s),
-            robot.transfer.goToPosAction(pos, 2.0, 0.0),
+            robot.transfer.goToPosAction(pos, 2, 0.0),
             SleepAction(0.25.s),
-            robot.transfer.goToPosAction(pos, 1.0, 0.0),
+            robot.transfer.goToPosAction(pos, 1, 0.0),
             SleepAction(0.25.s)
         )
 

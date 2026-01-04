@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot
 
 import com.acmerobotics.roadrunner.InstantAction
+import com.acmerobotics.roadrunner.ParallelAction
 import com.acmerobotics.roadrunner.RaceAction
 import com.acmerobotics.roadrunner.SequentialAction
 import com.acmerobotics.roadrunner.SleepAction
@@ -44,39 +45,47 @@ class Robot(
 
     fun intakeBalls(multiplier : Int) = SequentialAction(
         InstantAction{intake.power = 0.75},
-        transfer.goToPosAction(BoringDriveConfig.pos, multiplier.toDouble(), BoringDriveConfig.intakeOffset),
+        transfer.goToPosAction(BoringDriveConfig.pos, multiplier, BoringDriveConfig.intakeOffset),
         RaceAction(
             camera.waitForColors(),
             SleepAction(3.s)
         ),
         SleepAction(0.5.s),
-        transfer.goToPosAction(BoringDriveConfig.pos, (multiplier + 1).toDouble(), 0.0),
+        transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 1, 0.0),
         RaceAction(
             camera.waitForColors(),
             SleepAction(3.s)
         ),
         SleepAction(0.5.s),
-        transfer.goToPosAction(BoringDriveConfig.pos, (multiplier + 2).toDouble(), 0.0),
+        transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 2, 0.0),
         RaceAction(
             camera.waitForColors(),
             SleepAction(3.s)
         ),
         SleepAction(0.5.s),
         InstantAction{intake.power = 0.0},
-        transfer.goToPosAction(BoringDriveConfig.pos, 0.0, BoringDriveConfig.shooterOffset)
+        transfer.goToPosAction(BoringDriveConfig.pos, 0, BoringDriveConfig.shooterOffset)
     )
 
     fun shootBalls(rpm : Double, multiplier : Int) = SequentialAction(
         shooter.goToRpmAction(rpm),
-        transfer.goToPosAction(BoringDriveConfig.pos, multiplier.toDouble(), BoringDriveConfig.shooterOffset),
+        transfer.goToPosAction(BoringDriveConfig.pos, multiplier, BoringDriveConfig.shooterOffset),
         shootBall(rpm),
-        transfer.goToPosAction(BoringDriveConfig.pos, (multiplier + 1).toDouble(), BoringDriveConfig.shooterOffset),
+        transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 1, BoringDriveConfig.shooterOffset),
         shootBall(rpm),
-        transfer.goToPosAction(BoringDriveConfig.pos, (multiplier + 2).toDouble(), BoringDriveConfig.shooterOffset),
+        transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 2, BoringDriveConfig.shooterOffset),
         shootBall(rpm),
         SleepAction(0.5 .s),
-        transfer.goToPosAction(BoringDriveConfig.pos, BoringDriveConfig.multiplier, 0.0),
+        transfer.goToPosAction(BoringDriveConfig.pos, 0, 0.0),
         shooter.goToRpmAction(0.0),
+    )
+
+    fun stopShootAction() = ParallelAction(
+        InstantAction { shooter.goToRpmAction(0.0)}
+    )
+
+    fun stopIntakeAction() = ParallelAction(
+        InstantAction{ intake.power = 0.0 }
     )
 
     init {

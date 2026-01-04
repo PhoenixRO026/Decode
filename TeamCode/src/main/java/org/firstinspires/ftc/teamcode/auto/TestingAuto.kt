@@ -59,13 +59,13 @@ class TestingAuto : LinearOpMode() {
 
         fun shoot() = SequentialAction(
             robot.shooter.goToRpmAction(rpmFar),
-            robot.transfer.goToPosAction(pos, 1.0, 0.0),
+            robot.transfer.goToPosAction(pos, 1, 0.0),
             robot.transfer.shootAction(),
 
-            robot.transfer.goToPosAction(pos, 2.0, 0.0),
+            robot.transfer.goToPosAction(pos, 2, 0.0),
             robot.transfer.shootAction(),
 
-            robot.transfer.goToPosAction(pos, 3.0, 0.0),
+            robot.transfer.goToPosAction(pos, 3, 0.0),
             robot.transfer.shootAction(),
 
             robot.shooter.goToRpmAction(0.0)
@@ -73,19 +73,19 @@ class TestingAuto : LinearOpMode() {
 
         fun getBall() = SequentialAction (
             robot.intake.startIntakeAction(),
-            robot.transfer.goToPosAction(pos, 3.0, 0.0),
-            robot.transfer.goToPosAction(pos, 2.0, 0.0),
-            robot.transfer.goToPosAction(pos, 1.0, 0.0),
+            robot.transfer.goToPosAction(pos, 3, 0.0),
+            robot.transfer.goToPosAction(pos, 2, 0.0),
+            robot.transfer.goToPosAction(pos, 1, 0.0),
             robot.intake.stopIntakeAction()
         )
 
         val action = SequentialAction(
             SequentialAction(
-                robot.transfer.goToPosAction(pos, 3.0, 0.0),
+                robot.transfer.goToPosAction(pos, 3, 0.0),
                 SleepAction(0.25.s),
-                robot.transfer.goToPosAction(pos, 2.0, 0.0),
+                robot.transfer.goToPosAction(pos, 2, 0.0),
                 SleepAction(0.25.s),
-                robot.transfer.goToPosAction(pos, 1.0, 0.0),
+                robot.transfer.goToPosAction(pos, 1, 0.0),
                 SleepAction(0.25.s)
             ),
             robot.drive.actionBuilder(startPose)

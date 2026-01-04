@@ -72,11 +72,11 @@ class Spindexer(
     var targetPosition : Double = position
 
 
-    fun goToPos(pos: Double, multiplier: Double = 1.0, offset: Double= 0.0) {
+    fun goToPos(pos: Double, multiplier: Int = 0, offset: Double= 0.0) {
         targetPosition = pos * multiplier + offset
     }
 
-    fun goToPosAction(pos: Double, multiplier: Double = 1.0, offset: Double = 1.0) = object : Action {
+    fun goToPosAction(pos: Double, multiplier: Int = 0, offset: Double = 1.0) = object : Action {
         var init = true
         override fun run(p: TelemetryPacket): Boolean {
             if (init) {
