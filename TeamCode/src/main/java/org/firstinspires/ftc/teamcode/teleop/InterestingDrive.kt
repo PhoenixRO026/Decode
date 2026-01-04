@@ -5,9 +5,12 @@ import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
+import com.acmerobotics.roadrunner.Trajectory
 import com.commonlibs.units.Pose
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
+import com.commonlibs.units.inch
+import com.commonlibs.units.pose
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -33,6 +36,13 @@ class InterestingDrive : LinearOpMode(){
     var intakeAction : Action? = null
     var shootAction : Action? = null
 
+    var driveAction : Action? = null
+
+    var currTrajectory: Trajectory? = null
+    var goingToTarget = false
+
+    val smallTrianglePose = Pose(55.inch, -10.inch, 202.0.deg)
+
     override fun runOpMode() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
@@ -47,6 +57,8 @@ class InterestingDrive : LinearOpMode(){
         val stopShooter = ButtonReader {gamepad2.dpad_left}
         val dpadRight = ButtonReader {gamepad2.dpad_right}
         val stopButton = ButtonReader {gamepad2.touchpad}
+        val shootFar = ButtonReader {gamepad1.x}
+
 
         val buttons = listOf(shootRight, shootLeft, highRpm, lowRpm, stopShooter, dpadRight)
 
@@ -67,17 +79,38 @@ class InterestingDrive : LinearOpMode(){
             buttons.forEach { it.readValue() }
             robot.drive.updatePoseEstimate()
 
-            /// Drive
 
-            if (gamepad1.y) {
-                robot.drive.resetFieldCentric()
+            /// Drive
+            if (!goingToTarget) {
+                if (gamepad1.y) {
+                    robot.drive.resetFieldCentric()
+                }
+                robot.drive.isSlowMode = gamepad1.right_trigger >= 0.2
+                robot.drive.driveFieldCentric(
+                    -gamepad1.left_stick_y.toDouble(),
+                    -gamepad1.left_stick_x.toDouble(),
+                    -gamepad1.right_stick_x.toDouble()
+                )
+
+                if (shootFar.wasJustPressed()) {
+                    val startPose2d = robot.drive.mecanumDrive.localizer.pose
+                    driveAction = robot.drive.actionBuilder(startPose2d.pose)
+                        .strafeToLinearHeading(smallTrianglePose)
+                        .build()
+                    goingToTarget = true
+                }
+            } else {
+                // running an auto Action: run it each loop
+                driveAction?.let {
+                    val p = TelemetryPacket()
+                    if (!it.run(p)) {
+                        // action finished
+                        driveAction = null
+                        goingToTarget = false
+                    }
+                    FtcDashboard.getInstance().sendTelemetryPacket(p)
+                }
             }
-            robot.drive.isSlowMode = gamepad1.right_trigger >= 0.2
-            robot.drive.driveFieldCentric(
-                -gamepad1.left_stick_y.toDouble(),
-                -gamepad1.left_stick_x.toDouble(),
-                -gamepad1.right_stick_x.toDouble()
-            )
 
             /// Transfer
 
@@ -125,8 +158,9 @@ class InterestingDrive : LinearOpMode(){
             /// Stop
 
             if (stopButton.wasJustPressed()) {
-                shootAction = robot.stopShootAction()
-                intakeAction = robot.stopIntakeAction()
+                shootAction = null
+                intakeAction = null
+                driveAction = null
             }
             runActions()
             telemetry.addData("Best Match", robot.camera.sensorColor.closestSwatch)
