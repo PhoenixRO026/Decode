@@ -141,7 +141,7 @@ class BoringDrive : LinearOpMode(){
 
 
             if(dpadRight.wasJustPressed()) {
-                intakeAction = robot.intakeBalls()
+                intakeAction = robot.intakeBalls(0)
             }
 
 
