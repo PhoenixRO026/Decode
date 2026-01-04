@@ -19,15 +19,15 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder
 fun main() {
     System.setProperty("sun.java2d.opengl", "true")
 
-    val startPose = Pose(-50.inch, 50.7.inch, -54.0.deg)
+    val startPose = Pose(-64.inch, -38.inch, 90.0.deg)
     val smallTrianglePose = Pose(57.inch, -10.inch, 200.0.deg)
-    val bigTrianglePose = Pose(-10.inch, 10.inch, 135.0.deg)
+    val bigTrianglePose = Pose(-10.inch, -10.inch, 225.0.deg)
 
     val rightIntakePose = Pose(36.inch, -30.inch, 270.0.deg)
-    val middleIntakePose = Pose(12.inch, 30.inch, 90.0.deg)
-    val leftIntakePose = Pose(-12.inch, 30.inch, 90.0.deg)
+    val middleIntakePose = Pose(12.inch, -30.inch, 270.0.deg)
+    val leftIntakePose = Pose(-12.inch, -30.inch, 270.0.deg)
 
-    val endPose = Pose(10.inch, 58.inch, 160.0.deg)
+    val endPose = Pose(10.inch, -58.inch, 220.0.deg)
     val shootingTime = 4.2
 
     val meepMeep = MeepMeep(600)
@@ -53,18 +53,18 @@ fun main() {
 
 
     myBot.runAction(myBot.drive.actionBuilder(startPose.pose2d).ex()
-        .strafeToLinearHeading(bigTrianglePose)
+        .splineToLinearHeading(bigTrianglePose, 50.deg)
         .waitSeconds(shootingTime)
 
         .strafeToLinearHeading(middleIntakePose)
         .setTangent(-90.deg)
-        .lineToY(45.inch, slowSpeed)
+        .lineToY(-45.inch, slowSpeed)
         .strafeToLinearHeading(bigTrianglePose)
         .waitSeconds(shootingTime)
 
         .strafeToLinearHeading(leftIntakePose)
         .setTangent(-90.deg)
-        .lineToY(45.inch, slowSpeed)
+        .lineToY(-45.inch, slowSpeed)
         .strafeToLinearHeading(bigTrianglePose)
         .waitSeconds(shootingTime)
 

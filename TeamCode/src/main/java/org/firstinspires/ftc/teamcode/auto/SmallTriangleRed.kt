@@ -88,7 +88,7 @@ class SmallTriangleRed : LinearOpMode() {
                 .strafeToLinearHeading(rightIntakePose)
                 .setTangent(-90.deg)
                 .afterTime(0.s, getBall())
-                .lineToY(45.inch, slowSpeed)
+                .lineToY(42.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .strafeToLinearHeading(smallTrianglePose)
                 .build(),
@@ -98,7 +98,7 @@ class SmallTriangleRed : LinearOpMode() {
                 .strafeToLinearHeading(middleIntakePose)
                 .setTangent(-90.deg)
                 .afterTime(0.s, getBall())
-                .lineToY(45.inch, slowSpeed)
+                .lineToY(42.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .strafeToLinearHeading(bigTrianglePose)
                 .build(),
@@ -108,7 +108,7 @@ class SmallTriangleRed : LinearOpMode() {
                 .strafeToLinearHeading(leftIntakePose)
                 .setTangent(-90.deg)
                 .afterTime(0.s, getBall())
-                .lineToY(45.inch, slowSpeed)
+                .lineToY(42.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .strafeToLinearHeading(bigTrianglePose)
                 .build(),

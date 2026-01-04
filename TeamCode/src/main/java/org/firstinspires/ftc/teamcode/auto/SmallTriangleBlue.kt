@@ -58,28 +58,6 @@ class SmallTriangleBlue : LinearOpMode() {
             )
         )
 
-        fun shoot(start : Int) = SequentialAction(
-            robot.transfer.goToPosAction(pos, start, shooterOffset),
-            robot.transfer.shootAction(),
-
-            robot.transfer.goToPosAction(pos, start+1, shooterOffset),
-            robot.transfer.shootAction(),
-
-            robot.transfer.goToPosAction(pos, start+2, shooterOffset),
-            robot.transfer.shootAction(),
-            ParallelAction(
-                robot.shooter.goToRpmAction(0.0),
-                robot.transfer.goToPosAction(pos, start+2, 0.0)
-            )
-        )
-
-        fun getBall(start : Int) = SequentialAction (
-            SleepAction(0.45.s),
-            robot.transfer.goToPosAction(pos, start, 0.0),
-            SleepAction(0.55.s),
-            robot.transfer.goToPosAction(pos, start-1, 0.0),
-        )
-
         val actionPGP = SequentialAction(
             robot.drive.actionBuilder(startPose)
                 .strafeToLinearHeading(smallTrianglePose)
@@ -87,27 +65,27 @@ class SmallTriangleBlue : LinearOpMode() {
                 .build(),
             robot.drive.correctionAction(smallTrianglePose, 0.75.s),
 
-            robot.shootBalls(rpmFar, 2),
+            robot.shootBalls(rpmFar, 0),
 
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(smallTrianglePose)
                 .strafeToLinearHeading(rightIntakePose)
                 .setTangent(90.deg)
                 .afterTime(0.s, robot.intakeBalls(0))
-                .lineToY(-40.5.inch, slowSpeed)
+                .lineToY(-42.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
                 .strafeToLinearHeading(smallTrianglePose)
                 .build(),
 
-            robot.shootBalls(rpmFar, 2),
+            robot.shootBalls(rpmFar, 0),
 
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(smallTrianglePose)
                 .strafeToLinearHeading(middleIntakePose)
                 .setTangent(90.deg)
                 .afterTime(0.s, robot.intakeBalls(0))
-                .lineToY(-40.5.inch, slowSpeed)
+                .lineToY(-42.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
                 .strafeToLinearHeading(bigTrianglePose)
@@ -120,13 +98,13 @@ class SmallTriangleBlue : LinearOpMode() {
                 .strafeToLinearHeading(leftIntakePose)
                 .setTangent(90.deg)
                 .afterTime(0.s, robot.intakeBalls(0))
-                .lineToY(-40.5.inch, slowSpeed)
+                .lineToY(-42.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .strafeToLinearHeading(bigTrianglePose)
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
                 .build(),
 
-            robot.shootBalls(rpmClose, 2),
+            robot.shootBalls(rpmClose, 0),
 
             robot.drive.actionBuilder(bigTrianglePose)
                 .strafeToLinearHeading(endPose)
