@@ -32,8 +32,8 @@ class SmallTriangleBlue : LinearOpMode() {
 
     val endPose = Pose(16.inch, -54.inch, 0.0.deg)
 
-    val rpmFar = 3260.0
-    val rpmClose = 2490.0
+    val rpmFar = 3265.0
+    val rpmClose = 2480.0
 
     val shooterOffset = 94.0
 
@@ -124,7 +124,7 @@ class SmallTriangleBlue : LinearOpMode() {
                 .strafeToLinearHeading(rightIntakePose)
                 .setTangent(90.deg)
                 .afterTime(0.s, robot.intakeBalls(0))
-                .lineToY(-40.5.inch, slowSpeed)
+                .lineToY(-42.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
                 .strafeToLinearHeading(smallTrianglePose)
@@ -136,7 +136,7 @@ class SmallTriangleBlue : LinearOpMode() {
                 .strafeToLinearHeading(middleIntakePose)
                 .setTangent(90.deg)
                 .afterTime(0.s, robot.intakeBalls(0))
-                .lineToY(-40.5.inch, slowSpeed)
+                .lineToY(-42.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
                 .strafeToLinearHeading(bigTrianglePose)
@@ -148,7 +148,7 @@ class SmallTriangleBlue : LinearOpMode() {
                 .strafeToLinearHeading(leftIntakePose)
                 .setTangent(90.deg)
                 .afterTime(0.s, robot.intakeBalls(0))
-                .lineToY(-40.5.inch, slowSpeed)
+                .lineToY(-42.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .strafeToLinearHeading(bigTrianglePose)
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
@@ -167,46 +167,46 @@ class SmallTriangleBlue : LinearOpMode() {
                 .build(),
             robot.drive.correctionAction(smallTrianglePose, 0.75.s),
 
-            robot.shootBalls(rpmClose, 0),
+            robot.shootBalls(rpmFar, 1),
 
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(smallTrianglePose)
                 .strafeToLinearHeading(rightIntakePose)
                 .setTangent(90.deg)
                 .afterTime(0.s, robot.intakeBalls(0))
-                .lineToY(-40.5.inch, slowSpeed)
+                .lineToY(-42.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
                 .strafeToLinearHeading(smallTrianglePose)
                 .build(),
 
-            robot.shootBalls(rpmClose, 2),
+            robot.shootBalls(rpmFar, 1),
 
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(smallTrianglePose)
                 .strafeToLinearHeading(middleIntakePose)
                 .setTangent(90.deg)
                 .afterTime(0.s, robot.intakeBalls(0))
-                .lineToY(-40.5.inch, slowSpeed)
+                .lineToY(-42.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
                 .strafeToLinearHeading(bigTrianglePose)
                 .build(),
 
-            robot.shootBalls(rpmClose, 1),
+            robot.shootBalls(rpmClose, 2),
 
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(bigTrianglePose)
                 .strafeToLinearHeading(leftIntakePose)
                 .setTangent(90.deg)
                 .afterTime(0.s, robot.intakeBalls(0))
-                .lineToY(-40.5.inch, slowSpeed)
+                .lineToY(-42.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .strafeToLinearHeading(bigTrianglePose)
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
                 .build(),
 
-            robot.shootBalls(rpmClose, 2),
+            robot.shootBalls(rpmClose, 0),
 
             robot.drive.actionBuilder(bigTrianglePose)
                 .strafeToLinearHeading(endPose)
