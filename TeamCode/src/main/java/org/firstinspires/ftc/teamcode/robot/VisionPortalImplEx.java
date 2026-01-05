@@ -211,7 +211,7 @@ public class VisionPortalImplEx extends VisionPortalEx
 
                             if (camera instanceof OpenCvWebcam)
                             {
-                                ((OpenCvWebcam)camera).startStreaming(cameraResolution.getWidth(), cameraResolution.getHeight(), CAMERA_ROTATION, webcamStreamFormat == null ? null : OpenCvWebcam.StreamFormat.MJPEG);
+                                ((OpenCvWebcam)camera).startStreaming(cameraResolution.getWidth(), cameraResolution.getHeight(), CAMERA_ROTATION, webcamStreamFormat == null ? null : OpenCvWebcam.StreamFormat.YUY2);
                             }
                             else
                             {
@@ -551,7 +551,7 @@ public class VisionPortalImplEx extends VisionPortalEx
                     {
                         if (camera instanceof OpenCvWebcam)
                         {
-                            ((OpenCvWebcam)camera).startStreaming(cameraResolution.getWidth(), cameraResolution.getHeight(), CAMERA_ROTATION, OpenCvWebcam.StreamFormat.MJPEG);
+                            ((OpenCvWebcam)camera).startStreaming(cameraResolution.getWidth(), cameraResolution.getHeight(), CAMERA_ROTATION, OpenCvWebcam.StreamFormat.YUY2);
                         }
                         else
                         {
