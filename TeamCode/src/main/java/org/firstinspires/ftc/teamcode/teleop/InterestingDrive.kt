@@ -118,6 +118,18 @@ class InterestingDrive : LinearOpMode(){
                 robot.shooter.goToRmp(0.0)
             }
 
+            if (gamepad1.dpad_left) {
+                robot.transfer.power = -0.1
+            } else if (gamepad1.dpad_right) {
+                robot.transfer.power = 0.1
+            } else {
+                robot.transfer.power = 0.0
+            }
+
+            if (gamepad1.dpad_up) {
+                robot.transfer.resetPos()
+            }
+
 
             /// Intake
 
