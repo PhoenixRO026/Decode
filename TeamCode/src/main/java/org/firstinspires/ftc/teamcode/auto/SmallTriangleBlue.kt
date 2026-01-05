@@ -213,7 +213,11 @@ class SmallTriangleBlue : LinearOpMode() {
                 .build()
         )
 
-        waitForStart()
+        while (opModeInInit()) {
+            telemetry.addData("case id", robot.camera.detectAprilTagCase())
+            telemetry.update()
+            sleep(20)
+        }
 
         val action = when (robot.camera.detectAprilTagCase()) {
             21 -> actionGPP

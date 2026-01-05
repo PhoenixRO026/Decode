@@ -46,10 +46,10 @@ class CameraCore(
     val aprilTag = AprilTagProcessor.Builder()
         .build()
 
-    val visionPortal = VisionPortal.Builder()
+    val visionPortal = VisionPortalEx.Builder()
         .setCamera(cameraAprilTag)
-        .setCameraResolution(Size(1280, 960))
-        .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+        .setCameraResolution(Size(720, 720))
+        .setStreamFormat(VisionPortalEx.StreamFormat.MJPEG)
         .addProcessor(aprilTag)
         .setLiveViewContainerId(portal2ViewId)
         .build()

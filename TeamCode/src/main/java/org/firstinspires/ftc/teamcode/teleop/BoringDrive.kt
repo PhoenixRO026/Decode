@@ -145,9 +145,9 @@ class BoringDrive : LinearOpMode(){
             }
 
             if (gamepad1.dpad_left) {
-                robot.transfer.power = -0.2
+                robot.transfer.power = -0.1
             } else if (gamepad1.dpad_right) {
-                robot.transfer.power = 0.2
+                robot.transfer.power = 0.1
             } else {
                 robot.transfer.power = 0.0
             }
