@@ -27,7 +27,7 @@ class JustDriveDuo : LinearOpMode(){
         @JvmField var multiplier = 0
         @JvmField var shooterOffset = 94.0
         @JvmField var intakeOffset = 0.0
-        @JvmField var shooterTargetRpm = 3400
+        @JvmField var shooterTargetRpm = 3260
     }
 
     override fun runOpMode() {
@@ -63,6 +63,7 @@ class JustDriveDuo : LinearOpMode(){
         while (opModeIsActive()) {
             timeKeep.resetDeltaTime()
             buttons.forEach { it.readValue() }
+            robot.drive.updatePoseEstimate()
 
             /// Drive
 
@@ -124,10 +125,10 @@ class JustDriveDuo : LinearOpMode(){
 
             /// Intake
 
-            if (gamepad2.right_trigger > 0.1) {
+            if (gamepad1.right_bumper) {
                 robot.intake.power = 1.0
             }
-            else if (gamepad2.left_trigger > 0.1) {
+            else if (gamepad1.left_bumper) {
                 robot.intake.power = -1.0
             }
             else {

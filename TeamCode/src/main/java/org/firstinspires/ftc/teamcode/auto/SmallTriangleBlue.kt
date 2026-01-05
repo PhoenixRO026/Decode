@@ -67,44 +67,44 @@ class SmallTriangleBlue : LinearOpMode() {
 
             robot.shootBalls(rpmFar, 0),
 
-//            robot.intake.startIntakeAction(),
-//            robot.drive.actionBuilder(smallTrianglePose)
-//                .strafeToLinearHeading(rightIntakePose)
-//                .setTangent(90.deg)
-//                .afterTime(0.s, robot.intakeBalls(0))
-//                .lineToY(-42.inch, slowSpeed)
-//                .afterTime(0.0, robot.intake.stopIntakeAction())
-//                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
-//                .strafeToLinearHeading(smallTrianglePose)
-//                .build(),
-//
-//            robot.shootBalls(rpmFar, 0),
-//
-//            robot.intake.startIntakeAction(),
-//            robot.drive.actionBuilder(smallTrianglePose)
-//                .strafeToLinearHeading(middleIntakePose)
-//                .setTangent(90.deg)
-//                .afterTime(0.s, robot.intakeBalls(0))
-//                .lineToY(-42.inch, slowSpeed)
-//                .afterTime(0.0, robot.intake.stopIntakeAction())
-//                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
-//                .strafeToLinearHeading(bigTrianglePose)
-//                .build(),
-//
-//            robot.shootBalls(rpmClose, 1),
-//
-//            robot.intake.startIntakeAction(),
-//            robot.drive.actionBuilder(bigTrianglePose)
-//                .strafeToLinearHeading(leftIntakePose)
-//                .setTangent(90.deg)
-//                .afterTime(0.s, robot.intakeBalls(0))
-//                .lineToY(-42.inch, slowSpeed)
-//                .afterTime(0.0, robot.intake.stopIntakeAction())
-//                .strafeToLinearHeading(bigTrianglePose)
-//                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
-//                .build(),
-//
-//            robot.shootBalls(rpmClose, 2),
+            robot.intake.startIntakeAction(),
+            robot.drive.actionBuilder(smallTrianglePose)
+                .strafeToLinearHeading(rightIntakePose)
+                .setTangent(90.deg)
+                .afterTime(0.s, robot.intakeBalls(0))
+                .lineToY(-42.inch, slowSpeed)
+                .afterTime(0.0, robot.intake.stopIntakeAction())
+                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
+                .strafeToLinearHeading(smallTrianglePose)
+                .build(),
+
+            robot.shootBalls(rpmFar, 0),
+
+            robot.intake.startIntakeAction(),
+            robot.drive.actionBuilder(smallTrianglePose)
+                .strafeToLinearHeading(middleIntakePose)
+                .setTangent(90.deg)
+                .afterTime(0.s, robot.intakeBalls(0))
+                .lineToY(-42.inch, slowSpeed)
+                .afterTime(0.0, robot.intake.stopIntakeAction())
+                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
+                .strafeToLinearHeading(bigTrianglePose)
+                .build(),
+
+            robot.shootBalls(rpmClose, 1),
+
+            robot.intake.startIntakeAction(),
+            robot.drive.actionBuilder(bigTrianglePose)
+                .strafeToLinearHeading(leftIntakePose)
+                .setTangent(90.deg)
+                .afterTime(0.s, robot.intakeBalls(0))
+                .lineToY(-42.inch, slowSpeed)
+                .afterTime(0.0, robot.intake.stopIntakeAction())
+                .strafeToLinearHeading(bigTrianglePose)
+                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
+                .build(),
+
+            robot.shootBalls(rpmClose, 2),
 
             robot.drive.actionBuilder(smallTrianglePose)
                 .strafeTo(endPose.position)
@@ -120,41 +120,41 @@ class SmallTriangleBlue : LinearOpMode() {
             robot.shootBalls(rpmFar, 2),
 
 
-//            robot.intake.startIntakeAction(),
-//            robot.drive.actionBuilder(smallTrianglePose)
-//                .strafeToLinearHeading(rightIntakePose)
-//                .setTangent(90.deg)
-//                .afterTime(0.s, robot.intakeBalls(0))
-//                .lineToY(-42.inch, slowSpeed)
-//                .afterTime(0.0, robot.intake.stopIntakeAction())
-//                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
-//                .strafeToLinearHeading(smallTrianglePose)
-//                .build(),
-//            robot.shootBalls(rpmFar,2),
-//
-//            robot.intake.startIntakeAction(),
-//            robot.drive.actionBuilder(smallTrianglePose)
-//                .strafeToLinearHeading(middleIntakePose)
-//                .setTangent(90.deg)
-//                .afterTime(0.s, robot.intakeBalls(0))
-//                .lineToY(-42.inch, slowSpeed)
-//                .afterTime(0.0, robot.intake.stopIntakeAction())
-//                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
-//                .strafeToLinearHeading(bigTrianglePose)
-//                .build(),
-//            robot.shootBalls(rpmClose, 0),
-//
-//            robot.intake.startIntakeAction(),
-//            robot.drive.actionBuilder(bigTrianglePose)
-//                .strafeToLinearHeading(leftIntakePose)
-//                .setTangent(90.deg)
-//                .afterTime(0.s, robot.intakeBalls(0))
-//                .lineToY(-42.inch, slowSpeed)
-//                .afterTime(0.0, robot.intake.stopIntakeAction())
-//                .strafeToLinearHeading(bigTrianglePose)
-//                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
-//                .build(),
-//            robot.shootBalls(rpmClose,1),
+            robot.intake.startIntakeAction(),
+            robot.drive.actionBuilder(smallTrianglePose)
+                .strafeToLinearHeading(rightIntakePose)
+                .setTangent(90.deg)
+                .afterTime(0.s, robot.intakeBalls(0))
+                .lineToY(-42.inch, slowSpeed)
+                .afterTime(0.0, robot.intake.stopIntakeAction())
+                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
+                .strafeToLinearHeading(smallTrianglePose)
+                .build(),
+            robot.shootBalls(rpmFar,2),
+
+            robot.intake.startIntakeAction(),
+            robot.drive.actionBuilder(smallTrianglePose)
+                .strafeToLinearHeading(middleIntakePose)
+                .setTangent(90.deg)
+                .afterTime(0.s, robot.intakeBalls(0))
+                .lineToY(-42.inch, slowSpeed)
+                .afterTime(0.0, robot.intake.stopIntakeAction())
+                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
+                .strafeToLinearHeading(bigTrianglePose)
+                .build(),
+            robot.shootBalls(rpmClose, 0),
+
+            robot.intake.startIntakeAction(),
+            robot.drive.actionBuilder(bigTrianglePose)
+                .strafeToLinearHeading(leftIntakePose)
+                .setTangent(90.deg)
+                .afterTime(0.s, robot.intakeBalls(0))
+                .lineToY(-42.inch, slowSpeed)
+                .afterTime(0.0, robot.intake.stopIntakeAction())
+                .strafeToLinearHeading(bigTrianglePose)
+                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
+                .build(),
+            robot.shootBalls(rpmClose,1),
 
             robot.drive.actionBuilder(smallTrianglePose)
                 .strafeTo(endPose.position)
@@ -170,44 +170,44 @@ class SmallTriangleBlue : LinearOpMode() {
 
             robot.shootBalls(rpmFar, 1),
 
-//            robot.intake.startIntakeAction(),
-//            robot.drive.actionBuilder(smallTrianglePose)
-//                .strafeToLinearHeading(rightIntakePose)
-//                .setTangent(90.deg)
-//                .afterTime(0.s, robot.intakeBalls(0))
-//                .lineToY(-42.inch, slowSpeed)
-//                .afterTime(0.0, robot.intake.stopIntakeAction())
-//                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
-//                .strafeToLinearHeading(smallTrianglePose)
-//                .build(),
-//
-//            robot.shootBalls(rpmFar, 1),
-//
-//            robot.intake.startIntakeAction(),
-//            robot.drive.actionBuilder(smallTrianglePose)
-//                .strafeToLinearHeading(middleIntakePose)
-//                .setTangent(90.deg)
-//                .afterTime(0.s, robot.intakeBalls(0))
-//                .lineToY(-42.inch, slowSpeed)
-//                .afterTime(0.0, robot.intake.stopIntakeAction())
-//                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
-//                .strafeToLinearHeading(bigTrianglePose)
-//                .build(),
-//
-//            robot.shootBalls(rpmClose, 2),
-//
-//            robot.intake.startIntakeAction(),
-//            robot.drive.actionBuilder(bigTrianglePose)
-//                .strafeToLinearHeading(leftIntakePose)
-//                .setTangent(90.deg)
-//                .afterTime(0.s, robot.intakeBalls(0))
-//                .lineToY(-42.inch, slowSpeed)
-//                .afterTime(0.0, robot.intake.stopIntakeAction())
-//                .strafeToLinearHeading(bigTrianglePose)
-//                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
-//                .build(),
-//
-//            robot.shootBalls(rpmClose, 0),
+            robot.intake.startIntakeAction(),
+            robot.drive.actionBuilder(smallTrianglePose)
+                .strafeToLinearHeading(rightIntakePose)
+                .setTangent(90.deg)
+                .afterTime(0.s, robot.intakeBalls(0))
+                .lineToY(-42.inch, slowSpeed)
+                .afterTime(0.0, robot.intake.stopIntakeAction())
+                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
+                .strafeToLinearHeading(smallTrianglePose)
+                .build(),
+
+            robot.shootBalls(rpmFar, 1),
+
+            robot.intake.startIntakeAction(),
+            robot.drive.actionBuilder(smallTrianglePose)
+                .strafeToLinearHeading(middleIntakePose)
+                .setTangent(90.deg)
+                .afterTime(0.s, robot.intakeBalls(0))
+                .lineToY(-42.inch, slowSpeed)
+                .afterTime(0.0, robot.intake.stopIntakeAction())
+                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
+                .strafeToLinearHeading(bigTrianglePose)
+                .build(),
+
+            robot.shootBalls(rpmClose, 2),
+
+            robot.intake.startIntakeAction(),
+            robot.drive.actionBuilder(bigTrianglePose)
+                .strafeToLinearHeading(leftIntakePose)
+                .setTangent(90.deg)
+                .afterTime(0.s, robot.intakeBalls(0))
+                .lineToY(-42.inch, slowSpeed)
+                .afterTime(0.0, robot.intake.stopIntakeAction())
+                .strafeToLinearHeading(bigTrianglePose)
+                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
+                .build(),
+
+            robot.shootBalls(rpmClose, 0),
 
             robot.drive.actionBuilder(smallTrianglePose)
                 .strafeTo(endPose.position)
