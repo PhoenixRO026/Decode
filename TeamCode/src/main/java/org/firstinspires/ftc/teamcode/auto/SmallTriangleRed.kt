@@ -21,15 +21,15 @@ import org.firstinspires.ftc.teamcode.robot.Robot
 @Autonomous
 class SmallTriangleRed : LinearOpMode() {
 
-    val startPose = Pose(63.inch, 11.inch, (-180.0).deg)
-    val smallTrianglePose = Pose(57.inch, 10.inch, (-200.0).deg)
-    val bigTrianglePose = Pose(-10.inch, 10.inch, (-225.0).deg)
+    val startPose = Pose(63.inch, 11.inch, 180.0.deg)
+    val smallTrianglePose = Pose(55.inch, 10.inch, 158.0.deg)
+    val bigTrianglePose = Pose(-12.inch, 12.inch, 140.0.deg)
 
-    val rightIntakePose = Pose(36.inch, 30.inch, (-270.0).deg)
-    val middleIntakePose = Pose(12.inch, 30.inch, (-270.0).deg)
-    val leftIntakePose = Pose(-12.inch, 30.inch, (-270.0).deg)
+    val rightIntakePose = Pose(36.inch, 30.inch, 90.0.deg)
+    val middleIntakePose = Pose(12.inch, 30.inch, 90.0.deg)
+    val leftIntakePose = Pose(-12.inch, 29.inch, 90.0.deg)
 
-    val endPose = Pose(16.inch, 54.inch, 0.0.deg)
+    val endPose = Pose(20.inch, -44.inch, 0.0.deg)
 
     val rpmFar = 3260.0
     val rpmClose = 2490.0
@@ -40,9 +40,10 @@ class SmallTriangleRed : LinearOpMode() {
     var pos = ticksPerRev / 3.0
 
     override fun runOpMode() {
-
         val robot = Robot(hardwareMap, startPose)
         val timeKeep = TimeKeep()
+
+        robot.transfer.fingerDown()
 
         val kinematics = MecanumKinematics(
             15.0,

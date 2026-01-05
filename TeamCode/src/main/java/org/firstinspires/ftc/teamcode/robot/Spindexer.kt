@@ -38,7 +38,16 @@ class Spindexer(
         val fingerDownPosition = 0.95
     }
 
-    val position get() = encoder.getPositionAndVelocity().position
+    enum class Mode {
+        PID,
+        MANUAL
+    }
+
+    private var currentMode = Mode.PID
+
+    val position get() = encoder.getPositionAndVelocity().position - offset
+
+    private var offset = encoder.getPositionAndVelocity().position
 
     var fingerPosition : Double = 0.5
         get() = finger.position
@@ -50,10 +59,18 @@ class Spindexer(
             finger.position = field
         }
 
-    var power: Double
+    private var _power: Double
         get() = motor.power
         set(value) {
             motor.power = value.coerceIn(-1.0, 1.0)
+        }
+
+    var power
+        get() = _power
+        set(value) {
+            if (value == 0.0 && currentMode == Mode.PID) return
+            currentMode = Mode.MANUAL
+            _power = value
         }
 
     fun fingerUp() {
@@ -70,6 +87,10 @@ class Spindexer(
         SleepAction(0.5.s)
     )
     var targetPosition : Double = position
+        set(value) {
+            currentMode = Mode.PID
+            field = value
+        }
 
 
     fun goToPos(pos: Double, multiplier: Int = 0, offset: Double= 0.0) {
@@ -89,11 +110,13 @@ class Spindexer(
     }
 
     fun update(deltaTime: Duration) {
-        power = transferConfig.controller.calculate(
-            position,
-            targetPosition,
-            deltaTime
-        )
+        if (currentMode == Mode.PID) {
+            _power = transferConfig.controller.calculate(
+                position,
+                targetPosition,
+                deltaTime
+            )
+        }
     }
 
     fun addTelemetry(telemetry: Telemetry) {
@@ -101,5 +124,9 @@ class Spindexer(
         telemetry.addData("spindexer pos", motor.currentPosition)
         telemetry.addData("finger pos", fingerPosition)
         //telemetry.addData("lift current", rightMotor.getCurrent(CurrentUnit.AMPS) + leftMotor.getCurrent(CurrentUnit.AMPS))
+    }
+
+    fun resetPos() {
+        offset = encoder.getPositionAndVelocity().position
     }
 }

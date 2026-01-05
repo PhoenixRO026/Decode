@@ -144,6 +144,18 @@ class BoringDrive : LinearOpMode(){
                 intakeAction = robot.intakeBalls(0)
             }
 
+            if (gamepad1.dpad_left) {
+                robot.transfer.power = -0.2
+            } else if (gamepad1.dpad_right) {
+                robot.transfer.power = 0.2
+            } else {
+                robot.transfer.power = 0.0
+            }
+
+            if (gamepad1.dpad_up) {
+                robot.transfer.resetPos()
+            }
+
 
             runActions()
             telemetry.addData("Best Match", robot.camera.sensorColor.closestSwatch)
