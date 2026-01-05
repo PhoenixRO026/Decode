@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot
 
 @Autonomous
 class BigTriangleBlue : LinearOpMode() {
-    val startPose = Pose(-50.inch, -50.7.inch, 54.0.deg)
+    val startPose = Pose(-60.inch, -38.inch, 90.0.deg)
     val smallTrianglePose = Pose(57.inch, -10.inch, 200.0.deg)
     val bigTrianglePose = Pose(-10.inch, -10.inch, 225.0.deg)
 
@@ -57,73 +57,142 @@ class BigTriangleBlue : LinearOpMode() {
             )
         )
 
-        fun shoot(rpm : Double) = SequentialAction(
-            robot.shooter.goToRpmAction(rpm),
-            robot.transfer.goToPosAction(pos, 1, shooterOffset),
-            robot.transfer.shootAction(),
 
-            robot.transfer.goToPosAction(pos, 2, shooterOffset),
-            robot.transfer.shootAction(),
-
-            robot.transfer.goToPosAction(pos, 3, shooterOffset),
-            robot.transfer.shootAction(),
-            ParallelAction(
-                robot.shooter.goToRpmAction(0.0),
-                robot.transfer.goToPosAction(pos, 3, 0.0)
-            )
-        )
-
-        fun getBall() = SequentialAction (
-            robot.intake.startIntakeAction(),
-            robot.transfer.goToPosAction(pos, 3, 0.0),
-            SleepAction(0.25.s),
-            robot.transfer.goToPosAction(pos, 2, 0.0),
-            SleepAction(0.25.s),
-            robot.transfer.goToPosAction(pos, 1, 0.0),
-            SleepAction(0.25.s)
-        )
-
-        val action = SequentialAction(
+        val actionGPP = SequentialAction(
             robot.drive.actionBuilder(startPose)
                 .strafeToLinearHeading(bigTrianglePose)
                 .build(),
-            robot.drive.correctionAction(smallTrianglePose, 0.75.s),
-            shoot(rpmClose),
+            robot.drive.correctionAction(bigTrianglePose, 0.75.s),
+            robot.shootBalls(rpmClose, 0),
 
             robot.intake.startIntakeAction(),
-            robot.drive.actionBuilder(smallTrianglePose)
-                .strafeToLinearHeading(rightIntakePose)
+            robot.drive.actionBuilder(bigTrianglePose)
+                .strafeToLinearHeading(leftIntakePose)
                 .setTangent(90.deg)
-                .afterTime(0.s, getBall())
+                .afterTime(0.s, robot.intakeBalls(0))
                 .lineToY(-45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
-                .strafeToLinearHeading(smallTrianglePose)
+                .strafeToLinearHeading(bigTrianglePose)
                 .build(),
-            shoot(rpmClose),
+            robot.shootBalls(rpmClose, 2),
 
             robot.intake.startIntakeAction(),
-            robot.drive.actionBuilder(smallTrianglePose)
+            robot.drive.actionBuilder(bigTrianglePose)
                 .strafeToLinearHeading(middleIntakePose)
                 .setTangent(-90.deg)
-                .afterTime(0.s, getBall())
+                .afterTime(0.s, robot.intakeBalls(0))
                 .lineToY(-45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
                 .strafeToLinearHeading(bigTrianglePose)
                 .build(),
-            shoot(rpmClose),
+            robot.shootBalls(rpmClose, 1),
 
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(bigTrianglePose)
                 .strafeToLinearHeading(rightIntakePose)
                 .setTangent(-90.deg)
-                .afterTime(0.s, getBall())
+                .afterTime(0.s, robot.intakeBalls(0))
                 .lineToY(-45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .strafeToLinearHeading(smallTrianglePose)
                 .build(),
-            shoot(rpmFar),
+            robot.shootBalls(rpmFar, 2),
+
+            robot.drive.actionBuilder(smallTrianglePose)
+                .strafeToLinearHeading(endPose)
+                .build()
+        )
+
+        val actionPPG = SequentialAction(
+            robot.drive.actionBuilder(startPose)
+                .strafeToLinearHeading(bigTrianglePose)
+                .build(),
+            robot.drive.correctionAction(bigTrianglePose, 0.75.s),
+            robot.shootBalls(rpmClose, 2),
+
+            robot.intake.startIntakeAction(),
+            robot.drive.actionBuilder(bigTrianglePose)
+                .strafeToLinearHeading(rightIntakePose)
+                .setTangent(90.deg)
+                .afterTime(0.s, robot.intakeBalls(0))
+                .lineToY(-45.inch, slowSpeed)
+                .afterTime(0.0, robot.intake.stopIntakeAction())
+                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
+                .strafeToLinearHeading(bigTrianglePose)
+                .build(),
+            robot.shootBalls(rpmClose, 1),
+
+            robot.intake.startIntakeAction(),
+            robot.drive.actionBuilder(bigTrianglePose)
+                .strafeToLinearHeading(middleIntakePose)
+                .setTangent(-90.deg)
+                .afterTime(0.s, robot.intakeBalls(0))
+                .lineToY(-45.inch, slowSpeed)
+                .afterTime(0.0, robot.intake.stopIntakeAction())
+                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
+                .strafeToLinearHeading(bigTrianglePose)
+                .build(),
+            robot.shootBalls(rpmClose, 0),
+
+            robot.intake.startIntakeAction(),
+            robot.drive.actionBuilder(bigTrianglePose)
+                .strafeToLinearHeading(rightIntakePose)
+                .setTangent(-90.deg)
+                .afterTime(0.s, robot.intakeBalls(0))
+                .lineToY(-45.inch, slowSpeed)
+                .afterTime(0.0, robot.intake.stopIntakeAction())
+                .strafeToLinearHeading(smallTrianglePose)
+                .build(),
+            robot.shootBalls(rpmFar, 2),
+
+            robot.drive.actionBuilder(smallTrianglePose)
+                .strafeToLinearHeading(endPose)
+                .build()
+        )
+
+        val actionPGP = SequentialAction(
+            robot.drive.actionBuilder(startPose)
+                .strafeToLinearHeading(bigTrianglePose)
+                .build(),
+            robot.drive.correctionAction(bigTrianglePose, 0.75.s),
+            robot.shootBalls(rpmClose, 0),
+
+            robot.intake.startIntakeAction(),
+            robot.drive.actionBuilder(bigTrianglePose)
+                .strafeToLinearHeading(rightIntakePose)
+                .setTangent(90.deg)
+                .afterTime(0.s, robot.intakeBalls(0))
+                .lineToY(-45.inch, slowSpeed)
+                .afterTime(0.0, robot.intake.stopIntakeAction())
+                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
+                .strafeToLinearHeading(bigTrianglePose)
+                .build(),
+            robot.shootBalls(rpmClose, 2),
+
+            robot.intake.startIntakeAction(),
+            robot.drive.actionBuilder(bigTrianglePose)
+                .strafeToLinearHeading(middleIntakePose)
+                .setTangent(-90.deg)
+                .afterTime(0.s, robot.intakeBalls(0))
+                .lineToY(-45.inch, slowSpeed)
+                .afterTime(0.0, robot.intake.stopIntakeAction())
+                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
+                .strafeToLinearHeading(bigTrianglePose)
+                .build(),
+            robot.shootBalls(rpmClose, 1),
+
+            robot.intake.startIntakeAction(),
+            robot.drive.actionBuilder(bigTrianglePose)
+                .strafeToLinearHeading(rightIntakePose)
+                .setTangent(-90.deg)
+                .afterTime(0.s, robot.intakeBalls(0))
+                .lineToY(-45.inch, slowSpeed)
+                .afterTime(0.0, robot.intake.stopIntakeAction())
+                .strafeToLinearHeading(smallTrianglePose)
+                .build(),
+            robot.shootBalls(rpmFar, 0),
 
             robot.drive.actionBuilder(smallTrianglePose)
                 .strafeToLinearHeading(endPose)
@@ -131,6 +200,12 @@ class BigTriangleBlue : LinearOpMode() {
         )
 
         waitForStart()
+
+        val action = when (robot.camera.detectAprilTagCase()) {
+            21 -> actionPPG
+            22 -> actionGPP
+            else -> actionPGP
+        }
 
         val dash = FtcDashboard.getInstance()
         val c = Canvas()
