@@ -19,7 +19,7 @@ import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder
 fun main() {
     System.setProperty("sun.java2d.opengl", "true")
 
-    val startPose = Pose(-62.inch, -38.inch, 90.0.deg)
+    val startPose = Pose(-60.inch, -38.inch, 90.0.deg)
     val smallTrianglePose = Pose(57.inch, -10.inch, 200.0.deg)
     val bigTrianglePose = Pose(-10.inch, -10.inch, 225.0.deg)
 
