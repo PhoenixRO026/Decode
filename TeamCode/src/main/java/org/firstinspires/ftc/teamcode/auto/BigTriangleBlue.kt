@@ -54,11 +54,10 @@ class BigTriangleBlue : LinearOpMode() {
 
         val slowSpeed: VelConstraint = MinVelConstraint(
             listOf(
-                kinematics.WheelVelConstraint(10.0),
+                kinematics.WheelVelConstraint(8.5),
                 AngularVelConstraint(Math.toRadians(180.0))
             )
         )
-
 
         val actionGPP = SequentialAction(
             ParallelAction(
@@ -83,7 +82,7 @@ class BigTriangleBlue : LinearOpMode() {
                 .splineToLinearHeading(openGatePose, 270.deg)
                 .strafeToLinearHeading(bigTrianglePose)
                 .build(),
-            robot.shootBalls(rpmClose, 2),
+            robot.shootBalls(rpmClose, 0),
 
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(bigTrianglePose)
@@ -95,7 +94,7 @@ class BigTriangleBlue : LinearOpMode() {
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
                 .strafeToLinearHeading(bigTrianglePose)
                 .build(),
-            robot.shootBalls(rpmClose, 2),
+            robot.shootBalls(rpmClose, 1),
 
             robot.drive.actionBuilder(bigTrianglePose)
                 .strafeToLinearHeading(endPose)
@@ -198,6 +197,7 @@ class BigTriangleBlue : LinearOpMode() {
         val c = Canvas()
         action.preview(c)
         telemetry.addData("True case: ",robot.camera.detectAprilTagCase())
+        telemetry.update()
 
         var b = true
         while (b && opModeIsActive()) {
@@ -211,9 +211,9 @@ class BigTriangleBlue : LinearOpMode() {
             b = action.run(p)
 
             dash.sendTelemetryPacket(p)
-            telemetry.addData("case id", robot.camera.detectAprilTagCase())
-            telemetry.addData("color", robot.camera.colorSensor.getAnalysis())
-            telemetry.addData("rpm", robot.shooter.rpm)
+//            telemetry.addData("case id", robot.camera.detectAprilTagCase())
+//            telemetry.addData("color", robot.camera.colorSensor.getAnalysis())
+//            telemetry.addData("rpm", robot.shooter.rpm)
             telemetry.update()
         }
     }

@@ -50,19 +50,19 @@ class Robot(
             camera.waitForColors(2.s),
             SleepAction(2.s)
         ),
-        SleepAction(0.1.s),
+        SleepAction(0.09.s),
         transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 1, 0.0),
         RaceAction(
             camera.waitForColors(2.s),
             SleepAction(2.s)
         ),
-        SleepAction(0.1.s),
+        SleepAction(0.09.s),
         transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 2, 0.0),
         RaceAction(
             camera.waitForColors(2.s),
             SleepAction(2.s)
         ),
-        SleepAction(0.1.s),
+        SleepAction(0.09.s),
         InstantAction{intake.power = 0.0},
         transfer.goToPosAction(BoringDriveConfig.pos, 0, BoringDriveConfig.shooterOffset),
         InstantAction{intake.power = -1.0}
