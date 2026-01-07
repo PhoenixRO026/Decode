@@ -29,7 +29,7 @@ class BigTriangleBlue : LinearOpMode() {
     val rightIntakePose = Pose(36.inch, -32.inch, 270.0.deg)
     val middleIntakePose = Pose(14.inch, -33.inch, 270.0.deg)
     val leftIntakePose = Pose(-12.inch, -31.inch, 270.0.deg)
-    val openGatePose = Pose(-3.inch, -55.inch, 180.0.deg)
+    val openGatePose = Pose(-3.inch, -60.inch, 180.0.deg)
 
     val endPose = Pose(10.inch, -58.inch, 220.0.deg)
 
@@ -61,24 +61,15 @@ class BigTriangleBlue : LinearOpMode() {
 
 
         val actionGPP = SequentialAction(
-            robot.drive.actionBuilder(startPose)
-                .strafeToLinearHeading(bigTrianglePose)
-                .build(),
-            SequentialAction (
-                SleepAction(1.s),
-                robot.shootBalls(rpmClose, 0),
+            ParallelAction(
+                robot.drive.actionBuilder(startPose)
+                    .strafeToLinearHeading(bigTrianglePose)
+                    .build(),
+                SequentialAction(
+                    SleepAction(1.0.s),
+                    robot.shootBalls(rpmClose, 0),
+                )
             ),
-            robot.intake.startIntakeAction(),
-            robot.drive.actionBuilder(bigTrianglePose)
-                .strafeToLinearHeading(middleIntakePose)
-                .setTangent(90.deg)
-                .afterTime(0.s, robot.intakeBalls(0))
-                .lineToY(-50.inch, slowSpeed)
-                .afterTime(0.0, robot.intake.stopIntakeAction())
-                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
-                .strafeToLinearHeading(bigTrianglePose)
-                .build(),
-            robot.shootBalls(rpmClose, 2),
 
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(bigTrianglePose)
@@ -86,11 +77,25 @@ class BigTriangleBlue : LinearOpMode() {
                 .setTangent(-90.deg)
                 .afterTime(0.s, robot.intakeBalls(0))
                 .lineToY(-50.inch, slowSpeed)
+                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
+                .afterTime(0.0, robot.intake.stopIntakeAction())
+                .setTangent(0.0.deg)
+                .splineToLinearHeading(openGatePose, 270.deg)
+                .strafeToLinearHeading(bigTrianglePose)
+                .build(),
+            robot.shootBalls(rpmClose, 2),
+
+            robot.intake.startIntakeAction(),
+            robot.drive.actionBuilder(bigTrianglePose)
+                .strafeToLinearHeading(middleIntakePose)
+                .setTangent(-90.deg)
+                .afterTime(0.s, robot.intakeBalls(0))
+                .lineToY(-50.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
                 .strafeToLinearHeading(bigTrianglePose)
                 .build(),
-            robot.shootBalls(rpmClose, 1),
+            robot.shootBalls(rpmClose, 2),
 
             robot.drive.actionBuilder(bigTrianglePose)
                 .strafeToLinearHeading(endPose)
@@ -98,23 +103,15 @@ class BigTriangleBlue : LinearOpMode() {
         )
 
         val actionPPG = SequentialAction(
-            robot.drive.actionBuilder(startPose)
-                .strafeToLinearHeading(bigTrianglePose)
-                .build(),
-            robot.drive.correctionAction(bigTrianglePose, 0.75.s),
-            robot.shootBalls(rpmClose, 2),
-
-            robot.intake.startIntakeAction(),
-            robot.drive.actionBuilder(bigTrianglePose)
-                .strafeToLinearHeading(middleIntakePose)
-                .setTangent(90.deg)
-                .afterTime(0.s, robot.intakeBalls(0))
-                .lineToY(-50.inch, slowSpeed)
-                .afterTime(0.0, robot.intake.stopIntakeAction())
-                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
-                .strafeToLinearHeading(bigTrianglePose)
-                .build(),
-            robot.shootBalls(rpmClose, 1),
+            ParallelAction(
+                robot.drive.actionBuilder(startPose)
+                    .strafeToLinearHeading(bigTrianglePose)
+                    .build(),
+                SequentialAction(
+                    SleepAction(1.0.s),
+                    robot.shootBalls(rpmClose, 2),
+                )
+            ),
 
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(bigTrianglePose)
@@ -122,11 +119,25 @@ class BigTriangleBlue : LinearOpMode() {
                 .setTangent(-90.deg)
                 .afterTime(0.s, robot.intakeBalls(0))
                 .lineToY(-50.inch, slowSpeed)
+                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
+                .afterTime(0.0.s, robot.intake.stopIntakeAction())
+                .setTangent(0.0.deg)
+                .splineToLinearHeading(openGatePose, 270.deg)
+                .strafeToLinearHeading(bigTrianglePose)
+                .build(),
+            robot.shootBalls(rpmClose, 0),
+
+            robot.intake.startIntakeAction(),
+            robot.drive.actionBuilder(bigTrianglePose)
+                .strafeToLinearHeading(middleIntakePose)
+                .setTangent(-90.deg)
+                .afterTime(0.s, robot.intakeBalls(0))
+                .lineToY(-50.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
                 .strafeToLinearHeading(bigTrianglePose)
                 .build(),
-            robot.shootBalls(rpmClose, 0),
+            robot.shootBalls(rpmClose, 1),
 
             robot.drive.actionBuilder(bigTrianglePose)
                 .strafeToLinearHeading(endPose)
@@ -186,6 +197,7 @@ class BigTriangleBlue : LinearOpMode() {
         val dash = FtcDashboard.getInstance()
         val c = Canvas()
         action.preview(c)
+        telemetry.addData("True case: ",robot.camera.detectAprilTagCase())
 
         var b = true
         while (b && opModeIsActive()) {
@@ -199,6 +211,10 @@ class BigTriangleBlue : LinearOpMode() {
             b = action.run(p)
 
             dash.sendTelemetryPacket(p)
+            telemetry.addData("case id", robot.camera.detectAprilTagCase())
+            telemetry.addData("color", robot.camera.colorSensor.getAnalysis())
+            telemetry.addData("rpm", robot.shooter.rpm)
+            telemetry.update()
         }
     }
 }
