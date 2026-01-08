@@ -28,9 +28,9 @@ class SmallTriangleBlue : LinearOpMode() {
 
     val rightIntakePose = Pose(36.inch, -30.inch, 270.0.deg)
     val middleIntakePose = Pose(12.inch, -30.inch, 270.0.deg)
-    val leftIntakePose = Pose(-12.inch, -29.inch, 270.0.deg)
+    val leftIntakePose = Pose(-12.inch, -30.inch, 270.0.deg)
 
-    val endPose = Pose(58.inch, -34.inch, 180.0.deg)
+    val endPose = Pose(58.inch, -28.inch, 180.0.deg)
 
     val rpmFar = 3260.0
     val rpmClose = 2490.0
@@ -168,7 +168,7 @@ class SmallTriangleBlue : LinearOpMode() {
                 .build(),
             robot.drive.correctionAction(smallTrianglePose, 0.75.s),
 
-            robot.shootBalls(rpmClose, 0),
+            robot.shootBalls(rpmFar, 0),
 
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(smallTrianglePose)
@@ -180,6 +180,7 @@ class SmallTriangleBlue : LinearOpMode() {
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
                 .strafeToLinearHeading(smallTrianglePose)
                 .build(),
+            robot.drive.correctionAction(smallTrianglePose, 0.25.s),
 
             robot.shootBalls(rpmClose, 2),
 
@@ -214,17 +215,24 @@ class SmallTriangleBlue : LinearOpMode() {
                 .build()
         )
 
+        val startAction =  InstantAction {
+            robot.drive.actionBuilder(startPose)
+                .strafeToLinearHeading(smallTrianglePose)}
+
         while (opModeInInit()) {
             telemetry.addData("case id", robot.camera.detectAprilTagCase())
             telemetry.update()
             sleep(20)
         }
 
-        val action = when (robot.camera.detectAprilTagCase()) {
-            21 -> actionGPP
-            22 -> actionPGP
-            else -> actionPPG
-        }
+        val action = SequentialAction(
+            startAction,
+            when (robot.camera.detectAprilTagCase()) {
+                21 -> actionGPP
+                22 -> actionPGP
+                else -> actionPPG
+            }
+        )
 
         val dash = FtcDashboard.getInstance()
         val c = Canvas()

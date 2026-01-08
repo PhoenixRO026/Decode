@@ -84,7 +84,7 @@ class Spindexer(
         InstantAction { fingerUp() },
         SleepAction(0.5.s),
         InstantAction { fingerDown() },
-        SleepAction(0.5.s)
+        SleepAction(0.3.s)
     )
     var targetPosition : Double = position
         set(value) {
@@ -95,6 +95,7 @@ class Spindexer(
 
     fun goToPos(pos: Double, multiplier: Int = 0, offset: Double= 0.0) {
         targetPosition = pos * multiplier + offset
+        fingerDown()
     }
 
     fun goToPosAction(pos: Double, multiplier: Int = 0, offset: Double = 1.0) = object : Action {
