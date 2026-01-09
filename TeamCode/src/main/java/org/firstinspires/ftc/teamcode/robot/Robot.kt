@@ -43,7 +43,7 @@ class Robot(
         SleepAction(0.2.s),
     )
 
-    fun intakeBalls(multiplier : Int) = SequentialAction(
+    fun intakeBalls(multiplier : Int, futureOuttakePos : Int) = SequentialAction(
         InstantAction{intake.power = 0.75},
         transfer.goToPosAction(BoringDriveConfig.pos, multiplier, BoringDriveConfig.intakeOffset),
         RaceAction(
@@ -64,7 +64,7 @@ class Robot(
         ),
         SleepAction(0.25.s),
         InstantAction{intake.power = 0.0},
-        transfer.goToPosAction(BoringDriveConfig.pos, 0, BoringDriveConfig.shooterOffset),
+        transfer.goToPosAction(BoringDriveConfig.pos, futureOuttakePos, BoringDriveConfig.shooterOffset),
         InstantAction{intake.power = -1.0}
     )
 
