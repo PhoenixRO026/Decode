@@ -25,6 +25,7 @@ class BigTriangleBlue : LinearOpMode() {
     val startPose = Pose(-62.inch, -38.inch, 90.0.deg)
     val smallTrianglePose = Pose(55.inch, -10.inch, 202.0.deg)
     val bigTrianglePose = Pose(-19.inch, -19.inch, 225.0.deg)
+    val readAprilTag = Pose(-19.inch, -19.inch, 180.0.deg)
 
     val rightIntakePose = Pose(36.inch, -32.inch, 270.0.deg)
     val middleIntakePose = Pose(14.inch, -33.inch, 270.0.deg)
@@ -114,7 +115,6 @@ class BigTriangleBlue : LinearOpMode() {
 
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(bigTrianglePose)
-                .strafeToLinearHeading(leftIntakePose)
                 .setTangent(-90.deg)
                 .afterTime(0.s, robot.intakeBalls(0))
                 .lineToY(-50.inch, slowSpeed)
@@ -187,10 +187,16 @@ class BigTriangleBlue : LinearOpMode() {
 
         waitForStart()
 
+        robot.drive.actionBuilder(bigTrianglePose)
+            .strafeToLinearHeading(readAprilTag)
+            .setTangent(180.deg)
+            .turnTo(225.deg)
+            .build()
+
         val action = when (robot.camera.detectAprilTagCase()) {
-            21 -> actionPPG
-            22 -> actionGPP
-            else -> actionPGP
+            21 -> actionGPP
+            22 -> actionPGP
+            else -> actionPPG
         }
 
         val dash = FtcDashboard.getInstance()

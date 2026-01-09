@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot // Or your preferred package for utility classes
 
 import android.util.Size
+import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.roadrunner.RaceAction
 import com.commonlibs.units.Duration
 import com.commonlibs.units.SleepAction
@@ -8,6 +9,7 @@ import com.commonlibs.units.s
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
 import org.firstinspires.ftc.vision.opencv.ImageRegion
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor
@@ -17,6 +19,15 @@ class CameraCore(
     val cameraColor : WebcamName,
     val cameraAprilTag : WebcamName
 ) {
+    @Config
+    data object CameraCoreConfig {
+        @JvmField var colorWidth = 320
+        @JvmField var colorHeight = 240
+        @JvmField var aprilTagWidth = 1280
+        @JvmField var aprilTagHeight = 720
+        @JvmField var liveView = false
+        @JvmField var decimation = 2.0f
+    }
     enum class Balls{
         NONE,
         ARTIFACT_GREEN,
@@ -45,18 +56,27 @@ class CameraCore(
 
     val aprilTag = AprilTagProcessor.Builder()
         .setSuppressCalibrationWarnings(true)
-        .build()
+        .setDrawTagID(CameraCoreConfig.liveView)
+        .setDrawAxes(CameraCoreConfig.liveView)
+        .setDrawCubeProjection(CameraCoreConfig.liveView)
+        .setDrawTagOutline(CameraCoreConfig.liveView)
+        .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
+        .build().apply {
+            setDecimation(CameraCoreConfig.decimation)
+        }
 
-    val visionPortal = VisionPortalEx.Builder()
+    val visionPortal = VisionPortal.Builder()
         .setCamera(cameraAprilTag)
-        .setCameraResolution(Size(1280, 720))
-        .setStreamFormat(VisionPortalEx.StreamFormat.MJPEG)
+        .setCameraResolution(Size(CameraCoreConfig.aprilTagWidth, CameraCoreConfig.aprilTagHeight))
+        .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
         .addProcessor(aprilTag)
         .setLiveViewContainerId(portal2ViewId)
+        .enableLiveView(CameraCoreConfig.liveView)
         .build()
 
+    private var id = 0
+
     fun detectAprilTagCase() : Int {
-        var id = 0
         val currentDetections: List<AprilTagDetection> = aprilTag.detections
         for (detection in currentDetections) {
             if (detection.metadata != null) {
@@ -92,8 +112,10 @@ class CameraCore(
 
     val portal: VisionPortal = VisionPortal.Builder()
         .addProcessor(colorSensor)
-        .setCameraResolution(Size(320, 240))
+        .setCameraResolution(Size(CameraCoreConfig.colorWidth, CameraCoreConfig.colorHeight))
+        .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
         .setCamera(cameraColor)
+        .enableLiveView(CameraCoreConfig.liveView)
         .setLiveViewContainerId(portal1ViewId)
         .build()
 

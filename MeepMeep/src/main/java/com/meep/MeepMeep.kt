@@ -29,15 +29,25 @@ data object redGoal{
 }
 
 data object blueGoal{
-    val startPose = Pose(63.inch, -11.inch, 180.0.deg)
+    /*val startPose = Pose(63.inch, -11.inch, 180.0.deg)
     val smallTrianglePose = Pose(55.inch, -10.inch, 202.0.deg)
     val bigTrianglePose = Pose(-10.inch, -10.inch, 220.0.deg)
 
     val rightIntakePose = Pose(36.inch, -30.inch, 270.0.deg)
     val middleIntakePose = Pose(12.inch, -30.inch, 270.0.deg)
     val leftIntakePose = Pose(-12.inch, -29.inch, 270.0.deg)
-
+*/
     val endPose = Pose(20.inch, -44.inch, 0.0.deg)
+    val startPose = Pose(-62.inch, -38.inch, 90.0.deg)
+    val smallTrianglePose = Pose(55.inch, -10.inch, 202.0.deg)
+    val bigTrianglePose = Pose(-19.inch, -19.inch, 225.0.deg)
+    val readAprilTag = Pose(-19.inch, -19.inch, 180.0.deg)
+
+
+    val rightIntakePose = Pose(36.inch, -32.inch, 270.0.deg)
+    val middleIntakePose = Pose(14.inch, -33.inch, 270.0.deg)
+    val leftIntakePose = Pose(-12.inch, -31.inch, 270.0.deg)
+    val openGatePose = Pose(-3.inch, -60.inch, 180.0.deg)
 }
 
 fun main() {
@@ -78,40 +88,38 @@ fun main() {
         .strafeToLinearHeading(redGoal.smallTrianglePose)
         .waitSeconds(shootingTime)
 
-        .strafeToLinearHeading(redGoal.rightIntakePose)
-        .setTangent(90.deg)
-        .lineToY(43.inch, slowSpeed)
-        .strafeToLinearHeading(redGoal.smallTrianglePose)
-        .waitSeconds(shootingTime)
+        .strafeToLinearHeading(blueGoal.leftIntakePose)
+        .setTangent(-90.deg)
+        .lineToY(-50.inch, slowSpeed)
+        .setTangent(0.0.deg)
+        .splineToLinearHeading(blueGoal.openGatePose, 270.deg)
+        .strafeToLinearHeading(blueGoal.bigTrianglePose)
 
-        .strafeToLinearHeading(redGoal.middleIntakePose)
-        .setTangent(90.deg)
-        .lineToY(43.inch, slowSpeed)
-        .strafeToLinearHeading(redGoal.bigTrianglePose)
-        .waitSeconds(shootingTime)
+        .strafeToLinearHeading(blueGoal.middleIntakePose)
+        .setTangent(-90.deg)
+        .lineToY(-50.inch, slowSpeed)
+        .strafeToLinearHeading(blueGoal.bigTrianglePose)
 
-        .strafeToLinearHeading(redGoal.leftIntakePose)
-        .setTangent(90.deg)
-        .lineToY(45.inch, slowSpeed)
-        //.strafeToLinearHeading(bigTrianglePose)
-
-        //.strafeToLinearHeading(endPose)
+        .strafeToLinearHeading(blueGoal.endPose)
 
         .build()
     )
     blueBot.runAction(blueBot.drive.actionBuilder(blueGoal.startPose.pose2d).ex()
-        .strafeToLinearHeading(blueGoal.smallTrianglePose)
+        .strafeToLinearHeading(blueGoal.readAprilTag)
+        .turnTo(225.deg)
         .waitSeconds(shootingTime)
 
-        .strafeToLinearHeading(blueGoal.rightIntakePose)
-        .setTangent(90.deg)
-        .lineToY(-43.inch, slowSpeed)
-        .strafeToLinearHeading(blueGoal.smallTrianglePose)
+        .strafeToLinearHeading(blueGoal.leftIntakePose)
+        .setTangent(-90.deg)
+        .lineToY(-50.inch, slowSpeed)
+        .setTangent(0.0.deg)
+        .splineToLinearHeading(blueGoal.openGatePose, 270.deg)
+        .strafeToLinearHeading(blueGoal.bigTrianglePose)
         .waitSeconds(shootingTime)
 
         .strafeToLinearHeading(blueGoal.middleIntakePose)
-        .setTangent(90.deg)
-        .lineToY(-43.inch, slowSpeed)
+        .setTangent(-90.deg)
+        .lineToY(-50.inch, slowSpeed)
         .strafeToLinearHeading(blueGoal.bigTrianglePose)
         .waitSeconds(shootingTime)
 
@@ -129,6 +137,6 @@ fun main() {
         .setDarkMode(true)
         .setBackgroundAlpha(0.95f)
         .addEntity(blueBot)
-        .addEntity(redBot)
+        //.addEntity(redBot)
         .start()
 }
