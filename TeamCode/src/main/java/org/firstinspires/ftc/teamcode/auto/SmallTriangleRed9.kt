@@ -7,7 +7,6 @@ import com.acmerobotics.roadrunner.AngularVelConstraint
 import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.MecanumKinematics
 import com.acmerobotics.roadrunner.MinVelConstraint
-import com.acmerobotics.roadrunner.ParallelAction
 import com.acmerobotics.roadrunner.SequentialAction
 import com.acmerobotics.roadrunner.VelConstraint
 import com.commonlibs.units.Pose
@@ -21,15 +20,15 @@ import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.robot.Robot
 
 @Autonomous
-class SmallTriangleBlue9 : LinearOpMode() {
-    val startPose = Pose(63.inch, -11.inch, 180.0.deg)
-    val smallTrianglePose = Pose(55.inch, -10.inch, 203.0.deg)
-    val bigTrianglePose = Pose(-10.inch, -10.inch, 221.0.deg)
+class SmallTriangleRed9 : LinearOpMode() {
+    val startPose = Pose(63.inch, 11.inch, 180.0.deg)
+    val smallTrianglePose = Pose(55.inch, 10.inch, 157.0.deg)
+    val bigTrianglePose = Pose(-10.inch, 10.inch, 139.0.deg)
 
-    val rightIntakePose = Pose(36.inch, -30.inch, 270.0.deg)
-    val middleIntakePose = Pose(14.inch, -30.inch, 270.0.deg)
+    val rightIntakePose = Pose(36.inch, 30.inch, 90.0.deg)
+    val middleIntakePose = Pose(14.inch, 30.inch, 90.0.deg)
 
-    val endPose = Pose(58.inch, -28.inch, 180.0.deg)
+    val endPose = Pose(58.inch, 28.inch, 180.0.deg) // trebe modificat
 
     val rpmFar = 3210.0
     val rpmClose = 2480.0
@@ -42,8 +41,6 @@ class SmallTriangleBlue9 : LinearOpMode() {
     override fun runOpMode() {
         val robot = Robot(hardwareMap, startPose)
         val timeKeep = TimeKeep()
-
-        robot.transfer.fingerDown()
 
         val kinematics = MecanumKinematics(
             15.0,
@@ -73,9 +70,9 @@ class SmallTriangleBlue9 : LinearOpMode() {
             robot.drive.correctionAction(rightIntakePose, 0.5.s),
 
             robot.drive.actionBuilder(rightIntakePose)
-                .setTangent(90.deg)
+                .setTangent(-90.deg)
                 .afterTime(0.s, robot.intakeBalls(0,0))
-                .lineToY(-45.inch, slowSpeed)
+                .lineToY(45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
                 .strafeToLinearHeading(smallTrianglePose)
@@ -92,9 +89,9 @@ class SmallTriangleBlue9 : LinearOpMode() {
             robot.drive.correctionAction(middleIntakePose, 0.5.s),
 
             robot.drive.actionBuilder(middleIntakePose)
-                .setTangent(90.deg)
+                .setTangent(-90.deg)
                 .afterTime(0.s, robot.intakeBalls(0,1))
-                .lineToY(-45.inch, slowSpeed)
+                .lineToY(45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
                 .strafeToLinearHeading(bigTrianglePose)
@@ -126,9 +123,9 @@ class SmallTriangleBlue9 : LinearOpMode() {
             robot.drive.correctionAction(rightIntakePose, 0.5.s),
 
             robot.drive.actionBuilder(rightIntakePose)
-                .setTangent(90.deg)
+                .setTangent(-90.deg)
                 .afterTime(0.s, robot.intakeBalls(0,2))
-                .lineToY(-45.inch, slowSpeed)
+                .lineToY(45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
                 .strafeToLinearHeading(smallTrianglePose)
@@ -145,9 +142,9 @@ class SmallTriangleBlue9 : LinearOpMode() {
             robot.drive.correctionAction(middleIntakePose, 0.5.s),
 
             robot.drive.actionBuilder(middleIntakePose)
-                .setTangent(90.deg)
+                .setTangent(-90.deg)
                 .afterTime(0.s, robot.intakeBalls(0,0))
-                .lineToY(-45.inch, slowSpeed)
+                .lineToY(45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
                 .strafeToLinearHeading(bigTrianglePose)
@@ -178,9 +175,9 @@ class SmallTriangleBlue9 : LinearOpMode() {
             robot.drive.correctionAction(rightIntakePose, 0.5.s),
 
             robot.drive.actionBuilder(rightIntakePose)
-                .setTangent(90.deg)
+                .setTangent(-90.deg)
                 .afterTime(0.s, robot.intakeBalls(0,1))
-                .lineToY(-45.inch, slowSpeed)
+                .lineToY(45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
                 .strafeToLinearHeading(smallTrianglePose)
@@ -197,9 +194,9 @@ class SmallTriangleBlue9 : LinearOpMode() {
             robot.drive.correctionAction(middleIntakePose, 0.5.s),
 
             robot.drive.actionBuilder(middleIntakePose)
-                .setTangent(90.deg)
+                .setTangent(-90.deg)
                 .afterTime(0.s, robot.intakeBalls(0,2))
-                .lineToY(-45.inch, slowSpeed)
+                .lineToY(45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
                 .strafeToLinearHeading(bigTrianglePose)
@@ -212,7 +209,6 @@ class SmallTriangleBlue9 : LinearOpMode() {
                 .strafeTo(endPose.position)
                 .build()
         )
-
 
         val startAction =  InstantAction {
             robot.drive.actionBuilder(startPose)
