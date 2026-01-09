@@ -28,6 +28,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
 
     val rightIntakePose = Pose(36.inch, -30.inch, 270.0.deg)
     val middleIntakePose = Pose(14.inch, -30.inch, 270.0.deg)
+    val leftIntakePose = Pose(-12.inch, -30.inch, 270.0.deg)
 
     val endPose = Pose(58.inch, -28.inch, 180.0.deg)
 
@@ -103,9 +104,17 @@ class SmallTriangleBlue9 : LinearOpMode() {
 
             robot.shootBalls(rpmClose, 1),
 
-
+            robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(bigTrianglePose)
-                .strafeTo(endPose.position)
+                .strafeToLinearHeading(leftIntakePose)
+                .build(),
+            robot.drive.correctionAction(leftIntakePose, 0.5.s),
+
+            robot.drive.actionBuilder(leftIntakePose)
+                .setTangent(90.deg)
+                .afterTime(0.s, robot.intakeBalls(0, 1))
+                .lineToY(-45.inch, slowSpeed)
+                .afterTime(0.0, robot.intake.stopIntakeAction())
                 .build()
         )
 
@@ -156,8 +165,17 @@ class SmallTriangleBlue9 : LinearOpMode() {
 
             robot.shootBalls(rpmClose, 0),
 
+            robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(bigTrianglePose)
-                .strafeTo(endPose.position)
+                .strafeToLinearHeading(leftIntakePose)
+                .build(),
+            robot.drive.correctionAction(leftIntakePose, 0.5.s),
+
+            robot.drive.actionBuilder(leftIntakePose)
+                .setTangent(90.deg)
+                .afterTime(0.s, robot.intakeBalls(0, 1))
+                .lineToY(-45.inch, slowSpeed)
+                .afterTime(0.0, robot.intake.stopIntakeAction())
                 .build()
         )
 
@@ -208,8 +226,17 @@ class SmallTriangleBlue9 : LinearOpMode() {
 
             robot.shootBalls(rpmClose, 2),
 
+            robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(bigTrianglePose)
-                .strafeTo(endPose.position)
+                .strafeToLinearHeading(leftIntakePose)
+                .build(),
+            robot.drive.correctionAction(leftIntakePose, 0.5.s),
+
+            robot.drive.actionBuilder(leftIntakePose)
+                .setTangent(90.deg)
+                .afterTime(0.s, robot.intakeBalls(0, 1))
+                .lineToY(-45.inch, slowSpeed)
+                .afterTime(0.0, robot.intake.stopIntakeAction())
                 .build()
         )
 
