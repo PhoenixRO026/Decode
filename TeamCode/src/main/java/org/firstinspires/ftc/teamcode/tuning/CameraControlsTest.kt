@@ -17,12 +17,15 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.WhiteBa
 import org.firstinspires.ftc.vision.VisionPortal
 import java.util.concurrent.TimeUnit
 
-@TeleOp
+@TeleOp(group = "tuning")
 class CameraControlsTest : LinearOpMode() {
     @Config("Camera controls test config")
     companion object {
         @JvmField
         var cooldownMs = 50
+        @JvmField var width = 1280
+        @JvmField var height = 720
+        @JvmField var liveView = true
         @JvmField
         var exposureMode = ExposureControl.Mode.Unknown
         @JvmField
@@ -111,8 +114,9 @@ class CameraControlsTest : LinearOpMode() {
         val webcamName = hardwareMap.get(WebcamName::class.java, "Webcam 1")
         visionPortal = VisionPortal.Builder()
             .setCamera(webcamName)
-            .setCameraResolution(Size(1280, 720))
+            .setCameraResolution(Size(width, height))
             .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+            .enableLiveView(liveView)
             .build()
 
         while (opModeInInit()) {
@@ -214,6 +218,8 @@ class CameraControlsTest : LinearOpMode() {
     }
 
     fun addTelemetry() {
+        telemetry.addData("fps", visionPortal.fps)
+
         val dataList = listOf(
             Pair("exposureMode", exposureMode),
             Pair("exposureIsAutoModeSupported", exposureIsAutoModeSupported),
