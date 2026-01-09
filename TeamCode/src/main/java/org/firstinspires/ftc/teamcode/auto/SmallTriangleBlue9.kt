@@ -24,15 +24,15 @@ import org.firstinspires.ftc.teamcode.robot.Robot
 class SmallTriangleBlue9 : LinearOpMode() {
     val startPose = Pose(63.inch, -11.inch, 180.0.deg)
     val smallTrianglePose = Pose(55.inch, -10.inch, 203.0.deg)
-    val bigTrianglePose = Pose(-10.inch, -10.inch, 222.0.deg)
+    val bigTrianglePose = Pose(-10.inch, -10.inch, 221.0.deg)
 
-    val rightIntakePose = Pose(35.inch, -30.inch, 270.0.deg)
-    val middleIntakePose = Pose(12.inch, -30.inch, 270.0.deg)
+    val rightIntakePose = Pose(36.inch, -30.inch, 270.0.deg)
+    val middleIntakePose = Pose(14.inch, -30.inch, 270.0.deg)
 
     val endPose = Pose(58.inch, -28.inch, 180.0.deg)
 
-    val rpmFar = 3260.0
-    val rpmClose = 2500.0
+    val rpmFar = 3210.0
+    val rpmClose = 2480.0
 
     val shooterOffset = 94.0
 
@@ -62,7 +62,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
                 .strafeToLinearHeading(smallTrianglePose)
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
                 .build(),
-            robot.drive.correctionAction(smallTrianglePose, 1.5.s),
+            robot.drive.correctionAction(smallTrianglePose, 2.5.s),
 
             robot.shootBalls(rpmFar, 0),
 
@@ -80,7 +80,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
                 .strafeToLinearHeading(smallTrianglePose)
                 .build(),
-            robot.drive.correctionAction(smallTrianglePose, 1.5.s),
+            robot.drive.correctionAction(smallTrianglePose, 2.5.s),
 
             robot.shootBalls(rpmFar, 0),
 
@@ -99,7 +99,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
                 .strafeToLinearHeading(bigTrianglePose)
                 .build(),
-            robot.drive.correctionAction(bigTrianglePose, 1.5.s),
+            robot.drive.correctionAction(bigTrianglePose, 2.0.s),
 
             robot.shootBalls(rpmClose, 1),
 
