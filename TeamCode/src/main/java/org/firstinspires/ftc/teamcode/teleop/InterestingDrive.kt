@@ -56,12 +56,13 @@ class InterestingDrive : LinearOpMode(){
         val lowRpm = ButtonReader {gamepad2.left_bumper}
         val stopShooter = ButtonReader {gamepad2.dpad_left}
         val dpadRight = ButtonReader {gamepad2.dpad_right}
+        val stopButton1 = ButtonReader { gamepad1.touchpad }
         val spew = ButtonReader {gamepad1.right_trigger >= 0.2}
-        val stopButton = ButtonReader {gamepad2.touchpad}
+        val stopButton2 = ButtonReader {gamepad2.touchpad}
         val snipe = ButtonReader {gamepad1.x}
 
 
-        val buttons = listOf(shootRight, shootLeft, highRpm, lowRpm, stopShooter, dpadRight, spew, stopButton)
+        val buttons = listOf(shootRight, shootLeft, highRpm, lowRpm, stopShooter, dpadRight, spew, stopButton2, snipe)
 
 
         robot.transfer.finger.position = 1.0
@@ -81,94 +82,74 @@ class InterestingDrive : LinearOpMode(){
             robot.drive.updatePoseEstimate()
 
 
-            if (!goingToTarget) {
-                if (gamepad1.y) {
-                    robot.drive.resetFieldCentric()
-                }
-                robot.drive.isSlowMode = gamepad1.right_trigger >= 0.2
-                robot.drive.driveFieldCentric(
-                    -gamepad1.left_stick_y.toDouble(),
-                    -gamepad1.left_stick_x.toDouble(),
-                    -gamepad1.right_stick_x.toDouble()
-                )
+            if (gamepad1.y) {
+                robot.drive.resetFieldCentric()
+            }
+            robot.drive.isSlowMode = gamepad1.right_trigger >= 0.2
+            robot.drive.driveFieldCentric(
+                -gamepad1.left_stick_y.toDouble(),
+                -gamepad1.left_stick_x.toDouble(),
+                -gamepad1.right_stick_x.toDouble()
+            )
+            if (snipe.wasJustPressed()) {
 
-                // snipe: start a scan-and-lock action that rotates until the AprilTag detections list is non-empty
-                // snipe: start a scan-and-lock action that rotates until a goal AprilTag (IDs 20..24) is centered horizontally
-                if (snipe.wasJustPressed()) {
+                val allowedIds = setOf(20, 24) // change this to the exact IDs you want (e.g. setOf(20,24))
 
-                    val allowedIds = setOf(20, 24) // change this to the exact IDs you want (e.g. setOf(20,24))
+                driveAction = object : Action {
 
-                    driveAction = object : Action {
+                    // === TUNABLES ===
+                    private val kP = 0.0025          // proportional gain
+                    private val maxRot = 0.7         // max rotation power
+                    private val deadbandPx = 50    // pixels from center considered "aligned"
+                    private val imageCenterX = 1280.0 / 2.0  // use your aprilTag camera resolution / 2
 
-                        // === TUNABLES ===
-                        private val kP = 0.003          // proportional gain
-                        private val maxRot = 0.7         // max rotation power
-                        private val deadbandPx = 15    // pixels from center considered "aligned"
-                        private val imageCenterX = 1280.0 / 2.0  // use your aprilTag camera resolution / 2
-
-                        override fun run(p: TelemetryPacket): Boolean {
-                            // get all detections and filter to allowed IDs
-                            val all = robot.camera.aprilTag.detections
-                            val filtered = all.filter { det ->
-                                try {
-                                    allowedIds.contains(det.id)
-                                } catch (e: Exception) {
-                                    false
-                                }
+                    override fun run(p: TelemetryPacket): Boolean {
+                        // get all detections and filter to allowed IDs
+                        val all = robot.camera.aprilTag.detections
+                        val filtered = all.filter { det ->
+                            try {
+                                allowedIds.contains(det.id)
+                            } catch (e: Exception) {
+                                false
                             }
+                        }
 
-                            p.put("allTags", all.size)
-                            p.put("allowedTags", filtered.size)
+                        p.put("allTags", all.size)
+                        p.put("allowedTags", filtered.size)
 
-                            // if no allowed tag -> keep scanning (rotate slowly)
-                            if (filtered.isEmpty()) {
-                                robot.drive.driveFieldCentric(0.0, 0.0, 0.25)
-                                p.put("state", "scanning")
-                                return true
-                            }
-
-                            // use the first allowed detection (you can pick the largest/closest if you prefer)
-                            val tag = filtered[0]
-                            val tagX = try { tag.center.x } catch (e: Exception) { imageCenterX }
-                            val errorPx = tagX - imageCenterX
-
-                            p.put("tagId", tag.id)
-                            p.put("tagX", tagX)
-                            p.put("errorPx", errorPx)
-
-                            // If horizontally centered -> stop
-                            if (kotlin.math.abs(errorPx) < deadbandPx) {
-                                robot.drive.driveFieldCentric(0.0, 0.0, 0.0)
-                                p.put("state", "LOCKED")
-                                return false // action complete
-                            }
-
-                            // Proportional rotation
-                            var rot = errorPx * kP
-                            rot = rot.coerceIn(-maxRot, maxRot)
-
-                            robot.drive.driveFieldCentric(0.0, 0.0, rot)
-                            p.put("rotCmd", rot)
-
+                        // if no allowed tag -> keep scanning (rotate slowly)
+                        if (filtered.isEmpty()) {
+                            robot.drive.driveFieldCentric(0.0, 0.0, 0.25)
+                            p.put("state", "scanning")
                             return true
                         }
 
-                        override fun preview(c: com.acmerobotics.dashboard.canvas.Canvas) { /* no preview */ }
-                    }
+                        // use the first allowed detection (you can pick the largest/closest if you prefer)
+                        val tag = filtered[0]
+                        val tagX = try { tag.center.x } catch (e: Exception) { imageCenterX }
+                        val errorPx = tagX - imageCenterX
 
-                    goingToTarget = true
-                }
-                else {
-                    // running an auto Action: run it each loop
-                    driveAction?.let {
-                        val p = TelemetryPacket()
-                        if (!it.run(p)) {
-                            // action finished
-                            driveAction = null
-                            goingToTarget = false
+                        p.put("tagId", tag.id)
+                        p.put("tagX", tagX)
+                        p.put("errorPx", errorPx)
+
+                        // If horizontally centered -> stop
+                        if (kotlin.math.abs(errorPx) < deadbandPx) {
+                            robot.drive.driveFieldCentric(0.0, 0.0, 0.0)
+                            p.put("state", "LOCKED")
+                            return false // action complete
                         }
-                        FtcDashboard.getInstance().sendTelemetryPacket(p)
+
+                        // Proportional rotation
+                        var rot = errorPx * kP
+                        rot = rot.coerceIn(-maxRot, maxRot)
+
+                        robot.drive.driveFieldCentric(0.0, 0.0, rot)
+                        p.put("rotCmd", rot)
+
+                        return true
                     }
+                    override fun preview(c: com.acmerobotics.dashboard.canvas.Canvas) { /* no preview */ }
                 }
             }
 
@@ -232,9 +213,13 @@ class InterestingDrive : LinearOpMode(){
 
             /// Stop
 
-            if (stopButton.wasJustPressed()) {
+            if (stopButton2.wasJustPressed()) {
                 shootAction = null
                 intakeAction = null
+                driveAction = null
+            }
+            if (stopButton1.wasJustPressed()) {
+                driveAction = null
             }
             runActions()
             telemetry.addData("Best Match", robot.camera.sensorColor.closestSwatch)
@@ -265,6 +250,16 @@ class InterestingDrive : LinearOpMode(){
             val p = TelemetryPacket()
             if (!it.run(p)) {
                 shootAction = null
+            }
+            FtcDashboard.getInstance().sendTelemetryPacket(p)
+        }
+
+        driveAction?.let {
+            val p = TelemetryPacket()
+            if (!it.run(p)) {
+                // action finished
+                driveAction = null
+                goingToTarget = false
             }
             FtcDashboard.getInstance().sendTelemetryPacket(p)
         }

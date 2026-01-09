@@ -7,11 +7,9 @@ import com.acmerobotics.roadrunner.AngularVelConstraint
 import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.MecanumKinematics
 import com.acmerobotics.roadrunner.MinVelConstraint
-import com.acmerobotics.roadrunner.ParallelAction
 import com.acmerobotics.roadrunner.SequentialAction
 import com.acmerobotics.roadrunner.VelConstraint
 import com.commonlibs.units.Pose
-import com.commonlibs.units.SleepAction
 import com.commonlibs.units.deg
 import com.commonlibs.units.inch
 import com.commonlibs.units.s
@@ -24,11 +22,11 @@ import org.firstinspires.ftc.teamcode.robot.Robot
 class SmallTriangleBlue9 : LinearOpMode() {
     val startPose = Pose(63.inch, -11.inch, 180.0.deg)
     val smallTrianglePose = Pose(55.inch, -10.inch, 203.0.deg)
-    val bigTrianglePose = Pose(-10.inch, -10.inch, 221.0.deg)
+    val bigTrianglePose = Pose(-16.inch, -16.inch, 221.0.deg) //trebe verficat?
 
-    val rightIntakePose = Pose(36.inch, -30.inch, 270.0.deg)
-    val middleIntakePose = Pose(14.inch, -30.inch, 270.0.deg)
-    val leftIntakePose = Pose(-12.inch, -30.inch, 270.0.deg)
+    val rightIntakePose = Pose(36.inch, -30.inch, -90.0.deg)
+    val middleIntakePose = Pose(14.inch, -30.inch, -90.0.deg) //trebe modificat
+    val leftIntakePose = Pose(-12.inch, -30.inch, -90.0.deg)
 
     val endPose = Pose(58.inch, -28.inch, 180.0.deg)
 
@@ -59,10 +57,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
         )
 
         val actionPGP = SequentialAction(
-            robot.drive.actionBuilder(startPose)
-                .strafeToLinearHeading(smallTrianglePose)
-                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
-                .build(),
+            robot.shooter.goToRpmAction(rpmFar),
             robot.drive.correctionAction(smallTrianglePose, 2.5.s),
 
             robot.shootBalls(rpmFar, 0),
@@ -119,10 +114,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
         )
 
         val actionPPG = SequentialAction(
-            robot.drive.actionBuilder(startPose)
-                .strafeToLinearHeading(smallTrianglePose)
-                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
-                .build(),
+            robot.shooter.goToRpmAction(rpmFar),
             robot.drive.correctionAction(smallTrianglePose, 2.5.s),
 
             robot.shootBalls(rpmFar, 2),
@@ -180,10 +172,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
         )
 
         val actionGPP = SequentialAction(
-            robot.drive.actionBuilder(startPose)
-                .strafeToLinearHeading(smallTrianglePose)
-                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
-                .build(),
+            robot.shooter.goToRpmAction(rpmFar),
             robot.drive.correctionAction(smallTrianglePose, 2.5.s),
 
             robot.shootBalls(rpmFar, 1),
