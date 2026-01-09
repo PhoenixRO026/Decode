@@ -21,7 +21,7 @@ class CameraCore(
 ) {
     @Config
     data object CameraCoreConfig {
-        @JvmField var colorWidth = 320
+        @JvmField var colorWidth = 432
         @JvmField var colorHeight = 240
         @JvmField var aprilTagWidth = 1280
         @JvmField var aprilTagHeight = 720
@@ -71,7 +71,7 @@ class CameraCore(
         .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
         .addProcessor(aprilTag)
         .setLiveViewContainerId(portal2ViewId)
-        .enableLiveView(CameraCoreConfig.liveView)
+        //.enableLiveView(CameraCoreConfig.liveView)
         .build()
 
     private var id = 0
@@ -115,8 +115,8 @@ class CameraCore(
         .setCameraResolution(Size(CameraCoreConfig.colorWidth, CameraCoreConfig.colorHeight))
         .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
         .setCamera(cameraColor)
-        .enableLiveView(CameraCoreConfig.liveView)
         .setLiveViewContainerId(portal1ViewId)
+        //.enableLiveView(CameraCoreConfig.liveView)
         .build()
 
     fun updateColor() {
