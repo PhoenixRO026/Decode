@@ -20,9 +20,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.robot.Robot
-
-@Autonomous
 @Disabled
+@Autonomous
 class SmallTriangleBlue : LinearOpMode() {
     val startPose = Pose(63.inch, -11.inch, 180.0.deg)
     val smallTrianglePose = Pose(55.inch, -10.inch, 202.0.deg)

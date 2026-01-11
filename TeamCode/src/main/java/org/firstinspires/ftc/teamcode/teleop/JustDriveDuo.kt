@@ -146,6 +146,18 @@ class JustDriveDuo : LinearOpMode(){
                 robot.shooter.goToRmp(0.0)
             }
 
+            if (gamepad1.dpad_left) {
+                robot.transfer.power = -0.1
+            } else if (gamepad1.dpad_right) {
+                robot.transfer.power = 0.1
+            } else {
+                robot.transfer.power = 0.0
+            }
+
+            if (gamepad1.dpad_up) {
+                robot.transfer.resetPos()
+            }
+
             robot.shooter.update(timeKeep.deltaTime)
 
             val result: PredominantColorProcessor.Result = robot.camera.colorSensor.getAnalysis()
