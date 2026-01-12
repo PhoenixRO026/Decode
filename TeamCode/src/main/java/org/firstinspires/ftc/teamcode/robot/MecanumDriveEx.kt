@@ -27,11 +27,10 @@ import com.acmerobotics.roadrunner.ftc.throwIfModulesAreOutdated
 import com.acmerobotics.roadrunner.now
 import com.acmerobotics.roadrunner.range
 import com.commonlibs.units.Pose
-import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.VoltageSensor
 import org.firstinspires.ftc.teamcode.roadrunner.Drawing
 import org.firstinspires.ftc.teamcode.roadrunner.Localizer
 import org.firstinspires.ftc.teamcode.roadrunner.PinpointLocalizer
@@ -46,7 +45,7 @@ class MecanumDriveEx(
     hardwareMap: HardwareMap,
     pose: Pose,
     private val voltageProvider: () -> Double = object : () -> Double {
-        val voltageSensor = hardwareMap.voltageSensor.iterator().next()
+        val voltageSensor = hardwareMap.get(VoltageSensor::class.java, "Control Hub")
         override fun invoke(): Double {
             return voltageSensor.voltage
         }
@@ -102,10 +101,10 @@ class MecanumDriveEx(
         MecanumDriveExParams.maxProfileAccel
     )
 
-    val leftFront: DcMotorEx
-    val leftBack: DcMotorEx
-    val rightBack: DcMotorEx
-    val rightFront: DcMotorEx
+    val leftFront: DcMotor
+    val leftBack: DcMotor
+    val rightBack: DcMotor
+    val rightFront: DcMotor
 
     val localizer: Localizer
     private val poseHistory = LinkedList<Pose2d>()
@@ -118,14 +117,14 @@ class MecanumDriveEx(
     init {
         throwIfModulesAreOutdated(hardwareMap)
 
-        for (module in hardwareMap.getAll<LynxModule>(LynxModule::class.java)) {
+        /*for (module in hardwareMap.getAll<LynxModule>(LynxModule::class.java)) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO)
-        }
+        }*/
 
-        leftFront = hardwareMap.get(DcMotorEx::class.java, "motorLF")
-        leftBack = hardwareMap.get(DcMotorEx::class.java, "motorLB")
-        rightBack = hardwareMap.get(DcMotorEx::class.java, "motorRB")
-        rightFront = hardwareMap.get(DcMotorEx::class.java, "motorRF")
+        leftFront = hardwareMap.get(DcMotor::class.java, "motorLF")
+        leftBack = hardwareMap.get(DcMotor::class.java, "motorLB")
+        rightBack = hardwareMap.get(DcMotor::class.java, "motorRB")
+        rightFront = hardwareMap.get(DcMotor::class.java, "motorRF")
 
         leftFront.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
         leftBack.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE

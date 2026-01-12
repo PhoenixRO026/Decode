@@ -13,6 +13,8 @@ import com.commonlibs.units.s
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.VoltageSensor
 
+
+
 class  Drive(
     val mecanumDrive: MecanumDriveEx
 ) {
@@ -20,7 +22,7 @@ class  Drive(
         hardwareMap: HardwareMap,
         pose: Pose = Pose(0.cm, 0.cm, 0.deg),
         voltageProvider: () -> Double = object : () -> Double {
-            val voltageSensor = hardwareMap.getAll(VoltageSensor::class.java).first()
+            val voltageSensor = hardwareMap.get(VoltageSensor::class.java, "Control Hub")
             override fun invoke(): Double {
                 return voltageSensor.voltage
             }

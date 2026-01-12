@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.VoltageSensor
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
 import kotlin.math.absoluteValue
@@ -49,7 +50,7 @@ class Shooter(
     constructor(hardwareMap: HardwareMap) : this(
         hardwareMap,
         object : () -> Double {
-            val voltageSensor = hardwareMap.voltageSensor.iterator().next()
+            val voltageSensor = hardwareMap.get(VoltageSensor::class.java, "Control Hub")
             override fun invoke(): Double {
                 return voltageSensor.voltage
             }
