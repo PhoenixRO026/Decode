@@ -137,7 +137,8 @@ class MecanumDriveEx(
 
         localizer = PinpointLocalizer(hardwareMap, MecanumDriveExParams.inPerTick, pose.pose2d)
 
-        write("MECANUM_PARAMS", MecanumDriveExParams)
+        //TODO: FIX LATER
+        write("MECANUM_PARAMS", MecanumDriveExParams.toString())
     }
 
     fun setDrivePowers(powers: PoseVelocity2d) {

@@ -6,18 +6,21 @@ import com.acmerobotics.roadrunner.Vector2d
 import com.commonlibs.roadrunnerext.ex
 import com.commonlibs.units.Duration
 import com.commonlibs.units.Pose
+import com.commonlibs.units.cm
+import com.commonlibs.units.deg
 import com.commonlibs.units.rotate
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.VoltageSensor
 
 class  Drive(
     val mecanumDrive: MecanumDriveEx
 ) {
     constructor(
         hardwareMap: HardwareMap,
-        pose: Pose,
+        pose: Pose = Pose(0.cm, 0.cm, 0.deg),
         voltageProvider: () -> Double = object : () -> Double {
-            val voltageSensor = hardwareMap.voltageSensor.iterator().next()
+            val voltageSensor = hardwareMap.getAll(VoltageSensor::class.java).first()
             override fun invoke(): Double {
                 return voltageSensor.voltage
             }
