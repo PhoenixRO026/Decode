@@ -5,11 +5,16 @@ import org.firstinspires.ftc.teamcode.robot.Drive
 import org.psilynx.psikit.core.Logger
 import org.psilynx.psikit.core.rlog.RLOGServer
 import org.psilynx.psikit.core.rlog.RLOGWriter
+import org.psilynx.psikit.ftc.DriverStationLogger
+import org.psilynx.psikit.ftc.FtcLoggingSession
+import org.psilynx.psikit.ftc.PinpointOdometryLogger
 import org.psilynx.psikit.ftc.PsiKitOpMode
 
 @TeleOp
 class TestPsiKit: PsiKitOpMode() {
     lateinit var drive: Drive
+    val driverStationLogger = DriverStationLogger()
+    val pinpointOdometryLogger = PinpointOdometryLogger()
 
     override fun psiKit_init() {
         val server = RLOGServer()
@@ -19,10 +24,12 @@ class TestPsiKit: PsiKitOpMode() {
         Logger.addDataReceiver(writer)
 
         drive = Drive(hardwareMap)
+
+        processHardwareInputs()
     }
 
     override fun psiKit_init_loop() {
-
+        processHardwareInputs()
     }
 
     override fun psiKit_start() {
@@ -30,6 +37,9 @@ class TestPsiKit: PsiKitOpMode() {
     }
 
     override fun psiKit_loop() {
+        driverStationLogger.log(gamepad1, gamepad2)
+        pinpointOdometryLogger.logAll(hardwareMap)
+
         drive.updatePoseEstimate()
 
         /// Drive
@@ -42,6 +52,8 @@ class TestPsiKit: PsiKitOpMode() {
         if (gamepad1.y) {
             drive.resetFieldCentric()
         }
+
+
     }
 
     override fun psiKit_stop() {

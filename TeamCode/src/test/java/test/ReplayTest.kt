@@ -13,7 +13,7 @@ import org.robolectric.annotation.Config
 class ReplayTest {
     @Test
     fun run() {
-        val replaySource = RLOGReplay(RLOGReplay.promptForPath())
+        val replaySource = RLOGReplay("log.rlog")
         Replay(TestPsiKit(), replaySource).run()
     }
 }
