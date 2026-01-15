@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import org.firstinspires.ftc.teamcode.psikit.MockTelemetry
 import org.firstinspires.ftc.teamcode.robot.Drive
 import org.psilynx.psikit.core.Logger
 import org.psilynx.psikit.core.rlog.RLOGServer
@@ -17,6 +18,8 @@ class TestPsiKit: PsiKitOpMode() {
     val pinpointOdometryLogger = PinpointOdometryLogger()
 
     override fun psiKit_init() {
+        telemetry = MockTelemetry(telemetry)
+
         val server = RLOGServer()
         val writer = RLOGWriter("log.rlog")
 
@@ -53,7 +56,8 @@ class TestPsiKit: PsiKitOpMode() {
             drive.resetFieldCentric()
         }
 
-
+        telemetry.addData("slowMode", drive.isSlowMode)
+        telemetry.update()
     }
 
     override fun psiKit_stop() {
