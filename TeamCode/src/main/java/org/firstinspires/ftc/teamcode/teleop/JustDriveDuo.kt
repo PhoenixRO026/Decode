@@ -140,9 +140,11 @@ class JustDriveDuo : LinearOpMode(){
                 robot.shooter.goToRmp(JustDriveDuoConfig.shooterTargetRpm.toDouble())
             }
             else if (lowRpm.wasJustPressed()) { /// shoot close
-                robot.shooter.goToRmp(2500.0)
+                robot.shooter.goToRmp(2800.0)
             }
             else if (stopShooter.wasJustPressed()) { /// stop shoot
+
+
                 robot.shooter.goToRmp(0.0)
             }
 

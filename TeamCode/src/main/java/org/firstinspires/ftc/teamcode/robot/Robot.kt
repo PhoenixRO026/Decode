@@ -104,7 +104,7 @@ class Robot(
 
     fun shootTeleBalls(rpm : Double, multiplier : Int) = SequentialAction(
         shooter.goToRpmAction(rpm),
-        SleepAction(0.8.s),
+        SleepAction(0.9.s),
         transfer.goToPosAction(BoringDriveConfig.pos, multiplier, BoringDriveConfig.shooterOffset),
         shootBall(rpm),
         transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 1, BoringDriveConfig.shooterOffset),

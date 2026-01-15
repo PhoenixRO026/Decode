@@ -30,7 +30,7 @@ class InterestingDrive : LinearOpMode(){
         @JvmField var shooterOffset = 94.0
         @JvmField var intakeOffset = 0.0
         @JvmField val rpmFar = 3260.0
-        @JvmField val rpmClose = 2490.0
+        @JvmField val rpmClose = 2700.0
     }
 
     val smallTrianglePose = Pose(55.inch, -10.inch, 203.0.deg)
