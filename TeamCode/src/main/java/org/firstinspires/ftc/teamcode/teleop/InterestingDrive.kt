@@ -56,7 +56,7 @@ class InterestingDrive : LinearOpMode(){
         val lowRpm = ButtonReader {gamepad2.left_bumper}
         val stopShooter = ButtonReader {gamepad2.dpad_left}
         val dpadRight = ButtonReader {gamepad2.dpad_right}
-        val spew = ButtonReader {gamepad1.right_trigger >= 0.2}
+        val spew = ButtonReader {gamepad1.left_trigger >= 0.2}
         val stopButton = ButtonReader {gamepad2.touchpad}
         val snipe = ButtonReader {gamepad1.x}
 

@@ -85,24 +85,21 @@ class Robot(
         InstantAction{intake.power = 0.75},
         transfer.goToPosAction(BoringDriveConfig.pos, multiplier, BoringDriveConfig.intakeOffset),
         RaceAction(
-            camera.waitForColors(),
+            camera.waitForColors(2.s),
             SleepAction(3.s)
         ),
-        SleepAction(0.2.s),
         transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 1, 0.0),
         RaceAction(
-            camera.waitForColors(),
+            camera.waitForColors(2.s),
             SleepAction(3.s)
         ),
-        SleepAction(0.2.s),
         transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 2, 0.0),
         RaceAction(
-            camera.waitForColors(),
+            camera.waitForColors(2.s),
             SleepAction(3.s)
         ),
         InstantAction{intake.power = 0.0},
-        SleepAction(0.2.s),
-        transfer.goToPosAction(BoringDriveConfig.pos, 0, BoringDriveConfig.shooterOffset)
+        transfer.goToPosAction(BoringDriveConfig.pos, 0, BoringDriveConfig.shooterOffset),
     )
 
     fun shootTeleBalls(rpm : Double, multiplier : Int) = SequentialAction(
