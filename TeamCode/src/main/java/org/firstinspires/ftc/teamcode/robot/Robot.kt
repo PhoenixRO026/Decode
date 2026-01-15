@@ -50,7 +50,7 @@ class Robot(
             camera.waitForColors(3.s),
             SleepAction(3.s)
         ),
-        SleepAction(0.75.s),
+        SleepAction(0.6.s),
         transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 1, 0.0),
         RaceAction(
             camera.waitForColors(3.s),
@@ -76,7 +76,7 @@ class Robot(
         shootBall(rpm),
         transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 2, BoringDriveConfig.shooterOffset),
         shootBall(rpm),
-        SleepAction(0.5 .s),
+        SleepAction(0.2.s),
         transfer.goToPosAction(BoringDriveConfig.pos, 0, 0.0),
         shooter.goToRpmAction(0.0),
     )

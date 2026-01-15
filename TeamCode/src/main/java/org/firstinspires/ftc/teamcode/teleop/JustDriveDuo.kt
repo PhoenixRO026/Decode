@@ -38,10 +38,10 @@ class JustDriveDuo : LinearOpMode(){
         var lastPos : Boolean = false // false = intake true = shooter
 
 
-        val intakeRight = ButtonReader { gamepad2.y}
-        val intakeLeft = ButtonReader { gamepad2.a}
-        val shootRight = ButtonReader { gamepad2.b}
-        val shootLeft = ButtonReader { gamepad2.x}
+        val intakeRight = ButtonReader { gamepad2.b}
+        val intakeLeft = ButtonReader { gamepad2.x}
+        val shootRight = ButtonReader { gamepad2.y}
+        val shootLeft = ButtonReader { gamepad2.a}
         val fingerUp = ButtonReader {gamepad2.dpad_up}
         val fingerDown = ButtonReader {gamepad2.dpad_down}
         val highRpm = ButtonReader {gamepad2.right_bumper}
@@ -144,6 +144,18 @@ class JustDriveDuo : LinearOpMode(){
             }
             else if (stopShooter.wasJustPressed()) { /// stop shoot
                 robot.shooter.goToRmp(0.0)
+            }
+
+            if (gamepad1.dpad_left) {
+                robot.transfer.power = -0.1
+            } else if (gamepad1.dpad_right) {
+                robot.transfer.power = 0.1
+            } else {
+                robot.transfer.power = 0.0
+            }
+
+            if (gamepad1.dpad_up) {
+                robot.transfer.resetPos()
             }
 
             robot.shooter.update(timeKeep.deltaTime)

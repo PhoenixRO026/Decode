@@ -35,7 +35,7 @@ class Spindexer(
         @JvmField
         val fingerUpPosition = 0.5
         @JvmField
-        val fingerDownPosition = 0.95
+        val fingerDownPosition = 0.9
     }
 
     enum class Mode {
