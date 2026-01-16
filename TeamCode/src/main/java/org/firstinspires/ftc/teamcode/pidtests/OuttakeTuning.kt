@@ -21,9 +21,9 @@ class OuttakeTuning : LinearOpMode() {
     data object OuttakeTuningConfig {
         @JvmField
         var controller = PIDController(
-            kP = 0.0,
-            kD = 0.0,
-            kI = 0.0,
+            kP = 0.002,
+            kD = 0.00004,
+            kI = 0.018,
             stabilityThreshold = 50.0
         )
         @JvmField
