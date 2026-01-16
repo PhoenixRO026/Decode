@@ -61,7 +61,7 @@ class InterestingDrive : LinearOpMode(){
         val snipe = ButtonReader {gamepad1.x}
 
 
-        val buttons = listOf(shootRight, shootLeft, highRpm, lowRpm, stopShooter, dpadRight, spew, stopButton)
+        val buttons = listOf(shootRight, shootLeft, highRpm, lowRpm, stopShooter, dpadRight, spew, stopButton, snipe)
 
 
         robot.transfer.finger.position = 1.0
@@ -78,10 +78,38 @@ class InterestingDrive : LinearOpMode(){
         while (opModeIsActive()) {
             timeKeep.resetDeltaTime()
             buttons.forEach { it.readValue() }
+            // call early in loop
             robot.drive.updatePoseEstimate()
 
+// ----------------- CONFIG -----------------
+            val JOY_CANCEL_DEADBAND = 0.08       // if any stick magnitude > this -> cancel snipe
+            val SCAN_ROT_SPEED = 0.15           // slow scan rotation when no tag seen
+            val kP = 0.002                       // proportional gain (pixels -> rot)
+            val maxRot = 0.3
+
+
+
+
+
+
+
+
+            // max rotation power while homing
+            val deadbandPx = 1                  // pixels from center considered aligned
+            val imageCenterX = 1280.0 / 2.0     // adjust to your camera width/2
+            val allowedIds = setOf(20, 24)      // change to the exact IDs you want
+// -------------------------------------------
+
+            fun driverMoved(): Boolean {
+                return kotlin.math.abs(gamepad1.left_stick_x)  > JOY_CANCEL_DEADBAND ||
+                        kotlin.math.abs(gamepad1.left_stick_y)  > JOY_CANCEL_DEADBAND ||
+                        kotlin.math.abs(gamepad1.right_stick_x) > JOY_CANCEL_DEADBAND ||
+                        kotlin.math.abs(gamepad1.right_trigger) >= 0.2 ||
+                        kotlin.math.abs(gamepad1.left_trigger)  >= 0.2
+            }
 
             if (!goingToTarget) {
+                // regular manual control
                 if (gamepad1.y) {
                     robot.drive.resetFieldCentric()
                 }
@@ -92,45 +120,25 @@ class InterestingDrive : LinearOpMode(){
                     -gamepad1.right_stick_x.toDouble()
                 )
 
-                // snipe: start a scan-and-lock action that rotates until the AprilTag detections list is non-empty
-                // snipe: start a scan-and-lock action that rotates until a goal AprilTag (IDs 20..24) is centered horizontally
+                // start snipe action
                 if (snipe.wasJustPressed()) {
-
-                    val allowedIds = setOf(20, 24) // change this to the exact IDs you want (e.g. setOf(20,24))
-
                     driveAction = object : Action {
-
-                        // === TUNABLES ===
-                        private val kP = 0.003          // proportional gain
-                        private val maxRot = 0.7         // max rotation power
-                        private val deadbandPx = 15    // pixels from center considered "aligned"
-                        private val imageCenterX = 1280.0 / 2.0  // use your aprilTag camera resolution / 2
-
                         override fun run(p: TelemetryPacket): Boolean {
-                            // get all detections and filter to allowed IDs
-                            val all = robot.camera.aprilTag.detections
-                            val filtered = all.filter { det ->
-                                try {
-                                    allowedIds.contains(det.id)
-                                } catch (e: Exception) {
-                                    false
-                                }
-                            }
+                            val all = robot.camera.aprilTag.detections ?: emptyList()
+                            val filtered = all.filter { det -> det?.id != null && allowedIds.contains(det.id) }
 
                             p.put("allTags", all.size)
                             p.put("allowedTags", filtered.size)
 
-                            // if no allowed tag -> keep scanning (rotate slowly)
                             if (filtered.isEmpty()) {
-                                robot.drive.driveFieldCentric(0.0, 0.0, 0.25)
+                                robot.drive.driveFieldCentric(0.0, 0.0, SCAN_ROT_SPEED)
                                 p.put("state", "scanning")
-                                return true
+                                return false
                             }
 
-                            // use the first allowed detection (you can pick the largest/closest if you prefer)
                             val tag = filtered[0]
                             val tagX = try { tag.center.x } catch (e: Exception) { imageCenterX }
-                            val errorPx = tagX - imageCenterX
+                            val errorPx = -(tagX - imageCenterX)
 
                             p.put("tagId", tag.id)
                             p.put("tagX", tagX)
@@ -143,27 +151,35 @@ class InterestingDrive : LinearOpMode(){
                                 return false // action complete
                             }
 
-                            // Proportional rotation
+                            // Proportional rotation toward center
                             var rot = errorPx * kP
                             rot = rot.coerceIn(-maxRot, maxRot)
 
                             robot.drive.driveFieldCentric(0.0, 0.0, rot)
                             p.put("rotCmd", rot)
-
+                            p.put("state", "homing")
                             return true
                         }
 
                         override fun preview(c: com.acmerobotics.dashboard.canvas.Canvas) { /* no preview */ }
                     }
 
+                    // mark that we are now running the action (it will be executed next block)
                     goingToTarget = true
                 }
-                else {
-                    // running an auto Action: run it each loop
+            }
+
+// If an action is active, run it and allow joystick override
+            if (goingToTarget) {
+                // immediate driver cancel
+                if (driverMoved()) {
+                    driveAction = null
+                    goingToTarget = false
+                } else {
                     driveAction?.let {
                         val p = TelemetryPacket()
                         if (!it.run(p)) {
-                            // action finished
+                            // action finished normally
                             driveAction = null
                             goingToTarget = false
                         }
@@ -171,6 +187,7 @@ class InterestingDrive : LinearOpMode(){
                     }
                 }
             }
+
 
             /// Transfer
 
@@ -244,7 +261,8 @@ class InterestingDrive : LinearOpMode(){
             telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
             telemetry.addData("fps", 1.s / timeKeep.deltaTime)
             telemetry.addData("multiplier", InterestingDriveConfig.multiplier)
-            telemetry.addData("action", intakeAction)
+            telemetry.addData("action intake: ", intakeAction)
+            telemetry.addData("action drive: ", driveAction)
             telemetry.update()
 
             robot.shooter.update(timeKeep.deltaTime)
