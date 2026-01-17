@@ -26,7 +26,7 @@ class SmallTriangleRed9 : LinearOpMode() {
     val smallTrianglePose = Pose(55.inch, 10.inch, 157.0.deg)
     val bigTrianglePose = Pose(-16.5.inch, 16.inch, 138.0.deg)
 
-    val rightIntakePose = Pose(36.inch, 30.inch, 90.0.deg)
+    val rightIntakePose = Pose(36.inch, 29.inch, 90.0.deg)
     val rightIntakePoseBack = Pose(36.inch, 45.inch, 90.0.deg)
     val middleIntakePose = Pose(13.inch, 29.inch, 90.0.deg)
     val middleIntakePoseBack = Pose(13.inch, 45.inch, 90.0.deg)
@@ -34,7 +34,7 @@ class SmallTriangleRed9 : LinearOpMode() {
 
     val endPose = Pose(0.inch, 28.inch, 90.0.deg)
 
-    val rpmFar = 3280.0
+    val rpmFar = 3260.0
     val rpmClose = 2780.0
 
     val shooterOffset = 94.0
