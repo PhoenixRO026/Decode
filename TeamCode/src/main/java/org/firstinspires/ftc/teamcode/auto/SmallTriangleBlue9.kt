@@ -10,7 +10,6 @@ import com.acmerobotics.roadrunner.MinVelConstraint
 import com.acmerobotics.roadrunner.SequentialAction
 import com.acmerobotics.roadrunner.VelConstraint
 import com.commonlibs.units.Pose
-import com.commonlibs.units.SleepAction
 import com.commonlibs.units.deg
 import com.commonlibs.units.inch
 import com.commonlibs.units.s
@@ -273,7 +272,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
         while (running && opModeIsActive()) {
             timeKeep.resetDeltaTime()
             robot.transfer.update(timeKeep.deltaTime)
-            robot.shooter.update(timeKeep.deltaTime)
+            robot.shooter.updateRpm(timeKeep.deltaTime)
 
             val packet = TelemetryPacket()
             packet.fieldOverlay().operations.addAll(c.operations)

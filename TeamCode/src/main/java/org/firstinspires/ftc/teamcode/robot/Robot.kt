@@ -43,76 +43,79 @@ class Robot(
         SleepAction(0.2.s),
     )
 
-    fun intakeBalls(multiplier : Int, futureOuttakePos : Int) = SequentialAction(
+    fun intakeBalls(futureOuttakePos : Spindexer.TransferPos) = SequentialAction(
         InstantAction{intake.power = 0.75},
-        transfer.goToPosAction(BoringDriveConfig.pos, multiplier, BoringDriveConfig.intakeOffset),
+        transfer.goToPosAction(Spindexer.TransferPos.intake1),
         RaceAction(
             camera.waitForColors(3.s),
             SleepAction(3.s)
         ),
         SleepAction(0.6.s),
-        transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 1, 0.0),
+        transfer.goToNextIntakeAction(),
         RaceAction(
             camera.waitForColors(3.s),
             SleepAction(3.s)
         ),
         SleepAction(0.3.s),
-        transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 2, 0.0),
+        transfer.goToNextIntakeAction(),
         RaceAction(
             camera.waitForColors(3.s),
             SleepAction(3.s)
         ),
         SleepAction(0.3.s),
         InstantAction{intake.power = 0.0},
-        transfer.goToPosAction(BoringDriveConfig.pos, futureOuttakePos, BoringDriveConfig.shooterOffset),
+        transfer.goToPosAction(futureOuttakePos),
         InstantAction{intake.power = -1.0}
     )
 
-    fun shootBalls(rpm : Double, multiplier : Int) = SequentialAction(
+    fun shootBalls(rpm : Double, startPos : Spindexer.TransferPos) = SequentialAction(
         shooter.goToRpmAction(rpm),
-        transfer.goToPosAction(BoringDriveConfig.pos, multiplier, BoringDriveConfig.shooterOffset),
+        transfer.goToPosAction(startPos),
         shootBall(rpm),
-        transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 1, BoringDriveConfig.shooterOffset),
+        transfer.goToNextShootAction(),
         shootBall(rpm),
-        transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 2, BoringDriveConfig.shooterOffset),
+        transfer.goToNextShootAction(),
         shootBall(rpm),
         SleepAction(0.2.s),
-        transfer.goToPosAction(BoringDriveConfig.pos, 0, 0.0),
+        transfer.goToPosAction(Spindexer.TransferPos.intake1),
         shooter.goToRpmAction(0.0),
     )
 
-    fun intakeTeleBalls(multiplier : Int) = SequentialAction(
+    fun intakeTeleBalls() = SequentialAction(
         InstantAction{intake.power = 0.75},
-        transfer.goToPosAction(BoringDriveConfig.pos, multiplier, BoringDriveConfig.intakeOffset),
+        transfer.goToPosAction(Spindexer.TransferPos.intake1),
         RaceAction(
-            camera.waitForColors(2.s),
+            camera.waitForColors(3.s),
             SleepAction(3.s)
         ),
-        transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 1, 0.0),
+        SleepAction(0.6.s),
+        transfer.goToNextIntakeAction(),
         RaceAction(
-            camera.waitForColors(2.s),
+            camera.waitForColors(3.s),
             SleepAction(3.s)
         ),
-        transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 2, 0.0),
+        SleepAction(0.3.s),
+        transfer.goToNextIntakeAction(),
         RaceAction(
-            camera.waitForColors(2.s),
+            camera.waitForColors(3.s),
             SleepAction(3.s)
         ),
+        SleepAction(0.3.s),
         InstantAction{intake.power = 0.0},
-        transfer.goToPosAction(BoringDriveConfig.pos, 0, BoringDriveConfig.shooterOffset),
+        transfer.goToPosAction(Spindexer.TransferPos.shoot1),
+        InstantAction{intake.power = -1.0}
     )
 
-    fun shootTeleBalls(rpm : Double, multiplier : Int) = SequentialAction(
+    fun shootTeleBalls(rpm : Double, startPos : Spindexer.TransferPos) = SequentialAction(
         shooter.goToRpmAction(rpm),
-        SleepAction(0.9.s),
-        transfer.goToPosAction(BoringDriveConfig.pos, multiplier, BoringDriveConfig.shooterOffset),
+        transfer.goToPosAction(startPos),
         shootBall(rpm),
-        transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 1, BoringDriveConfig.shooterOffset),
+        transfer.goToNextShootAction(),
         shootBall(rpm),
-        transfer.goToPosAction(BoringDriveConfig.pos, multiplier + 2, BoringDriveConfig.shooterOffset),
+        transfer.goToNextShootAction(),
         shootBall(rpm),
-        SleepAction(0.5 .s),
-        transfer.goToPosAction(BoringDriveConfig.pos, 0, 0.0),
+        SleepAction(0.2.s),
+        transfer.goToPosAction(Spindexer.TransferPos.intake1),
         shooter.goToRpmAction(0.0),
     )
 
@@ -127,8 +130,13 @@ class Robot(
     init {
         val mecanumDrive = MecanumDrive(hardwareMap, pose.pose2d)
 
+        ///  Shooter  ///
+
+        // motors //
         val motorShooterTop = hardwareMap.get(DcMotorEx::class.java, "motorShooterTop")
         val motorShooterBottom = hardwareMap.get(DcMotorEx::class.java, "motorShooterBottom")
+        val motorTurret = hardwareMap.get(DcMotorEx::class.java, "motorTurret")
+
 
         motorShooterTop.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         motorShooterTop.direction = DcMotorSimple.Direction.FORWARD
@@ -138,28 +146,33 @@ class Robot(
         motorShooterBottom.direction = DcMotorSimple.Direction.REVERSE
         motorShooterBottom.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
+        motorTurret.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+        motorTurret.direction = DcMotorSimple.Direction.FORWARD
+        motorTurret.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
+        // encoders //
         val encoderOuttake : Encoder = RawEncoder(mecanumDrive.rightBack)
-        //val encoderOuttake : Encoder = OverflowEncoder(RawEncoder(mecanumDrive.rightBack))
+        val encoderTurret : Encoder = RawEncoder(motorTurret)
 
         encoderOuttake.direction =DcMotorSimple.Direction.REVERSE
 
+        // servos //
+        val servoBackwall = hardwareMap.get(Servo::class.java, "servoBackwall")
+
+        ///  Intake  ///
+
+        // motors //
         val motorIntake = hardwareMap.get(DcMotorEx::class.java, "motorIntake")
 
         motorIntake.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         motorIntake.direction = DcMotorSimple.Direction.FORWARD
         motorIntake.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
-        val motorTransfer = hardwareMap.get(DcMotorEx::class.java, "motorTransfer")
+        ///  Transfer  ///
 
-        motorTransfer.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-        motorTransfer.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        motorTransfer.direction = DcMotorSimple.Direction.REVERSE
-        motorTransfer.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-
-        val encoderTransfer : Encoder = RawEncoder(motorTransfer)
-        encoderTransfer.direction = DcMotorSimple.Direction.FORWARD
-
+        // motors //
+        val servoTransfer1 = hardwareMap.get(Servo::class.java, "servoTransfer1")
+        val servoTransfer2 = hardwareMap.get(Servo::class.java, "servoTransfer2")
         val finger = hardwareMap.get(Servo::class.java, "finger")
 
         val webcamColor = hardwareMap.get(WebcamName::class.java, "Webcam 1")
@@ -171,12 +184,15 @@ class Robot(
         shooter = Shooter(
             motorTop = motorShooterTop,
             motorBottom = motorShooterBottom,
-            encoder = encoderOuttake,
+            motorTurret = motorTurret,
+            encoderOuttake = encoderOuttake,
+            encoderTurret = encoderTurret,
+            servoBackwall = servoBackwall,
             voltageSensor = voltageSensor
         )
         transfer = Spindexer(
-            motor = motorTransfer,
-            encoder = encoderTransfer,
+            servoTransfer1 = servoTransfer1,
+            servoTransfer2 = servoTransfer2,
             finger = finger
         )
         intake = Intake(

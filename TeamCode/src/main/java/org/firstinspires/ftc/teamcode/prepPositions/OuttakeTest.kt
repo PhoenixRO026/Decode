@@ -8,14 +8,8 @@ import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorEx
-import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.teamcode.library.TimeKeep
-import org.firstinspires.ftc.teamcode.library.controller.PIDController
 import org.firstinspires.ftc.teamcode.robot.Robot
-import org.firstinspires.ftc.teamcode.robot.Shooter
-import kotlin.math.max
-import kotlin.math.min
 
 @TeleOp
 class OuttakeTest : LinearOpMode() {
@@ -59,11 +53,11 @@ class OuttakeTest : LinearOpMode() {
 
             robot.shooter.targetRpm = outtakeConfig.targetRPM.toDouble()
 
-            robot.shooter.update(timeKeep.deltaTime)
+            robot.shooter.updateRpm(timeKeep.deltaTime)
 
             telemetry.addData("RPM", "%.2f", rpm)
             telemetry.addData("Target RPM", outtakeConfig.targetRPM)
-            telemetry.addData("Power", "%.3f", robot.shooter.power)
+            telemetry.addData("Power", "%.3f", robot.shooter.powerShooter)
             telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
             telemetry.addData("fps", 1.s / timeKeep.deltaTime)
             telemetry.update()

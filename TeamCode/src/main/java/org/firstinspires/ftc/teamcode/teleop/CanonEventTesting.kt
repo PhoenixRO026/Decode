@@ -10,12 +10,9 @@ import com.commonlibs.units.deg
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.DcMotor
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.buttons.ButtonReader
 import org.firstinspires.ftc.teamcode.robot.Robot
-import org.firstinspires.ftc.teamcode.teleop.prepPositions.OuttakeTest.outtakeConfig
-import kotlin.math.abs
 
 @TeleOp
 class CanonEventTesting : LinearOpMode(){
@@ -142,14 +139,14 @@ class CanonEventTesting : LinearOpMode(){
                 robot.shooter.goToRmp(2500.0)
             }
 
-            robot.shooter.update(timeKeep.deltaTime)
+            robot.shooter.updateRpm(timeKeep.deltaTime)
 
             telemetry.addData("a was pressed (set)", gamepad1.a)
             telemetry.addData("x was pressed (left)", gamepad1.x)
             telemetry.addData("b was pressed (right)", gamepad1.b)
             telemetry.addData("up was pressed (set)", gamepad1.dpad_up)
             telemetry.addData("down was pressed (left)", gamepad1.dpad_down)
-            telemetry.addData("shooter power", robot.shooter.power)
+            telemetry.addData("shooter power", robot.shooter.powerShooter)
             telemetry.addData("rpm", robot.shooter.rpm)
             telemetry.addData("target rpm", robot.shooter.targetRpm)
             telemetry.addData("pos", robot.transfer.position)

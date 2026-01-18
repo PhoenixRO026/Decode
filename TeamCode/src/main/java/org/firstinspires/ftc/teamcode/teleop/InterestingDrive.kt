@@ -10,7 +10,6 @@ import com.commonlibs.units.Pose
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
 import com.commonlibs.units.inch
-import com.commonlibs.units.pose
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -247,7 +246,7 @@ class InterestingDrive : LinearOpMode(){
             telemetry.addData("action", intakeAction)
             telemetry.update()
 
-            robot.shooter.update(timeKeep.deltaTime)
+            robot.shooter.updateRpm(timeKeep.deltaTime)
             robot.transfer.update(timeKeep.deltaTime)
         }
     }

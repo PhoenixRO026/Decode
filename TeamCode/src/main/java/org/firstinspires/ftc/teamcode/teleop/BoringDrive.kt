@@ -5,26 +5,16 @@ import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
-import com.acmerobotics.roadrunner.InstantAction
-import com.acmerobotics.roadrunner.ParallelAction
-import com.acmerobotics.roadrunner.RaceAction
-import com.acmerobotics.roadrunner.SequentialAction
-import com.acmerobotics.roadrunner.ftc.runBlocking
-import com.acmerobotics.roadrunner.now
 import com.commonlibs.units.Pose
-import com.commonlibs.units.SleepAction
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.buttons.ButtonReader
-import org.firstinspires.ftc.teamcode.robot.CameraCore
 import org.firstinspires.ftc.teamcode.robot.Robot
-import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor
 import java.util.concurrent.TimeUnit
 
 @TeleOp
@@ -136,7 +126,7 @@ class BoringDrive : LinearOpMode(){
                 robot.shooter.goToRmp(0.0)
             }
 
-            robot.shooter.update(timeKeep.deltaTime)
+            robot.shooter.updateRpm(timeKeep.deltaTime)
 
 
 

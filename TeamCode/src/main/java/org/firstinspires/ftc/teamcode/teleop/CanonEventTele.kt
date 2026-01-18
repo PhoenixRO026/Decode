@@ -61,12 +61,12 @@ class CanonEventTele : LinearOpMode(){
             robot.intake.power = teleConfig.intakePower
             robot.transfer.targetPosition = teleConfig.targetPos
 
-            robot.shooter.update(timeKeep.deltaTime)
+            robot.shooter.updateRpm(timeKeep.deltaTime)
             robot.transfer.update(timeKeep.deltaTime)
 
             telemetry.addData("rpm", "%.2f", rpm)
             telemetry.addData("target RPM", OuttakeTest.outtakeConfig.targetRPM)
-            telemetry.addData("power shooter", "%.3f", robot.shooter.power)
+            telemetry.addData("power shooter", "%.3f", robot.shooter.powerShooter)
             telemetry.addData("pos", robot.transfer.position)
             telemetry.addData("target pos", robot.transfer.targetPosition)
             telemetry.addData("power trans", robot.transfer.power)

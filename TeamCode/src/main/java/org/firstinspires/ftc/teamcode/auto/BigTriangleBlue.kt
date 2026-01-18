@@ -8,7 +8,6 @@ import com.acmerobotics.roadrunner.MecanumKinematics
 import com.acmerobotics.roadrunner.MinVelConstraint
 import com.acmerobotics.roadrunner.ParallelAction
 import com.acmerobotics.roadrunner.SequentialAction
-import com.acmerobotics.roadrunner.SleepAction
 import com.acmerobotics.roadrunner.VelConstraint
 import com.commonlibs.units.Pose
 import com.commonlibs.units.SleepAction
@@ -209,7 +208,7 @@ class BigTriangleBlue : LinearOpMode() {
         while (b && opModeIsActive()) {
             timeKeep.resetDeltaTime()
             robot.transfer.update(timeKeep.deltaTime)
-            robot.shooter.update(timeKeep.deltaTime)
+            robot.shooter.updateRpm(timeKeep.deltaTime)
 
             val p = TelemetryPacket()
             p.fieldOverlay().operations.addAll(c.operations)

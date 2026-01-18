@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.InstantAction
+import com.acmerobotics.roadrunner.ParallelAction
 import com.acmerobotics.roadrunner.SequentialAction
 import com.acmerobotics.roadrunner.ftc.Encoder
 import com.commonlibs.units.Duration
@@ -17,67 +18,111 @@ import org.firstinspires.ftc.teamcode.library.controller.PIDController
 import kotlin.math.abs
 
 class Spindexer(
-    val motor: DcMotorEx,
-    val encoder: Encoder,
+    val servoTransfer1: Servo,
+    val servoTransfer2: Servo,
     val finger: Servo
 )
 {
     @Config
-    data object transferConfig {
-        @JvmField
-        var controller = PIDController(
-            kP = 0.003,
-            kD = 0.0001,
-            kI = 0.02,
-            stabilityThreshold = 50.0
-        )
+    data object TransferConfig {
+        @JvmField val fingerUpPosition = 0.5
+        @JvmField val fingerDownPosition = 0.8
 
-        @JvmField
-        val fingerUpPosition = 0.5
-        @JvmField
-        val fingerDownPosition = 0.9
+
     }
 
-    enum class Mode {
-        PID,
-        MANUAL
+    enum class TransferPos (val pos : Double) {
+        intake1(0.5),
+
+        intake2(0.5),
+
+        intake3(0.5),
+
+        shoot1(0.5),
+
+        shoot2(0.5),
+
+        shoot3(0.5),
     }
 
-    private var currentMode = Mode.PID
+    var currentPos = TransferPos.intake1
 
-    val position get() = encoder.getPositionAndVelocity().position - offset
+    var transferPos
+        get() = servoTransfer1.position
+        set(value) {
+            servoTransfer1.position = value
+            servoTransfer2.position = value
+        }
 
-    private var offset = encoder.getPositionAndVelocity().position
 
     var fingerPosition : Double = 0.5
         get() = finger.position
         set(value) {
             val clampedVal = value.coerceIn(0.0, 1.0)
-            //
-            // if (clampedVal == field) return
             field = clampedVal
             finger.position = field
         }
 
-    private var _power: Double
-        get() = motor.power
-        set(value) {
-            motor.power = value.coerceIn(-1.0, 1.0)
-        }
+    fun goToPos(pos : TransferPos) {
+        transferPos = pos.pos
+    }
 
-    var power
-        get() = _power
-        set(value) {
-            if (value == 0.0 && currentMode == Mode.PID) return
-            currentMode = Mode.MANUAL
-            _power = value
+    fun goToNextShoot(pos : TransferPos) {
+        if(pos == TransferPos.shoot1) {
+            goToPos(TransferPos.shoot2)
         }
+        else if(pos == TransferPos.shoot2) {
+            goToPos(TransferPos.shoot3)
+        }
+        else {
+            goToPos(TransferPos.shoot1)
+        }
+    }
+
+    fun goToNextIntake(pos : TransferPos) {
+        if(pos == TransferPos.intake1) {
+            goToPos(TransferPos.intake2)
+        }
+        else if(pos == TransferPos.intake2) {
+            goToPos(TransferPos.intake3)
+        }
+        else {
+            goToPos(TransferPos.intake1)
+        }
+    }
+
+    fun goToPosAction(pos : TransferPos) = ParallelAction(
+        InstantAction{ goToPos(pos) },
+        InstantAction { updateCurrentPos()}
+    )
+    fun goToNextShootAction() = ParallelAction(
+        InstantAction{ goToNextShoot(currentPos) },
+        InstantAction { updateCurrentPos()}
+    )
+
+    fun goToNextIntakeAction() = ParallelAction(
+        InstantAction{ goToNextIntake(currentPos) },
+        InstantAction { updateCurrentPos()}
+    )
+
 
     fun fingerUp() {
-        fingerPosition = transferConfig.fingerUpPosition
+        fingerPosition = TransferConfig.fingerUpPosition
     }
     fun fingerDown() {
-        fingerPosition = transferConfig.fingerDownPosition
+        fingerPosition = TransferConfig.fingerDownPosition
+    }
+
+    fun updateCurrentPos() {
+        currentPos = when(transferPos) {
+            TransferPos.intake1.pos -> TransferPos.intake1
+            TransferPos.intake2.pos -> TransferPos.intake2
+            TransferPos.intake3.pos -> TransferPos.intake3
+            TransferPos.shoot1.pos -> TransferPos.shoot1
+            TransferPos.shoot2.pos -> TransferPos.shoot2
+            TransferPos.shoot3.pos -> TransferPos.shoot3
+            else -> TransferPos.intake1
+        }
     }
 
     fun shootAction() = SequentialAction(
@@ -86,48 +131,10 @@ class Spindexer(
         InstantAction { fingerDown() },
         SleepAction(0.3.s)
     )
-    var targetPosition : Double = position
-        set(value) {
-            currentMode = Mode.PID
-            field = value
-        }
-
-
-    fun goToPos(pos: Double, multiplier: Int = 0, offset: Double= 0.0) {
-        targetPosition = pos * multiplier + offset
-        fingerDown()
-    }
-
-    fun goToPosAction(pos: Double, multiplier: Int = 0, offset: Double = 1.0) = object : Action {
-        var init = true
-        override fun run(p: TelemetryPacket): Boolean {
-            if (init) {
-                init = false
-                goToPos(pos, multiplier, offset)
-            }
-            p.addLine("waiting for spindexer")
-            return abs(targetPosition - position) > 5
-        }
-    }
-
-    fun update(deltaTime: Duration) {
-        if (currentMode == Mode.PID) {
-            _power = transferConfig.controller.calculate(
-                position,
-                targetPosition,
-                deltaTime
-            )
-        }
-    }
 
     fun addTelemetry(telemetry: Telemetry) {
-        telemetry.addData("transfer power", power)
-        telemetry.addData("spindexer pos", motor.currentPosition)
+        telemetry.addData("spindexer pos", transferPos)
         telemetry.addData("finger pos", fingerPosition)
         //telemetry.addData("lift current", rightMotor.getCurrent(CurrentUnit.AMPS) + leftMotor.getCurrent(CurrentUnit.AMPS))
-    }
-
-    fun resetPos() {
-        offset = encoder.getPositionAndVelocity().position
     }
 }

@@ -276,7 +276,7 @@ class SmallTriangleRed9 : LinearOpMode() {
         while (running && opModeIsActive()) {
             timeKeep.resetDeltaTime()
             robot.transfer.update(timeKeep.deltaTime)
-            robot.shooter.update(timeKeep.deltaTime)
+            robot.shooter.updateRpm(timeKeep.deltaTime)
 
             val packet = TelemetryPacket()
             packet.fieldOverlay().operations.addAll(c.operations)
