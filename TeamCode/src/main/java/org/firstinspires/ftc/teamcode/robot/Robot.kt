@@ -13,6 +13,7 @@ import com.commonlibs.units.SleepAction
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
 import com.commonlibs.units.s
+import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
@@ -33,6 +34,7 @@ class Robot(
     val transfer: Spindexer
     val intake: Intake
     val camera: CameraCore
+    val limlit: LimelightCore
 
     fun shootBall(rpm : Double) = SequentialAction(
         shooter.goToRpmAction(rpm),
@@ -163,7 +165,7 @@ class Robot(
         val finger = hardwareMap.get(Servo::class.java, "finger")
 
         val webcamColor = hardwareMap.get(WebcamName::class.java, "Webcam 1")
-        val webcamAprilTag = hardwareMap.get(WebcamName::class.java, "Webcam 2")
+        val llDevice = hardwareMap.get(Limelight3A::class.java, "limelight")
 
         val voltageSensor = hardwareMap.voltageSensor.iterator().next()
 
@@ -183,9 +185,13 @@ class Robot(
             motor = motorIntake
         )
         camera = CameraCore(
-            cameraColor = webcamColor,
-            cameraAprilTag = webcamAprilTag
+            cameraColor = webcamColor
         )
+
+        // create and start Limelight driver
+        limlit = LimelightCore(llDevice)
+        limlit.init(pipeline = 0, pollRateHz = 100)
+
 
 
     }

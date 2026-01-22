@@ -16,8 +16,7 @@ import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor
 
 
 class CameraCore(
-    val cameraColor : WebcamName,
-    val cameraAprilTag : WebcamName
+    val cameraColor : WebcamName
 ) {
     @Config
     data object CameraCoreConfig {
@@ -52,51 +51,6 @@ class CameraCore(
     // We extract the two view IDs from the array to make our lives a little easier later.
     // NB: the array is 2 long because we asked for 2 portals up above.
     val portal1ViewId: Int = viewIds[0]
-    val portal2ViewId: Int = viewIds[1]
-
-    val aprilTag = AprilTagProcessor.Builder()
-        .setSuppressCalibrationWarnings(true)
-        .setDrawTagID(CameraCoreConfig.liveView)
-        .setDrawAxes(CameraCoreConfig.liveView)
-        .setDrawCubeProjection(CameraCoreConfig.liveView)
-        .setDrawTagOutline(CameraCoreConfig.liveView)
-        .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
-        .build().apply {
-            setDecimation(CameraCoreConfig.decimation)
-        }
-
-    val visionPortal = VisionPortal.Builder()
-        .setCamera(cameraAprilTag)
-        .setCameraResolution(Size(CameraCoreConfig.aprilTagWidth, CameraCoreConfig.aprilTagHeight))
-        .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-        .addProcessor(aprilTag)
-        .setLiveViewContainerId(portal2ViewId)
-        //.enableLiveView(CameraCoreConfig.liveView)
-        .build()
-
-    private var id = 0
-
-    fun detectAprilTagCase() : Int {
-        val currentDetections: List<AprilTagDetection> = aprilTag.detections
-        for (detection in currentDetections) {
-            if (detection.metadata != null) {
-                if (detection.id > 20 && detection.id < 24) {
-                    id = detection.id
-                }
-            }
-        }
-        return id
-    }
-
-    val detectedCase = detectAprilTagCase()
-
-    fun stopStream() {
-        visionPortal.stopStreaming()
-    }
-
-    fun resumeStream() {
-        visionPortal.resumeStreaming()
-    }
 
     val colorSensor =
         PredominantColorProcessor.Builder()

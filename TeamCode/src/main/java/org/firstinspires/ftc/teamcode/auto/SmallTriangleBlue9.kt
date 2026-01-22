@@ -17,6 +17,7 @@ import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.library.TimeKeep
+import org.firstinspires.ftc.teamcode.robot.AutoCase
 import org.firstinspires.ftc.teamcode.robot.Robot
 
 @Autonomous
@@ -248,16 +249,16 @@ class SmallTriangleBlue9 : LinearOpMode() {
                 .strafeToLinearHeading(smallTrianglePose)}
 
         while (opModeInInit()) {
-            telemetry.addData("case id", robot.camera.detectAprilTagCase())
+            telemetry.addData("case id", robot.limlit.detectAutoCase())
             telemetry.update()
             sleep(20)
         }
 
         val action = SequentialAction(
             startAction,
-            when (robot.camera.detectAprilTagCase()) {
-                21 -> actionGPP
-                22 -> actionPGP
+            when (robot.limlit.detectAutoCase()) {
+                AutoCase.CASE_21 -> actionGPP
+                AutoCase.CASE_22 -> actionPGP
                 else -> actionPPG
             }
         )
@@ -268,7 +269,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
 
         var running = true
 
-        telemetry.addData("True case: ",robot.camera.detectAprilTagCase())
+        telemetry.addData("True case: ",robot.limlit.detectAutoCase())
 
         while (running && opModeIsActive()) {
             timeKeep.resetDeltaTime()
@@ -283,7 +284,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
 
             dash.sendTelemetryPacket(packet)
 
-            telemetry.addData("case id", robot.camera.detectAprilTagCase())
+            telemetry.addData("case id", robot.limlit.detectAutoCase())
             telemetry.addData("color", robot.camera.colorSensor.getAnalysis())
             telemetry.addData("rpm", robot.shooter.rpm)
             telemetry.update()

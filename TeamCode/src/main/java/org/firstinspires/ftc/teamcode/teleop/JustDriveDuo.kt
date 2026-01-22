@@ -63,7 +63,7 @@ class JustDriveDuo : LinearOpMode(){
         while (opModeIsActive()) {
             timeKeep.resetDeltaTime()
             buttons.forEach { it.readValue() }
-            robot.drive.updatePoseEstimate()
+            robot.drive.updatePoseEstimateOdo()
 
             /// Drive
 

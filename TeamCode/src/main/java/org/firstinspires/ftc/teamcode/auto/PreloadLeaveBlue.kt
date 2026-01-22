@@ -18,6 +18,7 @@ import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.library.TimeKeep
+import org.firstinspires.ftc.teamcode.robot.AutoCase
 import org.firstinspires.ftc.teamcode.robot.Robot
 
 @Autonomous
@@ -215,14 +216,14 @@ class PreloadLeaveBlue : LinearOpMode() {
         )
 
         while (opModeInInit()) {
-            telemetry.addData("case id", robot.camera.detectAprilTagCase())
+            telemetry.addData("case id", robot.limlit.detectAutoCase())
             telemetry.update()
             sleep(20)
         }
 
-        val action = when (robot.camera.detectAprilTagCase()) {
-            21 -> actionGPP
-            22 -> actionPGP
+        val action = when (robot.limlit.detectAutoCase()) {
+            AutoCase.CASE_21 -> actionGPP
+            AutoCase.CASE_22 -> actionPGP
             else -> actionPPG
         }
 
@@ -232,7 +233,7 @@ class PreloadLeaveBlue : LinearOpMode() {
 
         var running = true
 
-        telemetry.addData("True case: ",robot.camera.detectAprilTagCase())
+        telemetry.addData("True case: ",robot.limlit.detectAutoCase())
 
         while (running && opModeIsActive()) {
             timeKeep.resetDeltaTime()
@@ -247,7 +248,7 @@ class PreloadLeaveBlue : LinearOpMode() {
 
             dash.sendTelemetryPacket(packet)
 
-            telemetry.addData("case id", robot.camera.detectAprilTagCase())
+            telemetry.addData("case id", robot.limlit.detectAutoCase())
             telemetry.addData("color", robot.camera.colorSensor.getAnalysis())
             telemetry.addData("rpm", robot.shooter.rpm)
             telemetry.update()

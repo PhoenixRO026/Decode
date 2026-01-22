@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.Trajectory
+import com.acmerobotics.roadrunner.Vector2d
 import com.commonlibs.units.Pose
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
@@ -78,7 +79,7 @@ class InterestingDrive : LinearOpMode(){
         while (opModeIsActive()) {
             timeKeep.resetDeltaTime()
             buttons.forEach { it.readValue() }
-            robot.drive.updatePoseEstimate()
+            robot.drive.updatePoseEstimateOdo()
 
 
             if (!goingToTarget) {
@@ -98,63 +99,16 @@ class InterestingDrive : LinearOpMode(){
 
                     val allowedIds = setOf(20, 24) // change this to the exact IDs you want (e.g. setOf(20,24))
 
-                    driveAction = object : Action {
-
-                        // === TUNABLES ===
-                        private val kP = 0.003          // proportional gain
-                        private val maxRot = 0.7         // max rotation power
-                        private val deadbandPx = 15    // pixels from center considered "aligned"
-                        private val imageCenterX = 1280.0 / 2.0  // use your aprilTag camera resolution / 2
-
-                        override fun run(p: TelemetryPacket): Boolean {
-                            // get all detections and filter to allowed IDs
-                            val all = robot.camera.aprilTag.detections
-                            val filtered = all.filter { det ->
-                                try {
-                                    allowedIds.contains(det.id)
-                                } catch (e: Exception) {
-                                    false
-                                }
-                            }
-
-                            p.put("allTags", all.size)
-                            p.put("allowedTags", filtered.size)
-
-                            // if no allowed tag -> keep scanning (rotate slowly)
-                            if (filtered.isEmpty()) {
-                                robot.drive.driveFieldCentric(0.0, 0.0, 0.25)
-                                p.put("state", "scanning")
-                                return true
-                            }
-
-                            // use the first allowed detection (you can pick the largest/closest if you prefer)
-                            val tag = filtered[0]
-                            val tagX = try { tag.center.x } catch (e: Exception) { imageCenterX }
-                            val errorPx = tagX - imageCenterX
-
-                            p.put("tagId", tag.id)
-                            p.put("tagX", tagX)
-                            p.put("errorPx", errorPx)
-
-                            // If horizontally centered -> stop
-                            if (kotlin.math.abs(errorPx) < deadbandPx) {
-                                robot.drive.driveFieldCentric(0.0, 0.0, 0.0)
-                                p.put("state", "LOCKED")
-                                return false // action complete
-                            }
-
-                            // Proportional rotation
-                            var rot = errorPx * kP
-                            rot = rot.coerceIn(-maxRot, maxRot)
-
-                            robot.drive.driveFieldCentric(0.0, 0.0, rot)
-                            p.put("rotCmd", rot)
-
-                            return true
-                        }
-
-                        override fun preview(c: com.acmerobotics.dashboard.canvas.Canvas) { /* no preview */ }
-                    }
+                    driveAction = robot.drive
+                        .actionBuilder(robot.drive.mecanumDrive.localizer.getPose().pose)
+                        .strafeToLinearHeading(
+                            Vector2d(
+                                smallTrianglePose.position.x.asInch,
+                                smallTrianglePose.position.y.asInch
+                            ),
+                            smallTrianglePose.heading.asRad
+                        )
+                        .build()
 
                     goingToTarget = true
                 }

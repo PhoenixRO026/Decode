@@ -1,18 +1,15 @@
 package org.firstinspires.ftc.teamcode.robot
 
 import com.acmerobotics.dashboard.config.Config
+import com.acmerobotics.roadrunner.Pose2d
 import com.acmerobotics.roadrunner.PoseVelocity2d
-import com.acmerobotics.roadrunner.SequentialAction
 import com.acmerobotics.roadrunner.Vector2d
 import com.commonlibs.roadrunnerext.ex
 import com.commonlibs.units.Duration
 import com.commonlibs.units.Pose
-import com.commonlibs.units.deg
-import com.commonlibs.units.pose
 import com.commonlibs.units.rotate
 import com.commonlibs.units.s
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
-import java.lang.Thread.sleep
 
 class Drive(
     val mecanumDrive: MecanumDrive
@@ -36,8 +33,38 @@ class Drive(
         headingOffset = mecanumDrive.localizer.pose.heading.toDouble()
     }
 
-    fun updatePoseEstimate() {
+    fun updatePoseEstimateOdo() {
         mecanumDrive.updatePoseEstimate()
+    }
+
+    fun updatePoseEstimateTele(bp: BotPose?, preserveHeading: Boolean = true) {
+        if (bp == null) {
+            mecanumDrive.updatePoseEstimate()
+            return
+        }
+
+        /**
+         * Update pose during teleop using vision (or fall back to odometry).
+         *
+         * @param bp vision pose (null -> just run odometry)
+         * @param preserveHeading when true (default) adjust headingOffset so field-centric
+         *                        controls keep the same heading reference (no jerk). When false,
+         *                        overwrite localizer pose directly (use this before running
+         *                        an automated movement/rotation that needs exact pose).
+         */
+        if (preserveHeading) {
+            // preserve the *driver-facing* heading used by field-centric control
+            val oldHeading = mecanumDrive.localizer.getPose().heading.toDouble()
+            // write vision pose into localizer
+            mecanumDrive.localizer.setPose(Pose2d(bp.xMeters, bp.yMeters, bp.headingRad))
+            val newHeading = mecanumDrive.localizer.getPose().heading.toDouble()
+            // if localizer heading changed, update headingOffset so computed `heading` stays the same
+            val delta = newHeading - oldHeading
+            headingOffset += delta
+        } else {
+            // caller wants the localizer to match vision exactly (no offset compensation)
+            mecanumDrive.localizer.setPose(Pose2d(bp.xMeters, bp.yMeters, bp.headingRad))
+        }
     }
 
 

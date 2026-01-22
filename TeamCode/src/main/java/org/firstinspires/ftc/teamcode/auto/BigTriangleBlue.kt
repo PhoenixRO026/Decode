@@ -18,6 +18,7 @@ import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.library.TimeKeep
+import org.firstinspires.ftc.teamcode.robot.AutoCase
 import org.firstinspires.ftc.teamcode.robot.Robot
 
 @Autonomous
@@ -193,16 +194,16 @@ class BigTriangleBlue : LinearOpMode() {
             .turnTo(225.deg)
             .build()
 
-        val action = when (robot.camera.detectAprilTagCase()) {
-            21 -> actionGPP
-            22 -> actionPGP
+        val action = when (robot.limlit.detectAutoCase()) {
+            AutoCase.CASE_21 -> actionGPP
+            AutoCase.CASE_22 -> actionPGP
             else -> actionPPG
         }
 
         val dash = FtcDashboard.getInstance()
         val c = Canvas()
         action.preview(c)
-        telemetry.addData("True case: ",robot.camera.detectAprilTagCase())
+        telemetry.addData("True case: ", robot.limlit.detectAutoCase())
         telemetry.update()
 
         var b = true
