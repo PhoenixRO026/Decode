@@ -180,6 +180,8 @@ class InterestingDrive : LinearOpMode(){
                 intakeAction = null
             }
             runActions()
+            telemetry.addData("heading error", robot.limelight.headingErrorDeg)
+            telemetry.addData("heading button", snipe)
             telemetry.addData("Best Match", robot.camera.sensorColor.closestSwatch)
             telemetry.addData("pos", robot.transfer.position)
             telemetry.addData("target pos", robot.transfer.targetPosition)

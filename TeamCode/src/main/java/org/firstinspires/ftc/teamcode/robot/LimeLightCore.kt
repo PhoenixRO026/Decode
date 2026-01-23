@@ -57,36 +57,52 @@ class LimeLightCore(
     }
 
     fun updateHeadingError() {
-
-        val result: LLResult? = try {
-            camera.getLatestResult()
-        } catch (e: Exception) {
-            null
-        }
-
-        if (result == null || !result.isValid()) {
+        val result = camera.latestResult ?: run {
             headingErrorDeg = 0.0
             return
         }
 
-        val fiducials = result.getFiducialResults() ?: emptyList<LLResultTypes.FiducialResult>()
-
-        // prefer a fiducial with an id in 20..24
-        val chosen = fiducials.firstOrNull { fr ->
-            val id = try { fr.getFiducialId() } catch (e: Exception) { -1 }
-            id in 20..24
-        }
+        val fid = result.fiducialResults
+            ?.firstOrNull { it.fiducialId in listOf(20, 24) }
 
         headingErrorDeg = when {
-            chosen != null -> {
-                // use the per-target X degrees
-                try { chosen.getTargetXDegrees() } catch (e: Exception) { result.getTx() }
-            }
-            else -> {
-                // fallback to LLResult tx (primary target)
-                try { result.getTx() } catch (e: Exception) { 0.0 }
-            }
+            fid != null -> fid.targetXDegrees
+            else -> result.tx
         }
+    }
+
+    fun updateHeadingError_0() {
+
+
+//        val result: LLResult? = try {
+//            camera.getLatestResult()
+//        } catch (e: Exception) {
+//            null
+//        }
+//
+//        if (result == null || !result.isValid()) {
+//            headingErrorDeg = 0.0
+//            return
+//        }
+//
+//        val fiducials = result.getFiducialResults() ?: emptyList<LLResultTypes.FiducialResult>()
+//
+//        // prefer a fiducial with an id in 20..24
+//        val chosen = fiducials.firstOrNull { fr ->
+//            val id = try { fr.getFiducialId() } catch (e: Exception) { -1 }
+//            id in 20..24
+//        }
+//
+//        headingErrorDeg = when {
+//            chosen != null -> {
+//                // use the per-target X degrees
+//                try { chosen.getTargetXDegrees() } catch (e: Exception) { result.getTx() }
+//            }
+//            else -> {
+//                // fallback to LLResult tx (primary target)
+//                try { result.getTx() } catch (e: Exception) { 0.0 }
+//            }
+//        }
     }
 
     fun computeHeadingPower(dt: Duration): Double {
@@ -94,14 +110,13 @@ class LimeLightCore(
 
         val raw = LimeLightConfig.controller.calculate(0.0, error, dt)
 
-        // clamp to configured max output
         return raw.coerceIn(-LimeLightConfig.maxOutput, LimeLightConfig.maxOutput)
     }
 
     fun driveWithHeading(forward: Double = 0.0, left: Double = 0.0, dt: Duration) {
         updateHeadingError()
 
-        val rotate = computeHeadingPower(dt)
+        val rotate = -computeHeadingPower(dt)
 
         drive.driveFieldCentric(forward, left, rotate)
     }
