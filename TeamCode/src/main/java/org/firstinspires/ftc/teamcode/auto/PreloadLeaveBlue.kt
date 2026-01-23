@@ -18,7 +18,7 @@ import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.library.TimeKeep
-import org.firstinspires.ftc.teamcode.robot.AutoCase
+import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
 import org.firstinspires.ftc.teamcode.robot.Robot
 
 @Autonomous
@@ -68,45 +68,6 @@ class PreloadLeaveBlue : LinearOpMode() {
 
             robot.shootBalls(rpmFar, 0),
 
-//            robot.intake.startIntakeAction(),
-//            robot.drive.actionBuilder(smallTrianglePose)
-//                .strafeToLinearHeading(rightIntakePose)
-//                .setTangent(90.deg)
-//                .afterTime(0.s, robot.intakeBalls(0))
-//                .lineToY(-42.inch, slowSpeed)
-//                .afterTime(0.0, robot.intake.stopIntakeAction())
-//                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
-//                .strafeToLinearHeading(smallTrianglePose)
-//                .build(),
-//
-//            robot.shootBalls(rpmFar, 0),
-//
-//            robot.intake.startIntakeAction(),
-//            robot.drive.actionBuilder(smallTrianglePose)
-//                .strafeToLinearHeading(middleIntakePose)
-//                .setTangent(90.deg)
-//                .afterTime(0.s, robot.intakeBalls(0))
-//                .lineToY(-42.inch, slowSpeed)
-//                .afterTime(0.0, robot.intake.stopIntakeAction())
-//                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
-//                .strafeToLinearHeading(bigTrianglePose)
-//                .build(),
-//
-//            robot.shootBalls(rpmClose, 1),
-//
-//            robot.intake.startIntakeAction(),
-//            robot.drive.actionBuilder(bigTrianglePose)
-//                .strafeToLinearHeading(leftIntakePose)
-//                .setTangent(90.deg)
-//                .afterTime(0.s, robot.intakeBalls(0))
-//                .lineToY(-42.inch, slowSpeed)
-//                .afterTime(0.0, robot.intake.stopIntakeAction())
-//                .strafeToLinearHeading(bigTrianglePose)
-//                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
-//                .build(),
-//
-//            robot.shootBalls(rpmClose, 2),
-
             robot.drive.actionBuilder(smallTrianglePose)
                 .strafeTo(endPose.position)
                 .build()
@@ -119,43 +80,6 @@ class PreloadLeaveBlue : LinearOpMode() {
                 .build(),
             robot.drive.correctionAction(smallTrianglePose, 0.75.s),
             robot.shootBalls(rpmFar, 2),
-
-
-//            robot.intake.startIntakeAction(),
-//            robot.drive.actionBuilder(smallTrianglePose)
-//                .strafeToLinearHeading(rightIntakePose)
-//                .setTangent(90.deg)
-//                .afterTime(0.s, robot.intakeBalls(0))
-//                .lineToY(-42.inch, slowSpeed)
-//                .afterTime(0.0, robot.intake.stopIntakeAction())
-//                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
-//                .strafeToLinearHeading(smallTrianglePose)
-//                .build(),
-//            robot.shootBalls(rpmFar,2),
-//
-//            robot.intake.startIntakeAction(),
-//            robot.drive.actionBuilder(smallTrianglePose)
-//                .strafeToLinearHeading(middleIntakePose)
-//                .setTangent(90.deg)
-//                .afterTime(0.s, robot.intakeBalls(0))
-//                .lineToY(-42.inch, slowSpeed)
-//                .afterTime(0.0, robot.intake.stopIntakeAction())
-//                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
-//                .strafeToLinearHeading(bigTrianglePose)
-//                .build(),
-//            robot.shootBalls(rpmClose, 0),
-//
-//            robot.intake.startIntakeAction(),
-//            robot.drive.actionBuilder(bigTrianglePose)
-//                .strafeToLinearHeading(leftIntakePose)
-//                .setTangent(90.deg)
-//                .afterTime(0.s, robot.intakeBalls(0))
-//                .lineToY(-42.inch, slowSpeed)
-//                .afterTime(0.0, robot.intake.stopIntakeAction())
-//                .strafeToLinearHeading(bigTrianglePose)
-//                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
-//                .build(),
-//            robot.shootBalls(rpmClose,1),
 
             robot.drive.actionBuilder(smallTrianglePose)
                 .strafeTo(endPose.position)
@@ -171,61 +95,31 @@ class PreloadLeaveBlue : LinearOpMode() {
 
             robot.shootBalls(rpmFar, 1),
 
-//            robot.intake.startIntakeAction(),
-//            robot.drive.actionBuilder(smallTrianglePose)
-//                .strafeToLinearHeading(rightIntakePose)
-//                .setTangent(90.deg)
-//                .afterTime(0.s, robot.intakeBalls(0))
-//                .lineToY(-42.inch, slowSpeed)
-//                .afterTime(0.0, robot.intake.stopIntakeAction())
-//                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
-//                .strafeToLinearHeading(smallTrianglePose)
-//                .build(),
-//
-//            robot.shootBalls(rpmFar, 1),
-//
-//            robot.intake.startIntakeAction(),
-//            robot.drive.actionBuilder(smallTrianglePose)
-//                .strafeToLinearHeading(middleIntakePose)
-//                .setTangent(90.deg)
-//                .afterTime(0.s, robot.intakeBalls(0))
-//                .lineToY(-42.inch, slowSpeed)
-//                .afterTime(0.0, robot.intake.stopIntakeAction())
-//                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
-//                .strafeToLinearHeading(bigTrianglePose)
-//                .build(),
-//
-//            robot.shootBalls(rpmClose, 2),
-//
-//            robot.intake.startIntakeAction(),
-//            robot.drive.actionBuilder(bigTrianglePose)
-//                .strafeToLinearHeading(leftIntakePose)
-//                .setTangent(90.deg)
-//                .afterTime(0.s, robot.intakeBalls(0))
-//                .lineToY(-42.inch, slowSpeed)
-//                .afterTime(0.0, robot.intake.stopIntakeAction())
-//                .strafeToLinearHeading(bigTrianglePose)
-//                .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
-//                .build(),
-//
-//            robot.shootBalls(rpmClose, 0),
-
             robot.drive.actionBuilder(smallTrianglePose)
                 .strafeTo(endPose.position)
                 .build()
         )
 
+        val startAction =  InstantAction {
+            robot.drive.actionBuilder(startPose)
+                .strafeToLinearHeading(bigTrianglePose)}
+
         while (opModeInInit()) {
-            telemetry.addData("case id", robot.limlit.detectAutoCase())
+            robot.limelight.updateCase()
+            telemetry.addData("case id", robot.limelight.currentCase)
             telemetry.update()
             sleep(20)
         }
 
-        val action = when (robot.limlit.detectAutoCase()) {
-            AutoCase.CASE_21 -> actionGPP
-            AutoCase.CASE_22 -> actionPGP
-            else -> actionPPG
-        }
+        val action = SequentialAction(
+            startAction,
+            InstantAction{robot.limelight.updateCase()},
+            when (robot.limelight.currentCase) {
+                AutoCase.GPP -> actionGPP
+                AutoCase.PGP -> actionPGP
+                else -> actionPPG
+            }
+        )
 
         val dash = FtcDashboard.getInstance()
         val c = Canvas()
@@ -233,7 +127,7 @@ class PreloadLeaveBlue : LinearOpMode() {
 
         var running = true
 
-        telemetry.addData("True case: ",robot.limlit.detectAutoCase())
+        telemetry.addData("True case: ",robot.limelight.currentCase)
 
         while (running && opModeIsActive()) {
             timeKeep.resetDeltaTime()
@@ -248,7 +142,7 @@ class PreloadLeaveBlue : LinearOpMode() {
 
             dash.sendTelemetryPacket(packet)
 
-            telemetry.addData("case id", robot.limlit.detectAutoCase())
+            telemetry.addData("case id", robot.limelight.currentCase)
             telemetry.addData("color", robot.camera.colorSensor.getAnalysis())
             telemetry.addData("rpm", robot.shooter.rpm)
             telemetry.update()

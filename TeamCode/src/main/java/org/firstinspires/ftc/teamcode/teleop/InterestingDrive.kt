@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.Trajectory
-import com.acmerobotics.roadrunner.Vector2d
 import com.commonlibs.units.Pose
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
@@ -18,6 +17,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.buttons.ButtonReader
+import org.firstinspires.ftc.teamcode.robot.LimeLightCore.LimeLightConfig.headingToleranceDeg
 import org.firstinspires.ftc.teamcode.robot.Robot
 import java.util.concurrent.TimeUnit
 
@@ -62,7 +62,7 @@ class InterestingDrive : LinearOpMode(){
         val snipe = ButtonReader {gamepad1.x}
 
 
-        val buttons = listOf(shootRight, shootLeft, highRpm, lowRpm, stopShooter, dpadRight, spew, stopButton)
+        val buttons = listOf(shootRight, shootLeft, highRpm, lowRpm, stopShooter, dpadRight, spew, stopButton, snipe)
 
 
         robot.transfer.finger.position = 1.0
@@ -79,10 +79,28 @@ class InterestingDrive : LinearOpMode(){
         while (opModeIsActive()) {
             timeKeep.resetDeltaTime()
             buttons.forEach { it.readValue() }
-            robot.drive.updatePoseEstimateOdo()
 
+
+
+            val JOY_CANCEL_DEADBAND = 0.08       // if any stick magnitude > this -> cancel snipe
+            val SCAN_ROT_SPEED = 0.15           // slow scan rotation when no tag seen
+            val kP = 0.002                       // proportional gain (pixels -> rot)
+            val maxRot = 0.3
+
+            val deadbandPx = 1                  // pixels from center considered aligned
+            val imageCenterX = 1280.0 / 2.0     // adjust to your camera width/2
+            val allowedIds = setOf(20, 24)      // change to the exact IDs you want
+
+            fun driverMoved(): Boolean {
+                return kotlin.math.abs(gamepad1.left_stick_x)  > JOY_CANCEL_DEADBAND ||
+                        kotlin.math.abs(gamepad1.left_stick_y)  > JOY_CANCEL_DEADBAND ||
+                        kotlin.math.abs(gamepad1.right_stick_x) > JOY_CANCEL_DEADBAND ||
+                        kotlin.math.abs(gamepad1.right_trigger) >= 0.2 ||
+                        kotlin.math.abs(gamepad1.left_trigger)  >= 0.2
+            }
 
             if (!goingToTarget) {
+                // regular manual control
                 if (gamepad1.y) {
                     robot.drive.resetFieldCentric()
                 }
@@ -93,31 +111,66 @@ class InterestingDrive : LinearOpMode(){
                     -gamepad1.right_stick_x.toDouble()
                 )
 
-                // snipe: start a scan-and-lock action that rotates until the AprilTag detections list is non-empty
-                // snipe: start a scan-and-lock action that rotates until a goal AprilTag (IDs 20..24) is centered horizontally
+                // start snipe action
+                // start snipe action (Limelight PID based)
                 if (snipe.wasJustPressed()) {
+                    robot.limelight.resetPID()
 
-                    val allowedIds = setOf(20, 24) // change this to the exact IDs you want (e.g. setOf(20,24))
+                    driveAction = object : Action {
 
-                    driveAction = robot.drive
-                        .actionBuilder(robot.drive.mecanumDrive.localizer.getPose().pose)
-                        .strafeToLinearHeading(
-                            Vector2d(
-                                smallTrianglePose.position.x.asInch,
-                                smallTrianglePose.position.y.asInch
-                            ),
-                            smallTrianglePose.heading.asRad
-                        )
-                        .build()
+                        override fun run(p: TelemetryPacket): Boolean {
+
+                            // update limelight heading error
+                            robot.limelight.updateHeading()
+
+                            val headingErrorDeg = robot.limelight.headingErrorDeg
+
+                            val rotationCommand = robot.limelight
+                                .headingPower()
+                                .coerceIn(-0.35, 0.35)
+
+                            p.put("headingErrorDeg", headingErrorDeg)
+                            p.put("rotationCmd", rotationCommand)
+
+                            // ✅ CORRECT alignment check using tolerance
+                            if (kotlin.math.abs(headingErrorDeg) <= headingToleranceDeg) {
+                                robot.drive.driveFieldCentric(0.0, 0.0, 0.0)
+                                p.put("state", "LOCKED")
+                                return false // action complete
+                            }
+
+                            // rotate robot using PID output
+                            robot.drive.driveFieldCentric(
+                                forward = 0.0,
+                                left = 0.0,
+                                rotate = rotationCommand
+                            )
+
+                            p.put("state", "AIMING")
+                            return true
+                        }
+
+                        override fun preview(c: com.acmerobotics.dashboard.canvas.Canvas) {}
+                    }
+
 
                     goingToTarget = true
                 }
-                else {
-                    // running an auto Action: run it each loop
+
+            }
+
+
+// If an action is active, run it and allow joystick override
+            if (goingToTarget) {
+                // immediate driver cancel
+                if (driverMoved()) {
+                    driveAction = null
+                    goingToTarget = false
+                } else {
                     driveAction?.let {
                         val p = TelemetryPacket()
                         if (!it.run(p)) {
-                            // action finished
+                            // action finished normally
                             driveAction = null
                             goingToTarget = false
                         }
@@ -125,6 +178,7 @@ class InterestingDrive : LinearOpMode(){
                     }
                 }
             }
+
 
             /// Transfer
 
@@ -198,7 +252,8 @@ class InterestingDrive : LinearOpMode(){
             telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
             telemetry.addData("fps", 1.s / timeKeep.deltaTime)
             telemetry.addData("multiplier", InterestingDriveConfig.multiplier)
-            telemetry.addData("action", intakeAction)
+            telemetry.addData("action intake: ", intakeAction)
+            telemetry.addData("action drive: ", driveAction)
             telemetry.update()
 
             robot.shooter.update(timeKeep.deltaTime)

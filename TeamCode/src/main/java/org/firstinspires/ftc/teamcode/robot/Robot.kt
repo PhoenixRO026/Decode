@@ -34,7 +34,8 @@ class Robot(
     val transfer: Spindexer
     val intake: Intake
     val camera: CameraCore
-    val limlit: LimelightCore
+    val limelight: LimeLightCore
+
 
     fun shootBall(rpm : Double) = SequentialAction(
         shooter.goToRpmAction(rpm),
@@ -165,9 +166,8 @@ class Robot(
         val finger = hardwareMap.get(Servo::class.java, "finger")
 
         val webcamColor = hardwareMap.get(WebcamName::class.java, "Webcam 1")
-        val llDevice = hardwareMap.get(Limelight3A::class.java, "limelight")
-
-        val voltageSensor = hardwareMap.voltageSensor.iterator().next()
+        val limlit = hardwareMap.get(Limelight3A::class.java, "limelight")
+            val voltageSensor = hardwareMap.voltageSensor.iterator().next()
 
         drive = Drive(mecanumDrive)
         shooter = Shooter(
@@ -187,11 +187,9 @@ class Robot(
         camera = CameraCore(
             cameraColor = webcamColor
         )
-
-        // create and start Limelight driver
-        limlit = LimelightCore(llDevice)
-        limlit.init(pipeline = 0, pollRateHz = 100)
-
+        limelight = LimeLightCore(
+            camera = limlit
+        )
 
 
     }

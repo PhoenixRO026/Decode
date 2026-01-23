@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.canvas.Canvas
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.AngularVelConstraint
+import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.MecanumKinematics
 import com.acmerobotics.roadrunner.MinVelConstraint
 import com.acmerobotics.roadrunner.ParallelAction
@@ -18,8 +19,8 @@ import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.library.TimeKeep
-import org.firstinspires.ftc.teamcode.robot.AutoCase
 import org.firstinspires.ftc.teamcode.robot.Robot
+import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
 
 @Autonomous
 class BigTriangleBlue : LinearOpMode() {
@@ -194,16 +195,31 @@ class BigTriangleBlue : LinearOpMode() {
             .turnTo(225.deg)
             .build()
 
-        val action = when (robot.limlit.detectAutoCase()) {
-            AutoCase.CASE_21 -> actionGPP
-            AutoCase.CASE_22 -> actionPGP
-            else -> actionPPG
+        val startAction =  InstantAction {
+            robot.drive.actionBuilder(startPose)
+                .strafeToLinearHeading(bigTrianglePose)}
+
+        while (opModeInInit()) {
+            robot.limelight.updateCase()
+            telemetry.addData("case id", robot.limelight.currentCase)
+            telemetry.update()
+            sleep(20)
         }
+
+        val action = SequentialAction(
+            startAction,
+            InstantAction{robot.limelight.updateCase()},
+            when (robot.limelight.currentCase) {
+                AutoCase.GPP -> actionGPP
+                AutoCase.PGP -> actionPGP
+                else -> actionPPG
+            }
+        )
 
         val dash = FtcDashboard.getInstance()
         val c = Canvas()
         action.preview(c)
-        telemetry.addData("True case: ", robot.limlit.detectAutoCase())
+        telemetry.addData("True case: ", robot.limelight.currentCase)
         telemetry.update()
 
         var b = true
