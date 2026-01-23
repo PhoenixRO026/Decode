@@ -4,16 +4,27 @@ import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.hardware.limelightvision.LLResult
 import com.qualcomm.hardware.limelightvision.LLResultTypes
 import com.qualcomm.hardware.limelightvision.Limelight3A
-import kotlin.math.abs
+import org.firstinspires.ftc.teamcode.library.controller.PIDController
+import org.firstinspires.ftc.teamcode.library.controller.LowPassFilter
+import com.commonlibs.units.Duration
 
 class LimeLightCore(
-    val camera: Limelight3A
+    val camera: Limelight3A,
+    val drive: Drive
 ) {
     @Config
     data object LimeLightConfig {
-        @JvmField var kP = 0.015
-        @JvmField var kI = 0.0
-        @JvmField var kD = 0.001
+        @JvmField
+        var controller = PIDController(
+            0.015,
+            0.0,
+            0.001,
+            0.0,
+            newTargetReset = true,
+            zeroTargetReset = true,
+            derivativeFilter = LowPassFilter(0.0),
+            stabilityThreshold = 0.0
+        )
         @JvmField var headingToleranceDeg = 1.0
         @JvmField var maxOutput = 0.6
     }
@@ -25,9 +36,6 @@ class LimeLightCore(
 
     var headingErrorDeg: Double = 0.0
         private set
-
-    private var integral = 0.0
-    private var lastError = 0.0
 
 
     fun setPipeline(index: Int) {
@@ -66,7 +74,8 @@ class LimeLightCore(
             AutoCase.UNKNOWN
         }
     }
-    fun updateHeading() {
+
+    fun updateHeadingError() {
         setPipeline(1)
 
         val result: LLResult? = try {
@@ -100,27 +109,20 @@ class LimeLightCore(
         }
     }
 
-
-    fun headingPower(): Double {
+    fun computeHeadingPower(dt: Duration): Double {
         val error = headingErrorDeg
 
-        if (abs(error) <= LimeLightConfig.headingToleranceDeg) {
-            integral = 0.0
-            lastError = error
-            return 0.0
-        }
+        val raw = LimeLightConfig.controller.calculate(0.0, error, dt)
 
-        integral += error
-        val derivative = error - lastError
-        lastError = error
-
-        var output = error * LimeLightConfig.kP + integral * LimeLightConfig.kI + derivative * LimeLightConfig.kD
-        output = output.coerceIn(-LimeLightConfig.maxOutput, LimeLightConfig.maxOutput)
-        return output
+        // clamp to configured max output
+        return raw.coerceIn(-LimeLightConfig.maxOutput, LimeLightConfig.maxOutput)
     }
 
-    fun resetPID() {
-        integral = 0.0
-        lastError = 0.0
+    fun driveWithHeading(forward: Double = 0.0, left: Double = 0.0, dt: Duration) {
+        updateHeadingError()
+
+        val rotate = computeHeadingPower(dt)
+
+        drive.driveFieldCentric(forward, left, rotate)
     }
 }

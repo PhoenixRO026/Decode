@@ -167,7 +167,9 @@ class Robot(
 
         val webcamColor = hardwareMap.get(WebcamName::class.java, "Webcam 1")
         val limlit = hardwareMap.get(Limelight3A::class.java, "limelight")
-            val voltageSensor = hardwareMap.voltageSensor.iterator().next()
+        limlit.setPollRateHz(100)
+        limlit.start()
+        val voltageSensor = hardwareMap.voltageSensor.iterator().next()
 
         drive = Drive(mecanumDrive)
         shooter = Shooter(
@@ -188,7 +190,8 @@ class Robot(
             cameraColor = webcamColor
         )
         limelight = LimeLightCore(
-            camera = limlit
+            camera = limlit,
+            drive = drive
         )
 
 
