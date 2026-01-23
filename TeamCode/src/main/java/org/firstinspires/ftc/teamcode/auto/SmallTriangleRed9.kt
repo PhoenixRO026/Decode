@@ -47,6 +47,8 @@ class SmallTriangleRed9 : LinearOpMode() {
         val robot = Robot(hardwareMap, startPose)
         val timeKeep = TimeKeep()
 
+        robot.limelight.setPipeline(0)
+
         robot.transfer.fingerDown()
 
         val kinematics = MecanumKinematics(
@@ -294,6 +296,7 @@ class SmallTriangleRed9 : LinearOpMode() {
                 .strafeToLinearHeading(smallTrianglePose)}
 
         while (opModeInInit()) {
+            robot.limelight.updateCase()
             telemetry.addData("case id", robot.limelight.currentCase)
             telemetry.update()
             sleep(20)

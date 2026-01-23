@@ -43,40 +43,20 @@ class LimeLightCore(
     }
 
     fun updateCase() {
-        setPipeline(0)
+        val id = camera.latestResult
+            ?.fiducialResults
+            ?.firstOrNull { it.fiducialId in listOf(21, 22, 23) }
+            ?.fiducialId
 
-        val result: LLResult? = try {
-            camera.getLatestResult()
-        } catch (e: Exception) {
-            null
-        }
-
-        if (result == null || !result.isValid()) {
-            currentCase = AutoCase.UNKNOWN
-            return
-        }
-
-        val fiducials: List<LLResultTypes.FiducialResult> = result.getFiducialResults() ?: emptyList()
-
-        val found = fiducials.firstOrNull { fr ->
-            val id = try { fr.getFiducialId() } catch (e: Exception) { -1 }
-            id in 21..23
-        }
-
-        currentCase = if (found != null) {
-            when (found.getFiducialId()) {
-                21 -> AutoCase.PPG
-                22 -> AutoCase.PGP
-                23 -> AutoCase.GPP
-                else -> AutoCase.UNKNOWN
-            }
-        } else {
-            AutoCase.UNKNOWN
+        currentCase = when (id) {
+            21 -> AutoCase.GPP
+            22 -> AutoCase.PGP
+            23 -> AutoCase.PPG
+            else -> AutoCase.UNKNOWN
         }
     }
 
     fun updateHeadingError() {
-        setPipeline(1)
 
         val result: LLResult? = try {
             camera.getLatestResult()

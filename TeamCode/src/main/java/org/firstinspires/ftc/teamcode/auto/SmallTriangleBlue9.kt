@@ -49,6 +49,8 @@ class SmallTriangleBlue9 : LinearOpMode() {
         val robot = Robot(hardwareMap, startPose)
         val timeKeep = TimeKeep()
 
+        robot.limelight.setPipeline(0)
+
         robot.transfer.fingerDown()
 
         val kinematics = MecanumKinematics(

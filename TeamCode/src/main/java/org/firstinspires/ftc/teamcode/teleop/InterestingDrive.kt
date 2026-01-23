@@ -51,6 +51,8 @@ class InterestingDrive : LinearOpMode(){
         val timeKeep = TimeKeep()
         var shootOffset : Boolean = false // false = intake true = shooter
 
+        robot.limelight.setPipeline(1)
+
         val shootRight = ButtonReader { gamepad2.b}
         val shootLeft = ButtonReader { gamepad2.x}
         val highRpm = ButtonReader {gamepad2.right_bumper}
