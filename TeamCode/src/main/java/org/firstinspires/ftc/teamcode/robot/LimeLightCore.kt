@@ -16,9 +16,9 @@ class LimeLightCore(
     data object LimeLightConfig {
         @JvmField
         var controller = PIDController(
-            0.015,
-            0.0,
-            0.001,
+            1.0,
+            0.05,
+            0.3,
             0.0,
             newTargetReset = true,
             zeroTargetReset = true,
@@ -37,6 +37,8 @@ class LimeLightCore(
     var headingErrorDeg: Double = 0.0
         private set
 
+    var tagVisible: Boolean = false
+        private set
 
     fun setPipeline(index: Int) {
         camera.pipelineSwitch(index)
@@ -57,59 +59,24 @@ class LimeLightCore(
     }
 
     fun updateHeadingError() {
-        val result = camera.latestResult ?: run {
-            headingErrorDeg = 0.0
-            return
-        }
-
-        val fid = result.fiducialResults
+        val fid = camera.latestResult
+            ?.fiducialResults
             ?.firstOrNull { it.fiducialId in listOf(20, 24) }
 
-        headingErrorDeg = when {
-            fid != null -> fid.targetXDegrees
-            else -> result.tx
+        if (fid != null) {
+            headingErrorDeg = fid.targetXDegrees
+            tagVisible = true
+        } else {
+            tagVisible = false
         }
-    }
-
-    fun updateHeadingError_0() {
-
-
-//        val result: LLResult? = try {
-//            camera.getLatestResult()
-//        } catch (e: Exception) {
-//            null
-//        }
-//
-//        if (result == null || !result.isValid()) {
-//            headingErrorDeg = 0.0
-//            return
-//        }
-//
-//        val fiducials = result.getFiducialResults() ?: emptyList<LLResultTypes.FiducialResult>()
-//
-//        // prefer a fiducial with an id in 20..24
-//        val chosen = fiducials.firstOrNull { fr ->
-//            val id = try { fr.getFiducialId() } catch (e: Exception) { -1 }
-//            id in 20..24
-//        }
-//
-//        headingErrorDeg = when {
-//            chosen != null -> {
-//                // use the per-target X degrees
-//                try { chosen.getTargetXDegrees() } catch (e: Exception) { result.getTx() }
-//            }
-//            else -> {
-//                // fallback to LLResult tx (primary target)
-//                try { result.getTx() } catch (e: Exception) { 0.0 }
-//            }
-//        }
     }
 
     fun computeHeadingPower(dt: Duration): Double {
-        val error = headingErrorDeg
+        if (!tagVisible) {
+            return 0.05 * kotlin.math.sign(headingErrorDeg)
+        }
 
-        val raw = LimeLightConfig.controller.calculate(0.0, error, dt)
-
+        val raw = LimeLightConfig.controller.calculate(0.0, headingErrorDeg, dt)
         return raw.coerceIn(-LimeLightConfig.maxOutput, LimeLightConfig.maxOutput)
     }
 
