@@ -7,6 +7,7 @@ import com.commonlibs.units.Duration
 import com.commonlibs.units.SleepAction
 import com.commonlibs.units.s
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
+import org.firstinspires.ftc.teamcode.library.controller.PIDController
 import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase
@@ -20,6 +21,15 @@ class CameraCore(
 ) {
     @Config
     data object CameraCoreConfig {
+        @JvmField
+        var controller = PIDController(
+            kP = 0.00001,
+            kD = 0.00001,
+            kI = 0.00001,
+            stabilityThreshold = 50.0
+        )
+        @JvmField var targetRpmTolerance = 50
+
         @JvmField var colorWidth = 432
         @JvmField var colorHeight = 240
         @JvmField var aprilTagWidth = 1280
@@ -75,6 +85,10 @@ class CameraCore(
 
     fun updateColor() {
         sensorColor = colorSensor.getAnalysis()
+    }
+
+    fun rotateToAprilTag() {
+        //val pidpower = CameraCoreConfig.controller.calculate()
     }
 
     private fun waitForColor(color: PredominantColorProcessor.Swatch, maxTime : Duration = 10.s) = RaceAction(

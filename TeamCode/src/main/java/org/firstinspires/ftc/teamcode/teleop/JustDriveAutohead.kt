@@ -39,10 +39,10 @@ class JustDriveAutohead : LinearOpMode(){
         robot.limelight.setPipeline(1)
 
 
-        val intakeRight = ButtonReader { gamepad2.b}
-        val intakeLeft = ButtonReader { gamepad2.x}
-        val shootRight = ButtonReader { gamepad2.y}
-        val shootLeft = ButtonReader { gamepad2.a}
+        val intakeRight = ButtonReader { gamepad2.y}
+        val intakeLeft = ButtonReader { gamepad2.a}
+        val shootRight = ButtonReader { gamepad2.b}
+        val shootLeft = ButtonReader { gamepad2.x}
         val fingerUp = ButtonReader {gamepad2.dpad_up}
         val fingerDown = ButtonReader {gamepad2.dpad_down}
         val highRpm = ButtonReader {gamepad2.right_bumper}
@@ -176,6 +176,8 @@ class JustDriveAutohead : LinearOpMode(){
 
             telemetry.addData("Best Match", result.closestSwatch)
 
+            //telemetry.addData("target heading", robot.limelight.)
+            telemetry.addData("error heading", robot.limelight.headingErrorDeg)
             telemetry.addData("a was pressed (set)", gamepad1.a)
             telemetry.addData("x was pressed (left)", gamepad1.x)
             telemetry.addData("b was pressed (right)", gamepad1.b)

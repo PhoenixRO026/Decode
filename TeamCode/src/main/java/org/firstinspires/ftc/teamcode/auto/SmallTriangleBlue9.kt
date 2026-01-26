@@ -236,7 +236,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
             ParallelAction(
                 robot.intake.stopIntakeAction(),
                 robot.shooter.goToRpmAction(rpmFar),
-                ),
+            ),
 
             robot.drive.actionBuilder(rightIntakePoseBack)
                 .strafeToLinearHeading(smallTrianglePose)
@@ -331,7 +331,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
             running = action.run(packet)
 
             dash.sendTelemetryPacket(packet)
-
+8
             telemetry.addData("case id", robot.limelight.updateCase())
             telemetry.addData("color", robot.camera.colorSensor.getAnalysis())
             telemetry.addData("rpm", robot.shooter.rpm)

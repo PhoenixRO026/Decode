@@ -64,6 +64,7 @@ class JustDriveDuo : LinearOpMode(){
             timeKeep.resetDeltaTime()
             buttons.forEach { it.readValue() }
             robot.drive.updatePoseEstimateOdo()
+            robot.limelight.setPipeline(1)
 
             /// Drive
 
@@ -143,8 +144,6 @@ class JustDriveDuo : LinearOpMode(){
                 robot.shooter.goToRmp(2700.0)
             }
             else if (stopShooter.wasJustPressed()) { /// stop shoot
-
-
                 robot.shooter.goToRmp(0.0)
             }
 

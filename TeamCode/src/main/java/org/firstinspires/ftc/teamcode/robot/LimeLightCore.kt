@@ -16,9 +16,9 @@ class LimeLightCore(
     data object LimeLightConfig {
         @JvmField
         var controller = PIDController(
-            1.0,
+            0.027,
             0.05,
-            0.3,
+            0.00001,
             0.0,
             newTargetReset = true,
             zeroTargetReset = true,
