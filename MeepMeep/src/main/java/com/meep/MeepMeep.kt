@@ -17,15 +17,17 @@ import com.noahbres.meepmeep.MeepMeep.Background
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder
 
 data object redGoal{
-    val startPose = Pose(63.inch, 11.inch, 180.0.deg)
-    val smallTrianglePose = Pose(55.inch, 10.inch, 158.0.deg)
-    val bigTrianglePose = Pose(-16.inch, 16.inch, 139.0.deg) //trebe verficat?
+    val startPose = Pose(-62.inch, -38.inch, -90.0.deg)
+    val smallTrianglePose = Pose(55.inch, -10.inch, 201.0.deg)
+    val bigTrianglePose = Pose(-16.5.inch, -16.inch, 220.0.deg)
 
-    val rightIntakePose = Pose(36.inch, 29.inch, 90.0.deg)
-    val middleIntakePose = Pose(14.inch, 29.inch, 90.0.deg) //trebe modificat
-    val leftIntakePose = Pose(-12.inch, 29.inch, 90.0.deg)
+    val rightIntakePose = Pose(36.inch, -30.inch, -90.0.deg) // trebe testat, la rosu y e 29, mergea bine seara
+    val rightIntakePoseBack = Pose(36.inch, -45.inch, -90.0.deg)
+    val middleIntakePose = Pose(13.inch, -29.inch, -90.0.deg)
+    val middleIntakePoseBack = Pose(13.inch, -45.inch, -90.0.deg)
+    val leftIntakePose = Pose(-11.5.inch, -28.inch, -90.0.deg)
 
-    val endPose = Pose(58.inch, 28.inch, 180.0.deg)
+    val endPose = Pose(0.inch, -28.inch, -90.0.deg)
 }
 
 data object blueGoal{
@@ -75,25 +77,24 @@ fun main() {
 
 
     redBot.runAction(redBot.drive.actionBuilder(redGoal.startPose.pose2d).ex()
-        .strafeToLinearHeading(redGoal.smallTrianglePose)
-        .waitSeconds(shootingTime)
-
-        .strafeToLinearHeading(redGoal.rightIntakePose)
-        .setTangent(90.deg)
-        .lineToY(43.inch, slowSpeed)
-        .setTangent(0.0.deg)
-        .strafeToLinearHeading(redGoal.smallTrianglePose)
-
-        .strafeToLinearHeading(redGoal.middleIntakePose)
-        .setTangent(90.deg)
-        .lineToY(43.inch, slowSpeed)
-        .setTangent(-90.deg)
-        .splineToLinearHeading(redGoal.bigTrianglePose, 180.deg)
+        .strafeToLinearHeading(redGoal.bigTrianglePose)
 
         .strafeToLinearHeading(redGoal.leftIntakePose)
+        .setTangent(-90.deg)
+        .lineToY(45.inch, slowSpeed)
+        .setTangent(0.0.deg)
+        .strafeToLinearHeading(redGoal.bigTrianglePose)
 
-        .setTangent(90.deg)
-        .lineToY(43.inch, slowSpeed)
+        .strafeToLinearHeading(redGoal.middleIntakePose)
+        .setTangent(-90.deg)
+        .lineToY(45.inch, slowSpeed)
+        .setTangent(-90.deg)
+        .strafeToLinearHeading(redGoal.bigTrianglePose)
+
+        .strafeToLinearHeading(redGoal.rightIntakePose)
+
+        .setTangent(-90.deg)
+        .lineToY(45.inch, slowSpeed)
 
         .build()
     )

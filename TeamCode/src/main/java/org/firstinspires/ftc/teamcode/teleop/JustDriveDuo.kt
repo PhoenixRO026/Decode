@@ -38,10 +38,10 @@ class JustDriveDuo : LinearOpMode(){
         var lastPos : Boolean = false // false = intake true = shooter
 
 
-        val intakeRight = ButtonReader { gamepad2.b}
-        val intakeLeft = ButtonReader { gamepad2.x}
-        val shootRight = ButtonReader { gamepad2.y}
-        val shootLeft = ButtonReader { gamepad2.a}
+        val intakeRight = ButtonReader { gamepad2.y}
+        val intakeLeft = ButtonReader { gamepad2.a}
+        val shootRight = ButtonReader { gamepad2.b}
+        val shootLeft = ButtonReader { gamepad2.x}
         val fingerUp = ButtonReader {gamepad2.dpad_up}
         val fingerDown = ButtonReader {gamepad2.dpad_down}
         val highRpm = ButtonReader {gamepad2.right_bumper}
