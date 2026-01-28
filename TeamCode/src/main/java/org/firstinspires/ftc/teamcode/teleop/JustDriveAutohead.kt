@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.commonlibs.units.Pose
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
+import com.commonlibs.units.rpm
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -49,7 +50,8 @@ class JustDriveAutohead : LinearOpMode(){
         val lowRpm = ButtonReader {gamepad2.left_bumper}
         val stopShooter = ButtonReader {gamepad2.dpad_left}
         val snipe = ToggleButtonReader {gamepad1.x}
-        val buttons = listOf(intakeRight, intakeLeft, shootRight, shootLeft, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe)
+        val autoRpm = ButtonReader {gamepad2.dpad_right}
+        val buttons = listOf(intakeRight, intakeLeft, shootRight, shootLeft, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe, autoRpm)
 
         robot.transfer.finger.position = 0.9
 
@@ -88,22 +90,10 @@ class JustDriveAutohead : LinearOpMode(){
 
             /// Transfer
 
-            /* if (fingerUp.wasJustPressed())
-                 robot.transfer.finger.position = 0.5
-
-             if (fingerDown.wasJustPressed())
-                 robot.transfer.finger.position = 0.95*/
-
-
             if (fingerUp.wasJustPressed())
                 robot.transfer.fingerUp()
             if (fingerDown.wasJustPressed())
                 robot.transfer.fingerDown()
-
-
-
-            //if (fingerDown.wasJustPressed())
-
 
             if (intakeRight.wasJustPressed()){
                 JustDriveAutoheadConfing.multiplier--
@@ -144,16 +134,18 @@ class JustDriveAutohead : LinearOpMode(){
                 robot.intake.power = 0.0
             }
 
-
+            var rpm = 0.0
             if (highRpm.wasJustPressed()){ /// shoot far
                 robot.shooter.goToRmp(JustDriveAutoheadConfing.shooterTargetRpm.toDouble())
             }
             else if (lowRpm.wasJustPressed()) { /// shoot close
                 robot.shooter.goToRmp(2700.0)
             }
+            else if (autoRpm.wasJustPressed()) {
+                rpm = robot.limelight.getRpm()
+                robot.shooter.goToRmp(rpm)
+            }
             else if (stopShooter.wasJustPressed()) { /// stop shoot
-
-
                 robot.shooter.goToRmp(0.0)
             }
 
@@ -177,6 +169,7 @@ class JustDriveAutohead : LinearOpMode(){
             telemetry.addData("Best Match", result.closestSwatch)
 
             telemetry.addData("distance", robot.limelight.getDistance())
+            telemetry.addData("auto rpm", rpm)
 
             //telemetry.addData("target heading", robot.limelight.)
             telemetry.addData("error heading", robot.limelight.headingErrorDeg)

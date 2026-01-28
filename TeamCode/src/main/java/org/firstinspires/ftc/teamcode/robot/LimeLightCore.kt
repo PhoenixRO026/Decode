@@ -7,6 +7,7 @@ import com.qualcomm.hardware.limelightvision.Limelight3A
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
 import org.firstinspires.ftc.teamcode.library.controller.LowPassFilter
 import com.commonlibs.units.Duration
+import kotlin.math.pow
 
 class LimeLightCore(
     val camera: Limelight3A,
@@ -53,8 +54,8 @@ class LimeLightCore(
             return
         }
 
-        val x = pose.position.x   // left/right
-        val z = pose.position.z   // forward
+        val x = pose.position.x
+        val z = pose.position.z
 
         aprilTagDistance = kotlin.math.sqrt(x * x + z * z)
     }
@@ -79,6 +80,12 @@ class LimeLightCore(
             23 -> AutoCase.PPG
             else -> AutoCase.UNKNOWN
         }
+    }
+
+    fun getRpm(): Double {
+        updateDistance()
+        val rpm = -24.25548 * aprilTagDistance.pow(4.0) + 245.7718 * aprilTagDistance.pow(3.0) - 743.82234 * aprilTagDistance.pow(2.0) + 818.08553 * aprilTagDistance + 2723.19277
+        return rpm.coerceIn(0.0, 4000.0)
     }
 
     fun updateHeadingError() {

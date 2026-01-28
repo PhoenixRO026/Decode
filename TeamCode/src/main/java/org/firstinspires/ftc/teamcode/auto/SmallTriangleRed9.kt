@@ -36,7 +36,7 @@ class SmallTriangleRed9 : LinearOpMode() {
     val endPose = Pose(0.inch, 28.inch, 90.0.deg)
 
     val rpmFar = 3260.0
-    val rpmClose = 2780.0
+    val rpmClose = 2800.0
 
     val shooterOffset = 94.0
 
