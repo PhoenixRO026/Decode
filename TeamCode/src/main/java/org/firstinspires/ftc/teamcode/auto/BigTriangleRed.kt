@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
 
 @Autonomous
 class BigTriangleRed : LinearOpMode() {
-    val startPose = Pose(-62.inch, 38.inch, 90.0.deg)
+    val startPose = Pose(-50.5.inch, 50.5.inch, -144.0.deg)
     val smallTrianglePose = Pose(55.inch, 10.inch, 157.0.deg)
     val bigTrianglePose = Pose(-16.5.inch, 16.inch, 138.0.deg)
 
@@ -218,7 +218,7 @@ class BigTriangleRed : LinearOpMode() {
             robot.shooter.goToRpmAction(rpmClose),
             robot.drive.correctionAction(bigTrianglePose, 2.0.s),
 
-            robot.shootBalls(rpmClose, 1),
+            robot.shootBalls(rpmClose, 0),
 
 
             robot.intake.startIntakeAction(),
@@ -290,8 +290,6 @@ class BigTriangleRed : LinearOpMode() {
                 .build()*/
         )
 
-        waitForStart()
-
 //        robot.drive.actionBuilder(bigTrianglePose)
 //            .strafeToLinearHeading(readAprilTag)
 //            .setTangent(180.deg)
@@ -313,9 +311,9 @@ class BigTriangleRed : LinearOpMode() {
             startAction,
             InstantAction{robot.limelight.updateCase()},
             when (robot.limelight.currentCase) {
-                AutoCase.GPP -> actionGPP
-                AutoCase.PGP -> actionPGP
-                else -> actionPPG
+                AutoCase.PPG -> actionGPP
+                AutoCase.PGP -> actionPPG
+                else -> actionPGP
             }
         )
 

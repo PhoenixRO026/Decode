@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
 
 @Autonomous
 class BigTriangleBlue : LinearOpMode() {
-    val startPose = Pose(-62.inch, -38.inch, 90.0.deg)
+    val startPose = Pose(-47.inch, -52.inch, 135.0.deg)
     val smallTrianglePose = Pose(55.inch, -10.inch, 201.0.deg)
     val bigTrianglePose = Pose(-16.5.inch, -16.inch, 220.0.deg)
 

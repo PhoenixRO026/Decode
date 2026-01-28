@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit
 @TeleOp
 class JustDriveAutohead : LinearOpMode(){
     @Config
-    data object JustDriveDuoConfig {
+    data object JustDriveAutoheadConfing {
         @JvmField var ticksPerRev = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0)
         @JvmField var pos = ticksPerRev / 3.0
         @JvmField var multiplier = 0
@@ -51,7 +51,7 @@ class JustDriveAutohead : LinearOpMode(){
         val snipe = ToggleButtonReader {gamepad1.x}
         val buttons = listOf(intakeRight, intakeLeft, shootRight, shootLeft, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe)
 
-        robot.transfer.finger.position = 1.0
+        robot.transfer.finger.position = 0.9
 
         while (opModeInInit()){
             robot.camera.portal.getProcessorEnabled(robot.camera.colorSensor)
@@ -106,29 +106,29 @@ class JustDriveAutohead : LinearOpMode(){
 
 
             if (intakeRight.wasJustPressed()){
-                JustDriveDuoConfig.multiplier--
-                robot.transfer.goToPos(JustDriveDuoConfig.pos, JustDriveDuoConfig.multiplier, JustDriveDuoConfig.intakeOffset)
+                JustDriveAutoheadConfing.multiplier--
+                robot.transfer.goToPos(JustDriveAutoheadConfing.pos, JustDriveAutoheadConfing.multiplier, JustDriveAutoheadConfing.intakeOffset)
                 lastPos = false
             }
 
             if (intakeLeft.wasJustPressed()){
-                JustDriveDuoConfig.multiplier++
-                robot.transfer.goToPos(JustDriveDuoConfig.pos, JustDriveDuoConfig.multiplier, JustDriveDuoConfig.intakeOffset)
+                JustDriveAutoheadConfing.multiplier++
+                robot.transfer.goToPos(JustDriveAutoheadConfing.pos, JustDriveAutoheadConfing.multiplier, JustDriveAutoheadConfing.intakeOffset)
                 lastPos = false
             }
 
             if (shootRight.wasJustPressed()){
                 if(lastPos) {
-                    JustDriveDuoConfig.multiplier--
+                    JustDriveAutoheadConfing.multiplier--
                 }
-                robot.transfer.goToPos(JustDriveDuoConfig.pos, JustDriveDuoConfig.multiplier,JustDriveDuoConfig.shooterOffset)
+                robot.transfer.goToPos(JustDriveAutoheadConfing.pos, JustDriveAutoheadConfing.multiplier,JustDriveAutoheadConfing.shooterOffset)
                 lastPos = true
             }
             if (shootLeft.wasJustPressed()){
                 if (lastPos) {
-                    JustDriveDuoConfig.multiplier++
+                    JustDriveAutoheadConfing.multiplier++
                 }
-                robot.transfer.goToPos(JustDriveDuoConfig.pos, JustDriveDuoConfig.multiplier,JustDriveDuoConfig.shooterOffset)
+                robot.transfer.goToPos(JustDriveAutoheadConfing.pos, JustDriveAutoheadConfing.multiplier,JustDriveAutoheadConfing.shooterOffset)
                 lastPos = true
             }
 
@@ -146,7 +146,7 @@ class JustDriveAutohead : LinearOpMode(){
 
 
             if (highRpm.wasJustPressed()){ /// shoot far
-                robot.shooter.goToRmp(JustDriveDuoConfig.shooterTargetRpm.toDouble())
+                robot.shooter.goToRmp(JustDriveAutoheadConfing.shooterTargetRpm.toDouble())
             }
             else if (lowRpm.wasJustPressed()) { /// shoot close
                 robot.shooter.goToRmp(2700.0)
@@ -176,6 +176,8 @@ class JustDriveAutohead : LinearOpMode(){
 
             telemetry.addData("Best Match", result.closestSwatch)
 
+            telemetry.addData("distance", robot.limelight.getDistance())
+
             //telemetry.addData("target heading", robot.limelight.)
             telemetry.addData("error heading", robot.limelight.headingErrorDeg)
             telemetry.addData("a was pressed (set)", gamepad1.a)
@@ -192,7 +194,7 @@ class JustDriveAutohead : LinearOpMode(){
             telemetry.addData("power trans", robot.transfer.power)
             telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
             telemetry.addData("fps", 1.s / timeKeep.deltaTime)
-            telemetry.addData("multiplier", JustDriveDuoConfig.multiplier)
+            telemetry.addData("multiplier", JustDriveAutoheadConfing.multiplier)
             telemetry.update()
 
             robot.transfer.update(timeKeep.deltaTime)

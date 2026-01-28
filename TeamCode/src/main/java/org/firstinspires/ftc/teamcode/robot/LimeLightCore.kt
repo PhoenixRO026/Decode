@@ -40,6 +40,29 @@ class LimeLightCore(
     var tagVisible: Boolean = false
         private set
 
+    var aprilTagDistance: Double = 0.0
+
+    private fun updateDistance() {
+        val fid = camera.latestResult
+            ?.fiducialResults
+            ?.firstOrNull { it.fiducialId in listOf(20, 24) }
+            ?: run { aprilTagDistance = Double.NaN; return }
+
+        val pose = fid.targetPoseCameraSpace ?: run {
+            aprilTagDistance = Double.NaN
+            return
+        }
+
+        val x = pose.position.x   // left/right
+        val z = pose.position.z   // forward
+
+        aprilTagDistance = kotlin.math.sqrt(x * x + z * z)
+    }
+
+    fun getDistance() : Double{
+        updateDistance()
+        return aprilTagDistance
+    }
     fun setPipeline(index: Int) {
         camera.pipelineSwitch(index)
     }

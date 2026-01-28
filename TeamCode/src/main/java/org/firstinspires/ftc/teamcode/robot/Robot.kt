@@ -36,7 +36,6 @@ class Robot(
     val camera: CameraCore
     val limelight: LimeLightCore
 
-
     fun shootBall(rpm : Double) = SequentialAction(
         shooter.goToRpmAction(rpm),
         SleepAction(0.3.s),
