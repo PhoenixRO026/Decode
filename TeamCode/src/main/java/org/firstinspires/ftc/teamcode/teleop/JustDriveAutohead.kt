@@ -6,7 +6,6 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.commonlibs.units.Pose
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
-import com.commonlibs.units.rpm
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -27,7 +26,8 @@ class JustDriveAutohead : LinearOpMode(){
         @JvmField var multiplier = 0
         @JvmField var shooterOffset = 94.0
         @JvmField var intakeOffset = 0.0
-        @JvmField var shooterTargetRpm = 3260
+        @JvmField var rpmSmall = 3260
+        @JvmField var rpmBig = 2775
     }
 
     override fun runOpMode() {
@@ -138,10 +138,10 @@ class JustDriveAutohead : LinearOpMode(){
 
             var rpm = 0.0
             if (highRpm.wasJustPressed()){ /// shoot far
-                robot.shooter.goToRmp(JustDriveAutoheadConfing.shooterTargetRpm.toDouble())
+                robot.shooter.goToRmp(JustDriveAutoheadConfing.rpmSmall.toDouble())
             }
             else if (lowRpm.wasJustPressed()) { /// shoot close
-                robot.shooter.goToRmp(2750.0)
+                robot.shooter.goToRmp(JustDriveAutoheadConfing.rpmBig.toDouble())
             }
             else if (autoRpm.wasJustPressed()) {
                 rpm = robot.limelight.getRpm()

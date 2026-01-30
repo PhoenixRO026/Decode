@@ -25,21 +25,22 @@ import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
 
 @Autonomous
 class BigTriangleBlue : LinearOpMode() {
-    val startPose = Pose(-47.inch, -52.inch, 135.0.deg)
-    val smallTrianglePose = Pose(55.inch, -10.inch, 201.0.deg)
-    val bigTrianglePose = Pose(-16.5.inch, -16.inch, 220.0.deg)
+    val startPose = Pose(-61.5.inch, -38.inch, 90.0.deg)
+    val smallTrianglePose = Pose(55.inch, -10.inch, 203.0.deg)
+    val bigTrianglePose = Pose(-16.5.inch, -16.inch, 224.0.deg)
 
     val rightIntakePose = Pose(36.inch, -30.inch, -90.0.deg)
     val rightIntakePoseBack = Pose(36.inch, -45.inch, -90.0.deg)
-    val middleIntakePose = Pose(13.inch, -29.inch, -90.0.deg)
-    val middleIntakePoseBack = Pose(13.inch, -45.inch, -90.0.deg)
-    val leftIntakePose = Pose(-11.5.inch, -28.inch, -90.0.deg)
-    val leftIntakePoseBack = Pose(-11.5.inch, -45.inch, -90.0.deg)
+    val middleIntakePose = Pose(12.inch, -28.inch, -90.0.deg)
+    val middleIntakePoseBack = Pose(12.inch, -45.inch, -90.0.deg)
+    val leftIntakePose = Pose(-12.inch, -28.inch, -90.0.deg)
+    val leftIntakePoseBack = Pose(-12.inch, -45.inch, -90.0.deg)
 
+    val openGatePose = Pose(0.inch, -55.inch, -90.0.deg)
     val endPose = Pose(0.inch, -28.inch, -90.0.deg)
 
     val rpmFar = 3280.0
-    val rpmClose = 2780.0
+    val rpmClose = 2830.0
 
     val shooterOffset = 94.0
 
@@ -89,19 +90,22 @@ class BigTriangleBlue : LinearOpMode() {
                 robot.intake.stopIntakeAction(),
                 robot.shooter.goToRpmAction(rpmClose),
             ),
+            //gate open
             robot.drive.actionBuilder(leftIntakePoseBack)
+                .strafeToLinearHeading(openGatePose)
+                .build(),
+            robot.drive.actionBuilder(openGatePose)
                 .strafeToLinearHeading(bigTrianglePose)
                 .build(),
             robot.drive.correctionAction(bigTrianglePose, 2.0.s),
 
             robot.shootBalls(rpmClose, 2),
 
-
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(smallTrianglePose)
                 .strafeToLinearHeading(middleIntakePose)
                 .build(),
-            robot.drive.correctionAction(middleIntakePose, 0.75.s),
+            robot.drive.correctionAction(middleIntakePose, 1.0.s),
 
             RaceAction(
                 robot.drive.actionBuilder(middleIntakePose)
@@ -118,7 +122,7 @@ class BigTriangleBlue : LinearOpMode() {
                 .setTangent(90.deg)
                 .splineToLinearHeading(bigTrianglePose, 180.deg)
                 .build(),
-            robot.drive.correctionAction(bigTrianglePose, 2.5.s),
+            robot.drive.correctionAction(bigTrianglePose, 2.0.s),
 
             robot.shootBalls(rpmClose, 1),
 
@@ -163,19 +167,22 @@ class BigTriangleBlue : LinearOpMode() {
                 robot.intake.stopIntakeAction(),
                 robot.shooter.goToRpmAction(rpmClose),
             ),
+            // gate open
             robot.drive.actionBuilder(leftIntakePoseBack)
+                .strafeToLinearHeading(openGatePose)
+                .build(),
+            robot.drive.actionBuilder(openGatePose)
                 .strafeToLinearHeading(bigTrianglePose)
                 .build(),
             robot.drive.correctionAction(bigTrianglePose, 2.0.s),
 
             robot.shootBalls(rpmClose, 1),
 
-
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(bigTrianglePose)
                 .strafeToLinearHeading(middleIntakePose)
                 .build(),
-            robot.drive.correctionAction(middleIntakePose, 0.75.s),
+            robot.drive.correctionAction(middleIntakePose, 1.0.s),
 
             RaceAction(
                 robot.drive.actionBuilder(middleIntakePose)
@@ -218,7 +225,7 @@ class BigTriangleBlue : LinearOpMode() {
             robot.shooter.goToRpmAction(rpmClose),
             robot.drive.correctionAction(bigTrianglePose, 2.0.s),
 
-            robot.shootBalls(rpmClose, 1),
+            robot.shootBalls(rpmClose, 0),
 
 
             robot.intake.startIntakeAction(),
@@ -239,7 +246,12 @@ class BigTriangleBlue : LinearOpMode() {
                 robot.shooter.goToRpmAction(rpmClose),
             ),
 
+            // gate open
             robot.drive.actionBuilder(leftIntakePoseBack)
+                .strafeToLinearHeading(openGatePose)
+                .build(),
+
+            robot.drive.actionBuilder(openGatePose)
                 .strafeToLinearHeading(bigTrianglePose)
                 .build(),
             robot.drive.correctionAction(bigTrianglePose, 2.0.s),
@@ -251,7 +263,7 @@ class BigTriangleBlue : LinearOpMode() {
             robot.drive.actionBuilder(bigTrianglePose)
                 .strafeToLinearHeading(middleIntakePose)
                 .build(),
-            robot.drive.correctionAction(middleIntakePose, 0.75.s),
+            robot.drive.correctionAction(middleIntakePose, 1.0.s),
 
             RaceAction(
                 robot.drive.actionBuilder(middleIntakePose)

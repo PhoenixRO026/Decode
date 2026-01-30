@@ -17,7 +17,7 @@ import com.noahbres.meepmeep.MeepMeep.Background
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder
 
 data object redGoal{
-    val startPose = Pose(-50.inch, 50.5.inch, -137.0.deg)
+    val startPose = Pose(-61.5.inch, 38.inch, -90.0.deg)
     val smallTrianglePose = Pose(55.inch, -10.inch, 201.0.deg)
     val bigTrianglePose = Pose(-16.5.inch, 16.inch, 136.0.deg)
 
@@ -91,13 +91,13 @@ fun main() {
         .strafeToLinearHeading(redGoal.bigTrianglePose)
 
         //asta in functie de cum vorbim cu alinta si cum ni se misca
-        /*
+
         .strafeToLinearHeading(redGoal.middleIntakePose)
         .setTangent(-90.deg)
         .lineToY(45.inch, slowSpeed)
         .setTangent(-90.deg)
         .strafeToLinearHeading(redGoal.bigTrianglePose)
-         */
+
 
         .strafeToLinearHeading(redGoal.endPose)
 
