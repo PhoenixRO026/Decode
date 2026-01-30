@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
 class SmallTriangleRed9 : LinearOpMode() {
     val startPose = Pose(63.inch, 11.inch, 180.0.deg)
     val smallTrianglePose = Pose(55.inch, 10.inch, 157.0.deg)
-    val bigTrianglePose = Pose(-16.5.inch, 16.inch, 138.0.deg)
+    val bigTrianglePose = Pose(-16.5.inch, 16.inch, 136.0.deg)
 
     val rightIntakePose = Pose(36.inch, 29.inch, 90.0.deg)
     val rightIntakePoseBack = Pose(36.inch, 45.inch, 90.0.deg)
@@ -36,7 +36,7 @@ class SmallTriangleRed9 : LinearOpMode() {
     val endPose = Pose(0.inch, 28.inch, 90.0.deg)
 
     val rpmFar = 3260.0
-    val rpmClose = 2800.0
+    val rpmClose = 2830.0
 
     val shooterOffset = 94.0
 

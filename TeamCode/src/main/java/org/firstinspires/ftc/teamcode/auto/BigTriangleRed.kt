@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
 
 @Autonomous
 class BigTriangleRed : LinearOpMode() {
-    val startPose = Pose(-50.5.inch, 50.5.inch, -144.0.deg)
+    val startPose = Pose(-50.5.inch, 50.5.inch, -144.0.deg) //trebe verificat poz la toate 3
     val smallTrianglePose = Pose(55.inch, 10.inch, 157.0.deg)
     val bigTrianglePose = Pose(-16.5.inch, 16.inch, 138.0.deg)
 
@@ -36,10 +36,11 @@ class BigTriangleRed : LinearOpMode() {
     val leftIntakePose = Pose(-11.5.inch, 28.inch, 90.0.deg)
     val leftIntakePoseBack = Pose(-11.5.inch, 45.inch, 90.0.deg)
 
+    val openGatePose = Pose(0.inch, 55.inch, 90.0.deg)
     val endPose = Pose(0.inch, 28.inch, 90.0.deg)
 
-    val rpmFar = 3280.0
-    val rpmClose = 2780.0
+    val rpmFar = 3260.0
+    val rpmClose = 2830.0
 
     val shooterOffset = 94.0
 
@@ -89,14 +90,19 @@ class BigTriangleRed : LinearOpMode() {
                 robot.intake.stopIntakeAction(),
                 robot.shooter.goToRpmAction(rpmClose),
             ),
+            //gate open, trebe verificat
             robot.drive.actionBuilder(leftIntakePoseBack)
+                .strafeToLinearHeading(openGatePose)
+                .build(),
+            robot.drive.actionBuilder(openGatePose)
                 .strafeToLinearHeading(bigTrianglePose)
                 .build(),
             robot.drive.correctionAction(bigTrianglePose, 2.0.s),
 
             robot.shootBalls(rpmClose, 2),
 
-
+            //trebe verificat daca mai are timp
+            /*
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(smallTrianglePose)
                 .strafeToLinearHeading(middleIntakePose)
@@ -121,6 +127,8 @@ class BigTriangleRed : LinearOpMode() {
             robot.drive.correctionAction(bigTrianglePose, 2.5.s),
 
             robot.shootBalls(rpmClose, 1),
+
+            */
 
             robot.drive.actionBuilder(bigTrianglePose)
                 .strafeToLinearHeading(endPose)
@@ -163,14 +171,18 @@ class BigTriangleRed : LinearOpMode() {
                 robot.intake.stopIntakeAction(),
                 robot.shooter.goToRpmAction(rpmClose),
             ),
+            //gate open, trebe verificat
             robot.drive.actionBuilder(leftIntakePoseBack)
+                .strafeToLinearHeading(openGatePose)
+                .build(),
+            robot.drive.actionBuilder(openGatePose)
                 .strafeToLinearHeading(bigTrianglePose)
                 .build(),
             robot.drive.correctionAction(bigTrianglePose, 2.0.s),
 
             robot.shootBalls(rpmClose, 1),
-
-
+            //trebe verificat daca mai are timp
+            /*
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(bigTrianglePose)
                 .strafeToLinearHeading(middleIntakePose)
@@ -196,6 +208,7 @@ class BigTriangleRed : LinearOpMode() {
             robot.drive.correctionAction(bigTrianglePose, 2.5.s),
 
             robot.shootBalls(rpmClose, 0),
+             */
 
             robot.drive.actionBuilder(bigTrianglePose)
                 .strafeToLinearHeading(endPose)
@@ -238,15 +251,19 @@ class BigTriangleRed : LinearOpMode() {
                 robot.intake.stopIntakeAction(),
                 robot.shooter.goToRpmAction(rpmClose),
             ),
-
+            //gate open, trebe verificat
             robot.drive.actionBuilder(leftIntakePoseBack)
+                .strafeToLinearHeading(openGatePose)
+                .build(),
+
+            robot.drive.actionBuilder(openGatePose)
                 .strafeToLinearHeading(bigTrianglePose)
                 .build(),
             robot.drive.correctionAction(bigTrianglePose, 2.0.s),
 
             robot.shootBalls(rpmClose, 1),
 
-
+            //trebe verificat daca mai are timp
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(bigTrianglePose)
                 .strafeToLinearHeading(middleIntakePose)

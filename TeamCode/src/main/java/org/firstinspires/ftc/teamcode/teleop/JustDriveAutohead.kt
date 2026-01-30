@@ -39,6 +39,7 @@ class JustDriveAutohead : LinearOpMode(){
 
         robot.limelight.setPipeline(1)
 
+            
 
         val intakeRight = ButtonReader { gamepad2.y}
         val intakeLeft = ButtonReader { gamepad2.a}
@@ -52,6 +53,7 @@ class JustDriveAutohead : LinearOpMode(){
         val snipe = ToggleButtonReader {gamepad1.x}
         val autoRpm = ButtonReader {gamepad2.dpad_right}
         val buttons = listOf(intakeRight, intakeLeft, shootRight, shootLeft, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe, autoRpm)
+        val stopButton = ButtonReader {gamepad2.touchpad}
 
         robot.transfer.finger.position = 0.9
 
@@ -125,7 +127,7 @@ class JustDriveAutohead : LinearOpMode(){
             /// Intake
 
             if (gamepad1.right_bumper) {
-                robot.intake.power = 1.0
+                robot.intake.power = 0.8
             }
             else if (gamepad1.left_bumper) {
                 robot.intake.power = -1.0
@@ -139,7 +141,7 @@ class JustDriveAutohead : LinearOpMode(){
                 robot.shooter.goToRmp(JustDriveAutoheadConfing.shooterTargetRpm.toDouble())
             }
             else if (lowRpm.wasJustPressed()) { /// shoot close
-                robot.shooter.goToRmp(2700.0)
+                robot.shooter.goToRmp(2750.0)
             }
             else if (autoRpm.wasJustPressed()) {
                 rpm = robot.limelight.getRpm()
@@ -160,6 +162,11 @@ class JustDriveAutohead : LinearOpMode(){
             if (gamepad1.dpad_up) {
                 robot.transfer.resetPos()
             }
+
+//            if (stopButton.wasJustPressed()) {
+//                rpm = 0.0
+//
+//            }
 
             robot.shooter.update(timeKeep.deltaTime)
 

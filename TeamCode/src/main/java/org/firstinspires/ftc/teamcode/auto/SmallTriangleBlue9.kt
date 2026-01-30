@@ -26,8 +26,8 @@ import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
 @Autonomous
 class SmallTriangleBlue9 : LinearOpMode() {
     val startPose = Pose(63.inch, -11.inch, 180.0.deg)
-    val smallTrianglePose = Pose(55.inch, -10.inch, 201.0.deg)
-    val bigTrianglePose = Pose(-16.5.inch, -16.inch, 220.0.deg)
+    val smallTrianglePose = Pose(55.inch, -10.inch, 200.0.deg)
+    val bigTrianglePose = Pose(-16.5.inch, -16.inch, 221.0.deg) // trebe veficat
 
     val rightIntakePose = Pose(36.inch, -30.inch, -90.0.deg) // trebe testat, la rosu y e 29, mergea bine seara
     val rightIntakePoseBack = Pose(36.inch, -45.inch, -90.0.deg)
@@ -38,7 +38,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
     val endPose = Pose(0.inch, -28.inch, -90.0.deg)
 
     val rpmFar = 3280.0 // la rosu e 3260, again, trebe verificat
-    val rpmClose = 2800.0
+    val rpmClose = 2830.0
 
     val shooterOffset = 94.0
 
