@@ -39,8 +39,6 @@ class JustDriveAutohead : LinearOpMode(){
 
         robot.limelight.setPipeline(1)
 
-            
-
         val intakeRight = ButtonReader { gamepad2.y}
         val intakeLeft = ButtonReader { gamepad2.a}
         val shootRight = ButtonReader { gamepad2.b}
@@ -58,16 +56,20 @@ class JustDriveAutohead : LinearOpMode(){
         robot.transfer.finger.position = 0.9
 
         while (opModeInInit()){
-            robot.camera.portal.getProcessorEnabled(robot.camera.colorSensor)
+            robot.camera.setExposure()
+//            robot.camera.portal.getProcessorEnabled(robot.camera.colorSensor)
         }
 
-        val exposureCtrl = robot.camera.portal.getCameraControl(ExposureControl::class.java)
-        exposureCtrl.setExposure(CameraConfig.desiredExposureMs, TimeUnit.MILLISECONDS)
+//        val exposureCtrl = robot.camera.portal.getCameraControl(ExposureControl::class.java)
+//        exposureCtrl.setExposure(CameraConfig.desiredExposureMs, TimeUnit.MILLISECONDS)
 
-        waitForStart()
+//        waitForStart()
 
         while (opModeIsActive()) {
             timeKeep.resetDeltaTime()
+
+            robot.camera.setExposure()
+
             buttons.forEach { it.readValue() }
             robot.drive.updatePoseEstimateOdo()
 

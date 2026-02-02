@@ -5,15 +5,20 @@ import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.roadrunner.RaceAction
 import com.commonlibs.units.Duration
 import com.commonlibs.units.SleepAction
+import com.commonlibs.units.Time
+import com.commonlibs.units.ms
 import com.commonlibs.units.s
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
+import org.firstinspires.ftc.teamcode.teleop.CameraConfig
 import org.firstinspires.ftc.vision.VisionPortal
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor
 import org.firstinspires.ftc.vision.opencv.ImageRegion
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor
+import java.util.concurrent.TimeUnit
 
 
 class CameraCore(
@@ -82,6 +87,36 @@ class CameraCore(
         .setLiveViewContainerId(portal1ViewId)
         //.enableLiveView(CameraCoreConfig.liveView)
         .build()
+
+    private var exposureSet = false
+    private var cameraStreamingTime = 0.ms
+    private var controlsGetTime = 0.ms
+    private lateinit var exposureControl: ExposureControl
+
+    fun setExposure() {
+        if (exposureSet) return
+
+        if (portal.cameraState != VisionPortal.CameraState.STREAMING) return
+
+        if (cameraStreamingTime <= 0.ms) {
+            cameraStreamingTime = Time.now()
+            return
+        }
+
+        if (Time.now() < cameraStreamingTime + 50.ms) return
+
+        if (controlsGetTime <= 0.ms) {
+            controlsGetTime = Time.now()
+            exposureControl = portal.getCameraControl(ExposureControl::class.java)
+            return
+        }
+
+        if (Time.now() < controlsGetTime + 50.ms) return
+
+        exposureControl.setExposure(CameraConfig.desiredExposureMs, TimeUnit.MILLISECONDS)
+
+        exposureSet = true
+    }
 
     fun updateColor() {
         sensorColor = colorSensor.getAnalysis()
