@@ -33,6 +33,19 @@ data object redGoal{
     val endPose = Pose(0.inch, 28.inch, 90.0.deg)
 }
 
+data object redGoalV2{
+    val startPose = Pose(63.inch, 11.inch, 180.0.deg)
+    val smallTrianglePose = Pose(55.inch, 10.inch, 159.0.deg)
+    val humanPlayerPose = Pose(45.inch, 58.inch, 20.0.deg)
+
+    val rightIntakePose = Pose(36.inch, 30.inch, 90.0.deg) // trebe testat, la rosu y e 29, mergea bine seara
+    val middleIntakePose = Pose(13.inch, 29.inch, 90.0.deg)
+
+    val openGatePose = Pose(2.inch, 55.inch, 90.0.deg)
+
+    val endPose = Pose(38.inch, 10.inch, 90.0.deg)
+}
+
 data object blueGoal{
     val startPose = Pose(63.inch, -11.inch, 180.0.deg)
     val smallTrianglePose = Pose(55.inch, -10.inch, 202.0.deg)
@@ -80,26 +93,33 @@ fun main() {
             .build()
 
 
-    redBot.runAction(redBot.drive.actionBuilder(redGoal.startPose.pose2d).ex()
-        .strafeToLinearHeading(redGoal.bigTrianglePose)
+    redBot.runAction(redBot.drive.actionBuilder(redGoalV2.startPose.pose2d).ex()
+        .splineToLinearHeading(redGoalV2.smallTrianglePose, 180.deg)
 
-        .strafeToLinearHeading(redGoal.leftIntakePose)
+        .splineToLinearHeading(redGoalV2.rightIntakePose, 90.deg)
+        .setTangent(90.deg)
+        .lineToY(45.inch, slowSpeed)
+        .setTangent(-90.0.deg)
+        .splineToLinearHeading(redGoalV2.smallTrianglePose, -45.deg)
+
+
+        /*.strafeToLinearHeading(redGoalV2.middleIntakePose)
         .setTangent(-90.deg)
         .lineToY(45.inch, slowSpeed)
+        .setTangent(-90.deg)
+        .strafeToLinearHeading(redGoalV2.openGatePose)
         .setTangent(0.0.deg)
-        .strafeToLinearHeading(redGoal.openGatePose)
-        .strafeToLinearHeading(redGoal.bigTrianglePose)
+        .strafeToLinearHeading(redGoalV2.smallTrianglePose)*/
 
-        //asta in functie de cum vorbim cu alinta si cum ni se misca
-
-        .strafeToLinearHeading(redGoal.middleIntakePose)
-        .setTangent(-90.deg)
-        .lineToY(45.inch, slowSpeed)
-        .setTangent(-90.deg)
-        .strafeToLinearHeading(redGoal.bigTrianglePose)
+        //.strafeToLinearHeading(redGoalV2.humanPlayerPose)
+        .setTangent(135.0.deg)
+        .splineToLinearHeading(redGoalV2.humanPlayerPose, 45.deg)
+        .setTangent(0.0.deg)
+        .lineToX(57.inch, slowSpeed)
 
 
-        .strafeToLinearHeading(redGoal.endPose)
+        .strafeToLinearHeading(redGoalV2.smallTrianglePose)
+        .strafeToLinearHeading(redGoalV2.endPose)
 
         .build()
     )
