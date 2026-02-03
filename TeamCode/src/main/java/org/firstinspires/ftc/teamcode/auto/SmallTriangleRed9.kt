@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.robot.Robot
+import org.firstinspires.ftc.teamcode.robot.Spindexer
 
 @Autonomous
 class SmallTriangleRed9 : LinearOpMode() {
@@ -60,7 +61,7 @@ class SmallTriangleRed9 : LinearOpMode() {
             robot.shooter.goToRpmAction(rpmFar),
             robot.drive.correctionAction(smallTrianglePose, 2.0.s),
 
-            robot.shootBalls(rpmFar, 0),
+            robot.shootBalls(rpmFar, Spindexer.TransferPos.shoot1),
 
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(smallTrianglePose)
@@ -70,7 +71,7 @@ class SmallTriangleRed9 : LinearOpMode() {
 
             robot.drive.actionBuilder(rightIntakePose)
                 .setTangent(-90.deg)
-                .afterTime(0.s, robot.intakeBalls(0,0))
+                .afterTime(0.s, robot.intakeBalls(Spindexer.TransferPos.intake1))
                 .lineToY(45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
@@ -78,7 +79,7 @@ class SmallTriangleRed9 : LinearOpMode() {
                 .build(),
             robot.drive.correctionAction(smallTrianglePose, 2.0.s),
 
-            robot.shootBalls(rpmFar, 0),
+            robot.shootBalls(rpmFar, Spindexer.TransferPos.shoot1),
 
 
             robot.intake.startIntakeAction(),
@@ -89,7 +90,7 @@ class SmallTriangleRed9 : LinearOpMode() {
 
             robot.drive.actionBuilder(middleIntakePose)
                 .setTangent(-90.deg)
-                .afterTime(0.s, robot.intakeBalls(0,1))
+                .afterTime(0.s, robot.intakeBalls(Spindexer.TransferPos.intake1))
                 .lineToY(45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
@@ -98,7 +99,7 @@ class SmallTriangleRed9 : LinearOpMode() {
                 .build(),
             robot.drive.correctionAction(bigTrianglePose, 2.0.s),
 
-            robot.shootBalls(rpmClose, 1),
+            robot.shootBalls(rpmFar, Spindexer.TransferPos.shoot1),
 
             robot.drive.actionBuilder(bigTrianglePose)
                 .strafeToLinearHeading(endPose)
@@ -122,7 +123,7 @@ class SmallTriangleRed9 : LinearOpMode() {
             robot.shooter.goToRpmAction(rpmFar),
             robot.drive.correctionAction(smallTrianglePose, 2.0.s),
 
-            robot.shootBalls(rpmFar, 2),
+            robot.shootBalls(rpmFar, Spindexer.TransferPos.shoot1),
 
 
             robot.intake.startIntakeAction(),
@@ -133,7 +134,7 @@ class SmallTriangleRed9 : LinearOpMode() {
 
             robot.drive.actionBuilder(rightIntakePose)
                 .setTangent(-90.deg)
-                .afterTime(0.s, robot.intakeBalls(0,2))
+                .afterTime(0.s, robot.intakeBalls(Spindexer.TransferPos.intake1))
                 .lineToY(45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
@@ -141,7 +142,7 @@ class SmallTriangleRed9 : LinearOpMode() {
                 .build(),
             robot.drive.correctionAction(smallTrianglePose, 2.0.s),
 
-            robot.shootBalls(rpmFar, 2),
+            robot.shootBalls(rpmFar, Spindexer.TransferPos.shoot1),
 
 
             robot.intake.startIntakeAction(),
@@ -152,7 +153,7 @@ class SmallTriangleRed9 : LinearOpMode() {
 
             robot.drive.actionBuilder(middleIntakePose)
                 .setTangent(-90.deg)
-                .afterTime(0.s, robot.intakeBalls(0,0))
+                .afterTime(0.s, robot.intakeBalls(Spindexer.TransferPos.intake1))
                 .lineToY(45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
@@ -161,7 +162,7 @@ class SmallTriangleRed9 : LinearOpMode() {
                 .build(),
             robot.drive.correctionAction(bigTrianglePose, 2.0.s),
 
-            robot.shootBalls(rpmClose, 0),
+            robot.shootBalls(rpmFar, Spindexer.TransferPos.shoot1),
 
             robot.drive.actionBuilder(bigTrianglePose)
                 .strafeToLinearHeading(endPose)
@@ -184,7 +185,7 @@ class SmallTriangleRed9 : LinearOpMode() {
             robot.shooter.goToRpmAction(rpmFar),
             robot.drive.correctionAction(smallTrianglePose, 2.0.s),
 
-            robot.shootBalls(rpmFar, 1),
+            robot.shootBalls(rpmFar, Spindexer.TransferPos.shoot1),
 
 
             robot.intake.startIntakeAction(),
@@ -195,7 +196,7 @@ class SmallTriangleRed9 : LinearOpMode() {
 
             robot.drive.actionBuilder(rightIntakePose)
                 .setTangent(-90.deg)
-                .afterTime(0.s, robot.intakeBalls(0,1))
+                .afterTime(0.s, robot.intakeBalls(Spindexer.TransferPos.intake1))
                 .lineToY(45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
@@ -203,7 +204,7 @@ class SmallTriangleRed9 : LinearOpMode() {
                 .build(),
             robot.drive.correctionAction(smallTrianglePose, 2.0.s),
 
-            robot.shootBalls(rpmFar, 1),
+            robot.shootBalls(rpmFar, Spindexer.TransferPos.shoot1),
 
 
             robot.intake.startIntakeAction(),
@@ -214,7 +215,7 @@ class SmallTriangleRed9 : LinearOpMode() {
 
             robot.drive.actionBuilder(middleIntakePose)
                 .setTangent(-90.deg)
-                .afterTime(0.s, robot.intakeBalls(0,2))
+                .afterTime(0.s, robot.intakeBalls(Spindexer.TransferPos.intake1))
                 .lineToY(45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
@@ -223,7 +224,7 @@ class SmallTriangleRed9 : LinearOpMode() {
                 .build(),
             robot.drive.correctionAction(bigTrianglePose, 2.0.s),
 
-            robot.shootBalls(rpmClose, 2),
+            robot.shootBalls(rpmFar, Spindexer.TransferPos.shoot1),
 
             robot.drive.actionBuilder(bigTrianglePose)
                 .strafeToLinearHeading(endPose)
@@ -275,7 +276,6 @@ class SmallTriangleRed9 : LinearOpMode() {
 
         while (running && opModeIsActive()) {
             timeKeep.resetDeltaTime()
-            robot.transfer.update(timeKeep.deltaTime)
             robot.shooter.updateRpm(timeKeep.deltaTime)
 
             val packet = TelemetryPacket()
