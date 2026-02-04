@@ -13,10 +13,12 @@ import com.commonlibs.units.SleepAction
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
 import com.commonlibs.units.s
+import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
@@ -32,7 +34,7 @@ class Robot(
     val shooter: Shooter
     val transfer: Spindexer
     val intake: Intake
-    val camera: CameraCore
+    val limelight: LimeLightCore
 
     fun shootBall(rpm : Double) = SequentialAction(
         shooter.goToRpmAction(rpm),
@@ -47,19 +49,19 @@ class Robot(
         InstantAction{intake.power = 0.75},
         transfer.goToPosAction(Spindexer.TransferPos.intake1),
         RaceAction(
-            camera.waitForColors(3.s),
+            transfer.waitForColors(3.s),
             SleepAction(3.s)
         ),
         SleepAction(0.6.s),
         transfer.goToNextIntakeAction(),
         RaceAction(
-            camera.waitForColors(3.s),
+            transfer.waitForColors(3.s),
             SleepAction(3.s)
         ),
         SleepAction(0.3.s),
         transfer.goToNextIntakeAction(),
         RaceAction(
-            camera.waitForColors(3.s),
+            transfer.waitForColors(3.s),
             SleepAction(3.s)
         ),
         SleepAction(0.3.s),
@@ -85,19 +87,19 @@ class Robot(
         InstantAction{intake.power = 0.75},
         transfer.goToPosAction(Spindexer.TransferPos.intake1),
         RaceAction(
-            camera.waitForColors(3.s),
+            transfer.waitForColors(3.s),
             SleepAction(3.s)
         ),
         SleepAction(0.6.s),
         transfer.goToNextIntakeAction(),
         RaceAction(
-            camera.waitForColors(3.s),
+            transfer.waitForColors(3.s),
             SleepAction(3.s)
         ),
         SleepAction(0.3.s),
         transfer.goToNextIntakeAction(),
         RaceAction(
-            camera.waitForColors(3.s),
+            transfer.waitForColors(3.s),
             SleepAction(3.s)
         ),
         SleepAction(0.3.s),
@@ -175,8 +177,10 @@ class Robot(
         val servoTransfer2 = hardwareMap.get(Servo::class.java, "servoTransfer2")
         val finger = hardwareMap.get(Servo::class.java, "finger")
 
-        val webcamColor = hardwareMap.get(WebcamName::class.java, "Webcam 1")
-        val webcamAprilTag = hardwareMap.get(WebcamName::class.java, "Webcam 2")
+        val colorSensor = hardwareMap.get(NormalizedColorSensor::class.java, "colorSensor")
+        val limlit = hardwareMap.get(Limelight3A::class.java, "limelight")
+        limlit.setPollRateHz(100)
+        limlit.start()
 
         val voltageSensor = hardwareMap.voltageSensor.iterator().next()
 
@@ -193,15 +197,18 @@ class Robot(
         transfer = Spindexer(
             servoTransfer1 = servoTransfer1,
             servoTransfer2 = servoTransfer2,
-            finger = finger
+            finger = finger,
+            colorSensor = colorSensor
         )
         intake = Intake(
             motor = motorIntake
         )
-        camera = CameraCore(
-            cameraColor = webcamColor,
-            cameraAprilTag = webcamAprilTag
+        limelight = LimeLightCore(
+            camera = limlit,
+            drive = drive
         )
+
+
 
 
     }

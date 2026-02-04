@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.robot
 
+import android.graphics.Color
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.ParallelAction
+import com.acmerobotics.roadrunner.RaceAction
 import com.acmerobotics.roadrunner.SequentialAction
 import com.acmerobotics.roadrunner.ftc.Encoder
 import com.commonlibs.units.Duration
@@ -12,6 +14,7 @@ import com.commonlibs.units.SleepAction
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
@@ -20,7 +23,8 @@ import kotlin.math.abs
 class Spindexer(
     val servoTransfer1: Servo,
     val servoTransfer2: Servo,
-    val finger: Servo
+    val finger: Servo,
+    val colorSensor: NormalizedColorSensor
 )
 {
     @Config
@@ -30,7 +34,11 @@ class Spindexer(
 
 
     }
-
+    enum class Balls {
+        PURPLE,
+        GREEN,
+        EMPTY
+    }
     enum class TransferPos (val pos : Double) {
         intake1(0.5),
 
@@ -44,6 +52,39 @@ class Spindexer(
 
         shoot3(0.5),
     }
+
+    enum class SensorColor {
+        PURPLE,
+        GREEN,
+        NONE
+    }
+
+    var slot1= Balls.EMPTY
+    var slot2= Balls.EMPTY
+    var slot3= Balls.EMPTY
+
+    var sensorHue: Float = 0f
+
+    var hsv = floatArrayOf(0f, 0f, 0f)
+
+    val sensorColor get() = when {
+        hsv[1] != 0f && sensorHue in 0f..40f -> SensorColor.PURPLE
+        hsv[1] != 0f && sensorHue in 200f..280f -> SensorColor.GREEN
+        hsv[1] != 0f && sensorHue in 40f..110f -> SensorColor.NONE
+        else -> SensorColor.NONE
+    }
+
+    fun updateHue() {
+        val normalizedColors = colorSensor.normalizedColors
+        Color.RGBToHSV(
+            (normalizedColors.red * 256).toInt(),
+            (normalizedColors.green * 256).toInt(),
+            (normalizedColors.blue * 256).toInt(),
+            hsv
+        )
+        sensorHue = hsv[0]
+    }
+
 
     var currentPos = TransferPos.intake1
 
@@ -62,6 +103,21 @@ class Spindexer(
             field = clampedVal
             finger.position = field
         }
+
+    fun waitForColorAction(waitColor: SensorColor, maxTime: Duration = 1.s) = RaceAction(
+        Action {
+            updateHue()
+            it.addLine("Waiting for $waitColor")
+            sensorColor != waitColor
+        },
+        SleepAction(maxTime)
+    )
+
+    fun waitForColors(duration: Duration) = RaceAction(
+        waitForColorAction(SensorColor.PURPLE),
+        waitForColorAction(SensorColor.GREEN),
+        SleepAction(duration)
+    )
 
     fun goToPos(pos : TransferPos) {
         transferPos = pos.pos
