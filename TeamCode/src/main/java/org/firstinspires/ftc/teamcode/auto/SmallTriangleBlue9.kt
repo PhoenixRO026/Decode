@@ -82,7 +82,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
                     .setTangent(90.deg)
                     .lineToY(-45.inch, slowSpeed)
                     .build(),
-                robot.intakeBalls(0,0)
+                robot.intakeBalls(0)
             ),
             ParallelAction(
                 robot.intake.stopIntakeAction(),
@@ -107,7 +107,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
                     .setTangent(90.deg)
                     .lineToY(-45.inch, slowSpeed)
                     .build(),
-                robot.intakeBalls(0,1)
+                robot.intakeBalls(1)
             ),
             ParallelAction(
                 robot.intake.stopIntakeAction(),
@@ -156,7 +156,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
                     .setTangent(90.deg)
                     .lineToY(-45.inch, slowSpeed)
                     .build(),
-                robot.intakeBalls(0,2)
+                robot.intakeBalls(2)
             ),
             ParallelAction(
                 robot.intake.stopIntakeAction(),
@@ -181,7 +181,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
                     .setTangent(90.deg)
                     .lineToY(-45.inch, slowSpeed)
                     .build(),
-                robot.intakeBalls(0,0)
+                robot.intakeBalls(0)
             ),
             ParallelAction(
                 robot.intake.stopIntakeAction(),
@@ -231,7 +231,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
                     .setTangent(90.deg)
                     .lineToY(-45.inch, slowSpeed)
                     .build(),
-                robot.intakeBalls(0,1)
+                robot.intakeBalls(1)
             ),
             ParallelAction(
                 robot.intake.stopIntakeAction(),
@@ -257,7 +257,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
                     .setTangent(90.deg)
                     .lineToY(-45.inch, slowSpeed)
                     .build(),
-                robot.intakeBalls(0,2)
+                robot.intakeBalls(2)
             ),
             ParallelAction(
                 robot.intake.stopIntakeAction(),
@@ -333,7 +333,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
             dash.sendTelemetryPacket(packet)
 8
             telemetry.addData("case id", robot.limelight.updateCase())
-            telemetry.addData("color", robot.camera.colorSensor.getAnalysis())
+            telemetry.addData("color", robot.transfer.sensorColor)
             telemetry.addData("rpm", robot.shooter.rpm)
             telemetry.update()
         }

@@ -143,7 +143,7 @@ class PreloadLeaveBlue : LinearOpMode() {
             dash.sendTelemetryPacket(packet)
 
             telemetry.addData("case id", robot.limelight.currentCase)
-            telemetry.addData("color", robot.camera.colorSensor.getAnalysis())
+            telemetry.addData("color", robot.transfer.sensorColor)
             telemetry.addData("rpm", robot.shooter.rpm)
             telemetry.update()
         }

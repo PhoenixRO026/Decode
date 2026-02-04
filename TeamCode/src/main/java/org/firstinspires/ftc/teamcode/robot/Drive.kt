@@ -17,7 +17,7 @@ class Drive(
     @Config
     data object DriveConfig {
         @JvmField
-        var slowSpeed = 0.5
+        var slowSpeed = 0.2
     }
 
     private var headingOffset = 0.0

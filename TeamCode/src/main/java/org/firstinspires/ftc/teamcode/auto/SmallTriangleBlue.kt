@@ -72,7 +72,7 @@ class SmallTriangleBlue : LinearOpMode() {
 
             robot.drive.actionBuilder(rightIntakePose)
                 .setTangent(90.deg)
-                .afterTime(0.s, robot.intakeBalls(0,0))
+                .afterTime(0.s, robot.intakeBalls(0))
                 .lineToY(-45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
@@ -91,7 +91,7 @@ class SmallTriangleBlue : LinearOpMode() {
 
             robot.drive.actionBuilder(middleIntakePose)
                 .setTangent(90.deg)
-                .afterTime(0.s, robot.intakeBalls(0,1))
+                .afterTime(0.s, robot.intakeBalls(1))
                 .lineToY(-45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
@@ -134,7 +134,7 @@ class SmallTriangleBlue : LinearOpMode() {
 
             robot.drive.actionBuilder(rightIntakePose)
                 .setTangent(90.deg)
-                .afterTime(0.s, robot.intakeBalls(0,2))
+                .afterTime(0.s, robot.intakeBalls(2))
                 .lineToY(-45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
@@ -153,7 +153,7 @@ class SmallTriangleBlue : LinearOpMode() {
 
             robot.drive.actionBuilder(middleIntakePose)
                 .setTangent(90.deg)
-                .afterTime(0.s, robot.intakeBalls(0,0))
+                .afterTime(0.s, robot.intakeBalls(0))
                 .lineToY(-45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
@@ -196,7 +196,7 @@ class SmallTriangleBlue : LinearOpMode() {
 
             robot.drive.actionBuilder(rightIntakePose)
                 .setTangent(90.deg)
-                .afterTime(0.s, robot.intakeBalls(0,1))
+                .afterTime(0.s, robot.intakeBalls(1))
                 .lineToY(-45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmFar))
@@ -215,7 +215,7 @@ class SmallTriangleBlue : LinearOpMode() {
 
             robot.drive.actionBuilder(middleIntakePose)
                 .setTangent(90.deg)
-                .afterTime(0.s, robot.intakeBalls(0,2))
+                .afterTime(0.s, robot.intakeBalls(2))
                 .lineToY(-45.inch, slowSpeed)
                 .afterTime(0.0, robot.intake.stopIntakeAction())
                 .afterTime(0.0.s, robot.shooter.goToRpmAction(rpmClose))
@@ -285,7 +285,7 @@ class SmallTriangleBlue : LinearOpMode() {
             dash.sendTelemetryPacket(packet)
 
             telemetry.addData("case id", robot.limelight.currentCase)
-            telemetry.addData("color", robot.camera.colorSensor.getAnalysis())
+            telemetry.addData("color", robot.transfer.sensorColor)
             telemetry.addData("rpm", robot.shooter.rpm)
             telemetry.update()
         }

@@ -51,12 +51,6 @@ class JustDriveDuo : LinearOpMode(){
 
         robot.transfer.finger.position = 1.0
 
-        while (opModeInInit()){
-            robot.camera.portal.getProcessorEnabled(robot.camera.colorSensor)
-        }
-
-        val exposureCtrl = robot.camera.portal.getCameraControl(ExposureControl::class.java)
-        exposureCtrl.setExposure(CameraConfig.desiredExposureMs, TimeUnit.MILLISECONDS)
 
         waitForStart()
 
@@ -80,22 +74,13 @@ class JustDriveDuo : LinearOpMode(){
 
             /// Transfer
 
-            /* if (fingerUp.wasJustPressed())
-                 robot.transfer.finger.position = 0.5
-
-             if (fingerDown.wasJustPressed())
-                 robot.transfer.finger.position = 0.95*/
-
-
+            if(gamepad1.left_trigger >= 0.2) {
+                robot.intakeBalls(0)
+            }
             if (fingerUp.wasJustPressed())
                 robot.transfer.fingerUp()
             if (fingerDown.wasJustPressed())
                 robot.transfer.fingerDown()
-
-
-
-            //if (fingerDown.wasJustPressed())
-
 
             if (intakeRight.wasJustPressed()){
                 JustDriveDuoConfig.multiplier--
@@ -161,10 +146,7 @@ class JustDriveDuo : LinearOpMode(){
 
             robot.shooter.update(timeKeep.deltaTime)
 
-            val result: PredominantColorProcessor.Result = robot.camera.colorSensor.getAnalysis()
 
-
-            telemetry.addData("Best Match", result.closestSwatch)
 
             telemetry.addData("a was pressed (set)", gamepad1.a)
             telemetry.addData("x was pressed (left)", gamepad1.x)

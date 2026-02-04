@@ -57,13 +57,6 @@ class JustDriveAutohead : LinearOpMode(){
 
         robot.transfer.finger.position = 0.9
 
-        while (opModeInInit()){
-            robot.camera.portal.getProcessorEnabled(robot.camera.colorSensor)
-        }
-
-        val exposureCtrl = robot.camera.portal.getCameraControl(ExposureControl::class.java)
-        exposureCtrl.setExposure(CameraConfig.desiredExposureMs, TimeUnit.MILLISECONDS)
-
         waitForStart()
 
         while (opModeIsActive()) {
@@ -169,11 +162,6 @@ class JustDriveAutohead : LinearOpMode(){
 //            }
 
             robot.shooter.update(timeKeep.deltaTime)
-
-            val result: PredominantColorProcessor.Result = robot.camera.colorSensor.getAnalysis()
-
-
-            telemetry.addData("Best Match", result.closestSwatch)
 
             telemetry.addData("distance", robot.limelight.getDistance())
             telemetry.addData("auto rpm", rpm)
