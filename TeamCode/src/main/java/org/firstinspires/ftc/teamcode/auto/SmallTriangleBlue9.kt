@@ -27,12 +27,12 @@ import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
 class SmallTriangleBlue9 : LinearOpMode() {
     val startPose = Pose(63.inch, -11.inch, 180.0.deg)
     val smallTrianglePose = Pose(55.inch, -10.inch, 200.0.deg)
-    val bigTrianglePose = Pose(-16.5.inch, -16.inch, 221.0.deg) // trebe veficat
+    val bigTrianglePose = Pose(-16.5.inch, -16.inch, 221.0.deg)
 
-    val rightIntakePose = Pose(36.inch, -30.inch, -90.0.deg) // trebe testat, la rosu y e 29, mergea bine seara
+    val rightIntakePose = Pose(36.inch, -30.inch, -90.0.deg)
     val rightIntakePoseBack = Pose(36.inch, -45.inch, -90.0.deg)
-    val middleIntakePose = Pose(13.inch, -29.inch, -90.0.deg)
-    val middleIntakePoseBack = Pose(13.inch, -45.inch, -90.0.deg)
+    val middleIntakePose = Pose(12.inch, -28.inch, -90.0.deg)
+    val middleIntakePoseBack = Pose(12.inch, -45.inch, -90.0.deg)
     val leftIntakePose = Pose(-11.5.inch, -28.inch, -90.0.deg)
 
     val endPose = Pose(0.inch, -28.inch, -90.0.deg)

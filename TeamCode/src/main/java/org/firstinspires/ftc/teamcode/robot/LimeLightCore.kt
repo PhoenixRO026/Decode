@@ -7,6 +7,7 @@ import com.qualcomm.hardware.limelightvision.Limelight3A
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
 import org.firstinspires.ftc.teamcode.library.controller.LowPassFilter
 import com.commonlibs.units.Duration
+import kotlin.math.abs
 import kotlin.math.pow
 
 class LimeLightCore(
@@ -91,7 +92,8 @@ class LimeLightCore(
     fun updateHeadingError() {
         val fid = camera.latestResult
             ?.fiducialResults
-            ?.firstOrNull { it.fiducialId in listOf(20, 24) }
+            ?.firstOrNull()
+
 
         if (fid != null) {
             headingErrorDeg = fid.targetXDegrees
@@ -106,7 +108,9 @@ class LimeLightCore(
             return 0.05 * kotlin.math.sign(headingErrorDeg)
         }
 
-        val raw = LimeLightConfig.controller.calculate(0.0, headingErrorDeg, dt)
+        var raw = LimeLightConfig.controller.calculate(0.0, headingErrorDeg, dt)
+        if(abs(raw) < 0.05)
+            raw = 0.0
         return raw.coerceIn(-LimeLightConfig.maxOutput, LimeLightConfig.maxOutput)
     }
 

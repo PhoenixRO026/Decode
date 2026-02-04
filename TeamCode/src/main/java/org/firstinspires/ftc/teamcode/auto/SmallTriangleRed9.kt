@@ -64,7 +64,13 @@ class SmallTriangleRed9 : LinearOpMode() {
         )
 
         val actionPGP = SequentialAction(
+
             robot.shooter.goToRpmAction(rpmFar),
+
+            robot.drive.actionBuilder(startPose)
+                .strafeToLinearHeading(smallTrianglePose)
+                .build(),
+
             robot.drive.correctionAction(smallTrianglePose, 2.0.s),
 
             robot.shootBalls(rpmFar, 0),
@@ -139,6 +145,10 @@ class SmallTriangleRed9 : LinearOpMode() {
 
         val actionPPG = SequentialAction(
             robot.shooter.goToRpmAction(rpmFar),
+
+            robot.drive.actionBuilder(startPose)
+                .strafeToLinearHeading(smallTrianglePose)
+                .build(),
             robot.drive.correctionAction(smallTrianglePose, 2.0.s),
 
             robot.shootBalls(rpmFar, 2),
@@ -214,6 +224,10 @@ class SmallTriangleRed9 : LinearOpMode() {
 
         val actionGPP = SequentialAction(
             robot.shooter.goToRpmAction(rpmFar),
+
+            robot.drive.actionBuilder(startPose)
+                .strafeToLinearHeading(smallTrianglePose)
+                .build(),
             robot.drive.correctionAction(smallTrianglePose, 2.0.s),
 
             robot.shootBalls(rpmFar, 1),
@@ -303,7 +317,6 @@ class SmallTriangleRed9 : LinearOpMode() {
         }
 
         val action = SequentialAction(
-            startAction,
             when (robot.limelight.currentCase) {
                 AutoCase.GPP -> actionGPP
                 AutoCase.PGP -> actionPGP
