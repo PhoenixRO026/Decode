@@ -39,8 +39,6 @@ class JustDriveAutohead : LinearOpMode(){
 
         robot.limelight.setPipeline(1)
 
-            
-
         val intakeRight = ButtonReader { gamepad2.y}
         val intakeLeft = ButtonReader { gamepad2.a}
         val shootRight = ButtonReader { gamepad2.b}

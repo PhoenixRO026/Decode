@@ -302,8 +302,6 @@ class BigTriangleBlue : LinearOpMode() {
                 .build()*/
         )
 
-        waitForStart()
-
 //        robot.drive.actionBuilder(bigTrianglePose)
 //            .strafeToLinearHeading(readAprilTag)
 //            .setTangent(180.deg)
