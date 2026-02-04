@@ -31,9 +31,8 @@ class Spindexer(
     data object TransferConfig {
         @JvmField val fingerUpPosition = 0.5
         @JvmField val fingerDownPosition = 0.8
-
-
     }
+
     enum class Balls {
         PURPLE,
         GREEN,
@@ -59,9 +58,9 @@ class Spindexer(
         NONE
     }
 
-    var slot1= Balls.EMPTY
-    var slot2= Balls.EMPTY
-    var slot3= Balls.EMPTY
+    var slot1 = Balls.EMPTY
+    var slot2 = Balls.EMPTY
+    var slot3 = Balls.EMPTY
 
     var sensorHue: Float = 0f
 
@@ -85,7 +84,6 @@ class Spindexer(
         sensorHue = hsv[0]
     }
 
-
     var currentPos = TransferPos.intake1
 
     var transferPos
@@ -104,6 +102,7 @@ class Spindexer(
             finger.position = field
         }
 
+    // waits for specific color
     fun waitForColorAction(waitColor: SensorColor, maxTime: Duration = 1.s) = RaceAction(
         Action {
             updateHue()
@@ -124,10 +123,10 @@ class Spindexer(
     }
 
     fun goToNextShoot(pos : TransferPos) {
-        if(pos == TransferPos.shoot1) {
+        if (pos == TransferPos.shoot1) {
             goToPos(TransferPos.shoot2)
         }
-        else if(pos == TransferPos.shoot2) {
+        else if (pos == TransferPos.shoot2) {
             goToPos(TransferPos.shoot3)
         }
         else {
@@ -136,7 +135,7 @@ class Spindexer(
     }
 
     fun goToNextIntake(pos : TransferPos) {
-        if(pos == TransferPos.intake1) {
+        if (pos == TransferPos.intake1) {
             goToPos(TransferPos.intake2)
         }
         else if(pos == TransferPos.intake2) {

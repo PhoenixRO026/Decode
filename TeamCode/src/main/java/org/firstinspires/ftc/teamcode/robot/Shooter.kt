@@ -18,7 +18,6 @@ class Shooter(
     val motorTurret: DcMotorEx,
     val encoderTurret: Encoder,
     val encoderOuttake: Encoder,
-    val servoBackwall: Servo,
     val voltageSensor: VoltageSensor
 )
 {
@@ -108,7 +107,7 @@ class Shooter(
         targetPos = pos
     }
 
-    fun liftToPosAction(pos: Double) = object : Action {
+    fun turretToPosAction(pos: Double) = object : Action {
         var init = true
         override fun run(p: TelemetryPacket): Boolean {
             if (init) {

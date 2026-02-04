@@ -158,9 +158,6 @@ class Robot(
 
         encoderOuttake.direction =DcMotorSimple.Direction.REVERSE
 
-        // servos //
-        val servoBackwall = hardwareMap.get(Servo::class.java, "servoBackwall")
-
         ///  Intake  ///
 
         // motors //
@@ -191,7 +188,6 @@ class Robot(
             motorTurret = motorTurret,
             encoderOuttake = encoderOuttake,
             encoderTurret = encoderTurret,
-            servoBackwall = servoBackwall,
             voltageSensor = voltageSensor
         )
         transfer = Spindexer(
