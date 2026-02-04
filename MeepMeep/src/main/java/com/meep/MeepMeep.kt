@@ -46,6 +46,18 @@ data object redGoalV2{
     val endPose = Pose(38.inch, 10.inch, 90.0.deg)
 }
 
+data object redGoalV3{
+    val startPose = Pose(-54.inch, 47.inch, 215.0.deg)
+    val bigTrianglePose = Pose(-16.5.inch, 16.inch, 136.0.deg)
+
+    val leftIntakePose = Pose(-11.5.inch, 28.inch, 90.0.deg)
+    val middleIntakePose = Pose(11.inch, 29.inch, 90.0.deg)
+
+    val openGatePose = Pose(2.inch, 55.inch, 90.0.deg)
+
+    val endPose = Pose(38.inch, 10.inch, 90.0.deg)
+}
+
 data object blueGoal{
     val startPose = Pose(63.inch, -11.inch, 180.0.deg)
     val smallTrianglePose = Pose(55.inch, -10.inch, 202.0.deg)
@@ -93,8 +105,30 @@ fun main() {
             .build()
 
 
-    redBot.runAction(redBot.drive.actionBuilder(redGoalV2.startPose.pose2d).ex()
-        .splineToLinearHeading(redGoalV2.smallTrianglePose, 180.deg)
+    redBot.runAction(redBot.drive.actionBuilder(redGoalV3.startPose.pose2d).ex()
+        .setTangent(-45.0.deg)
+        .splineToLinearHeading(redGoalV3.bigTrianglePose, 45.0.deg)
+
+
+        .splineToLinearHeading(redGoalV3.middleIntakePose, 90.deg)
+        .setTangent(90.deg)
+        .lineToY(56.inch, slowSpeed)
+        .setTangent(-30.0.deg)
+        .splineToLinearHeading(redGoalV3.bigTrianglePose, 135.deg)
+
+        .setTangent(135.0.deg)
+        .splineToLinearHeading(redGoalV3.leftIntakePose, 45.deg)
+        .setTangent(90.0.deg)
+        .lineToY(45.inch, slowSpeed)
+
+
+        .strafeToLinearHeading(redGoalV3.bigTrianglePose)
+        .strafeToLinearHeading(redGoalV3.endPose)
+
+        .build()
+
+
+        /*.splineToLinearHeading(redGoalV2.smallTrianglePose, 180.deg)
 
         .splineToLinearHeading(redGoalV2.rightIntakePose, 90.deg)
         .setTangent(90.deg)
@@ -121,7 +155,7 @@ fun main() {
         .strafeToLinearHeading(redGoalV2.smallTrianglePose)
         .strafeToLinearHeading(redGoalV2.endPose)
 
-        .build()
+        .build()*/
     )
     blueBot.runAction(blueBot.drive.actionBuilder(blueGoal.startPose.pose2d).ex()
         .strafeToLinearHeading(blueGoal.smallTrianglePose)
