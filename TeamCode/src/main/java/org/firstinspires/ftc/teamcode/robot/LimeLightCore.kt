@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.robot
 
 import com.acmerobotics.dashboard.config.Config
-import com.qualcomm.hardware.limelightvision.LLResult
-import com.qualcomm.hardware.limelightvision.LLResultTypes
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
 import org.firstinspires.ftc.teamcode.library.controller.LowPassFilter
@@ -12,12 +10,13 @@ import kotlin.math.pow
 
 class LimeLightCore(
     val camera: Limelight3A,
-    val drive: Drive
+    val drive: Drive,
+    val shooter: Shooter
 ) {
     @Config
     data object LimeLightConfig {
         @JvmField
-        var controller = PIDController(
+        var headingController = PIDController(
             0.027,
             0.05,
             0.00001,
@@ -29,6 +28,17 @@ class LimeLightCore(
         )
         @JvmField var headingToleranceDeg = 1.0
         @JvmField var maxOutput = 0.6
+
+        var turretController = PIDController(
+            0.027,
+            0.05,
+            0.00001,
+            0.0,
+            newTargetReset = true,
+            zeroTargetReset = true,
+            derivativeFilter = LowPassFilter(0.0),
+            stabilityThreshold = 0.0
+        )
     }
 
     enum class AutoCase { PPG, PGP, GPP, UNKNOWN }
@@ -108,10 +118,28 @@ class LimeLightCore(
             return 0.05 * kotlin.math.sign(headingErrorDeg)
         }
 
-        var raw = LimeLightConfig.controller.calculate(0.0, headingErrorDeg, dt)
+        var raw = LimeLightConfig.headingController.calculate(0.0, headingErrorDeg, dt)
         if(abs(raw) < 0.05)
             raw = 0.0
         return raw.coerceIn(-LimeLightConfig.maxOutput, LimeLightConfig.maxOutput)
+    }
+
+    fun computeTurretHeadingPower(dt: Duration) : Double {
+        if (!tagVisible) {
+            return 0.05 * kotlin.math.sign(headingErrorDeg)
+        }
+
+        var raw = LimeLightConfig.turretController.calculate(0.0, headingErrorDeg, dt)
+        if(abs(raw) < 0.05)
+            raw = 0.0
+        return raw.coerceIn(-LimeLightConfig.maxOutput, LimeLightConfig.maxOutput)
+    }
+
+    fun adjustTurretHeading(dt: Duration) {
+        updateHeadingError()
+
+        val power = computeHeadingPower(dt)
+        shooter.motorTurret.power = power
     }
 
     fun driveWithHeading(forward: Double = 0.0, left: Double = 0.0, dt: Duration) {
