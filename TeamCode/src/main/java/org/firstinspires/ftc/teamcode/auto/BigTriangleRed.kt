@@ -347,7 +347,7 @@ class BigTriangleRed : LinearOpMode() {
 
             dash.sendTelemetryPacket(packet)
             telemetry.addData("case id", robot.limelight.updateCase())
-            telemetry.addData("color", robot.transfer.sensorColor)
+            telemetry.addData("color", robot.camera.colorSensor.getAnalysis())
             telemetry.addData("rpm", robot.shooter.rpm)
             telemetry.update()
         }

@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.teleop
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.acmerobotics.roadrunner.Action
 import com.commonlibs.units.Pose
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
@@ -28,6 +30,8 @@ abstract class GoodDrive : LinearOpMode(){
     }
     abstract val pipeline: Int
 
+    private var driver1Action: Action? = null
+
     override fun runOpMode() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
@@ -48,7 +52,8 @@ abstract class GoodDrive : LinearOpMode(){
         val stopShooter = ButtonReader {gamepad2.dpad_left}
         val snipe = ToggleButtonReader {gamepad1.x}
         val autoRpm = ButtonReader {gamepad2.dpad_right}
-        val buttons = listOf(intakeRight, intakeLeft, shootRight, shootLeft, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe, autoRpm)
+        val shootBalls = ButtonReader{gamepad2.right_trigger >= 0.2}
+        val buttons = listOf(shootBalls, intakeRight, intakeLeft, shootRight, shootLeft, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe, autoRpm)
         val stopButton = ButtonReader {gamepad2.touchpad}
 
         robot.transfer.finger.position = 0.9
@@ -80,6 +85,9 @@ abstract class GoodDrive : LinearOpMode(){
             }
 
             /// Transfer
+
+            if (shootBalls.wasJustPressed())
+                driver1Action=  robot.shootTeleBalls(3280.0, GoodDriveConfing.multiplier)
 
             if (fingerUp.wasJustPressed())
                 robot.transfer.fingerUp()
@@ -152,11 +160,6 @@ abstract class GoodDrive : LinearOpMode(){
                 robot.transfer.resetPos()
             }
 
-//            if (stopButton.wasJustPressed()) {
-//                rpm = 0.0
-//
-//            }
-
             robot.shooter.update(timeKeep.deltaTime)
 
             telemetry.addData("distance", robot.limelight.getDistance())
@@ -182,6 +185,15 @@ abstract class GoodDrive : LinearOpMode(){
             telemetry.update()
 
             robot.transfer.update(timeKeep.deltaTime)
+            runActions()
+        }
+    }
+
+    private fun runActions() {
+        driver1Action?.let {
+            if (!it.run(TelemetryPacket())) {
+                driver1Action = null
+            }
         }
     }
 }

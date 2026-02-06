@@ -35,7 +35,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
     val middleIntakePoseBack = Pose(12.inch, -45.inch, -90.0.deg)
     val leftIntakePose = Pose(-11.5.inch, -28.inch, -90.0.deg)
 
-    val endPose = Pose(0.inch, -28.inch, -90.0.deg)
+    val endPose = Pose(-1.inch, -25.inch, -90.0.deg)
 
     val rpmFar = 3280.0 // la rosu e 3260, again, trebe verificat
     val rpmClose = 2830.0
@@ -117,7 +117,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
                 .setTangent(90.deg)
                 .splineToLinearHeading(bigTrianglePose, 180.deg)
                 .build(),
-            robot.drive.correctionAction(bigTrianglePose, 2.5.s),
+            robot.drive.correctionAction(bigTrianglePose, 2.0.s),
 
             robot.shootBalls(rpmClose, 1),
 
@@ -192,7 +192,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
                 .setTangent(90.deg)
                 .splineToLinearHeading(bigTrianglePose, 180.deg)
                 .build(),
-            robot.drive.correctionAction(bigTrianglePose, 2.5.s),
+            robot.drive.correctionAction(bigTrianglePose, 2.0.s),
 
             robot.shootBalls(rpmClose, 0),
 
@@ -268,7 +268,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
                 .setTangent(90.deg)
                 .splineToLinearHeading(bigTrianglePose, 180.deg)
                 .build(),
-            robot.drive.correctionAction(bigTrianglePose, 2.5.s),
+            robot.drive.correctionAction(bigTrianglePose, 2.0.s),
 
             robot.shootBalls(rpmClose, 2),
 
@@ -333,7 +333,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
             dash.sendTelemetryPacket(packet)
 8
             telemetry.addData("case id", robot.limelight.updateCase())
-            telemetry.addData("color", robot.transfer.sensorColor)
+            telemetry.addData("color", robot.camera.colorSensor.getAnalysis())
             telemetry.addData("rpm", robot.shooter.rpm)
             telemetry.update()
         }

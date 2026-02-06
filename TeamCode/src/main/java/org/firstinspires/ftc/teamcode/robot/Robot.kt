@@ -32,6 +32,7 @@ class Robot(
     val shooter: Shooter
     val transfer: Spindexer
     val intake: Intake
+    val camera: CameraCore
     val limelight: LimeLightCore
 
     data object RobotConfig {
@@ -54,14 +55,14 @@ class Robot(
     fun intakeBalls(futureOuttakePos : Int) = SequentialAction(
         InstantAction{intake.power = 0.75},
         transfer.goToPosAction(RobotConfig.pos, 0, RobotConfig.intakeOffset),
-        transfer.waitForColors(3.s),
+        camera.waitForColors(3.s),
         SleepAction(0.5.s),
         transfer.goToPosAction(RobotConfig.pos, 1, 0.0),
-        transfer.waitForColors(3.s),
+        camera.waitForColors(3.s),
 
         SleepAction(0.3.s),
         transfer.goToPosAction(RobotConfig.pos, 2, 0.0),
-        transfer.waitForColors(3.s),
+        camera.waitForColors(3.s),
 
         SleepAction(0.4.s),
         InstantAction{intake.power = 0.0},
@@ -86,17 +87,17 @@ class Robot(
         InstantAction{intake.power = 0.75},
         transfer.goToPosAction(RobotConfig.pos, multiplier, RobotConfig.intakeOffset),
         RaceAction(
-            transfer.waitForColors(2.s),
+            camera.waitForColors(2.s),
             SleepAction(3.s)
         ),
         transfer.goToPosAction(RobotConfig.pos, multiplier + 1, 0.0),
         RaceAction(
-            transfer.waitForColors(2.s),
+            camera.waitForColors(2.s),
             SleepAction(3.s)
         ),
         transfer.goToPosAction(RobotConfig.pos, multiplier + 2, 0.0),
         RaceAction(
-            transfer.waitForColors(2.s),
+            camera.waitForColors(2.s),
             SleepAction(3.s)
         ),
         InstantAction{intake.power = 0.0},
@@ -104,15 +105,15 @@ class Robot(
     )
 
     fun shootTeleBalls(rpm : Double, multiplier : Int) = SequentialAction(
-        shooter.goToRpmAction(rpm),
-        SleepAction(0.9.s),
+        //shooter.goToRpmAction(rpm),
+        //SleepAction(0.9.s),
         transfer.goToPosAction(RobotConfig.pos, multiplier, RobotConfig.shooterOffset),
         shootBall(rpm),
         transfer.goToPosAction(RobotConfig.pos, multiplier + 1, RobotConfig.shooterOffset),
         shootBall(rpm),
         transfer.goToPosAction(RobotConfig.pos, multiplier + 2, RobotConfig.shooterOffset),
         shootBall(rpm),
-        SleepAction(0.5 .s),
+        SleepAction(0.3 .s),
         transfer.goToPosAction(RobotConfig.pos, 0, 0.0),
         shooter.goToRpmAction(0.0),
     )
@@ -163,10 +164,10 @@ class Robot(
 
         val finger = hardwareMap.get(Servo::class.java, "finger")
 
-        val colorSensor = hardwareMap.get(NormalizedColorSensor::class.java, "colorSensor")
         val limlit = hardwareMap.get(Limelight3A::class.java, "limelight")
         limlit.setPollRateHz(100)
         limlit.start()
+        val webcamColor = hardwareMap.get(WebcamName::class.java, "Webcam 1")
         val voltageSensor = hardwareMap.voltageSensor.iterator().next()
 
         drive = Drive(mecanumDrive)
@@ -180,7 +181,6 @@ class Robot(
             motor = motorTransfer,
             encoder = encoderTransfer,
             finger = finger,
-            colorSensor = colorSensor
         )
         intake = Intake(
             motor = motorIntake
@@ -189,6 +189,10 @@ class Robot(
             camera = limlit,
             drive = drive
         )
+        camera = CameraCore(
+            cameraColor = webcamColor
+        )
+
 
 
     }

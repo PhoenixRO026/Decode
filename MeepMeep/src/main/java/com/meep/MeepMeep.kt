@@ -47,11 +47,11 @@ data object redGoalV2{
 }
 
 data object redGoalV3{
-    val startPose = Pose(-54.inch, 47.inch, 215.0.deg)
+    val startPose = Pose(-52.inch, 50.inch, 215.0.deg)
     val bigTrianglePose = Pose(-16.5.inch, 16.inch, 136.0.deg)
 
     val leftIntakePose = Pose(-11.5.inch, 28.inch, 90.0.deg)
-    val middleIntakePose = Pose(11.inch, 29.inch, 90.0.deg)
+    val middleIntakePose = Pose(9.inch, 29.inch, 90.0.deg)
 
     val openGatePose = Pose(2.inch, 55.inch, 90.0.deg)
 
@@ -107,21 +107,21 @@ fun main() {
 
     redBot.runAction(redBot.drive.actionBuilder(redGoalV3.startPose.pose2d).ex()
         .setTangent(-45.0.deg)
-        .splineToLinearHeading(redGoalV3.bigTrianglePose, 45.0.deg)
+        .splineToLinearHeading(redGoalV3.bigTrianglePose, -45.0.deg)
 
-
-        .splineToLinearHeading(redGoalV3.middleIntakePose, 90.deg)
+        .setTangent(45.deg)
+        .splineToLinearHeading(redGoalV3.middleIntakePose, 45.deg)
         .setTangent(90.deg)
         .lineToY(56.inch, slowSpeed)
-        .setTangent(-30.0.deg)
-        .splineToLinearHeading(redGoalV3.bigTrianglePose, 135.deg)
+        .setTangent(-90.0.deg)
+        .splineToLinearHeading(redGoalV3.bigTrianglePose, 180.deg)
 
-        .setTangent(135.0.deg)
-        .splineToLinearHeading(redGoalV3.leftIntakePose, 45.deg)
+        .setTangent(60.0.deg)
+        .splineToLinearHeading(redGoalV3.leftIntakePose, 90.deg)
         .setTangent(90.0.deg)
         .lineToY(45.inch, slowSpeed)
 
-
+        .setTangent(-90.0.deg)
         .strafeToLinearHeading(redGoalV3.bigTrianglePose)
         .strafeToLinearHeading(redGoalV3.endPose)
 

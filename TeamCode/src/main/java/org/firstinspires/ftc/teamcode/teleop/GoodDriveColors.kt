@@ -4,10 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 
 @TeleOp
 class GoodDriveBlue : GoodDrive() {
-    override val pipeline = 2
+    override val pipeline = 1
 }
 
 @TeleOp
 class GoodDriveRed : GoodDrive() {
-    override val pipeline = 1
+    override val pipeline = 2
 }
