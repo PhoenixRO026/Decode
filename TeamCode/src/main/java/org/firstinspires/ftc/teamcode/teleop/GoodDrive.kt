@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.library.buttons.ToggleButtonReader
 import org.firstinspires.ftc.teamcode.robot.Robot
 
 @TeleOp
-abstract class GoodDrive : LinearOpMode(){
+open class GoodDrive : LinearOpMode(){
     @Config
     data object GoodDriveConfing {
         @JvmField var ticksPerRev = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0)
@@ -26,7 +26,7 @@ abstract class GoodDrive : LinearOpMode(){
         @JvmField var rpmSmall = 3260
         @JvmField var rpmBig = 2775
     }
-    abstract val pipeline: Int
+    open val pipeline: Int = 1
 
     override fun runOpMode() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
