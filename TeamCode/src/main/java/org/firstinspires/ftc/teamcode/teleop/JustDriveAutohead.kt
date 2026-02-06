@@ -18,7 +18,8 @@ import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor
 import java.util.concurrent.TimeUnit
 
 @TeleOp
-class JustDriveAutohead : LinearOpMode(){
+open class JustDriveAutohead : LinearOpMode(){
+    open val pip: Int = 1
     @Config
     data object JustDriveAutoheadConfing {
         @JvmField var ticksPerRev = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0)
