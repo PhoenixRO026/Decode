@@ -2,55 +2,143 @@ package org.firstinspires.ftc.teamcode.robot
 
 import android.graphics.Color
 import com.acmerobotics.dashboard.config.Config
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
-import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.RaceAction
-import com.acmerobotics.roadrunner.SequentialAction
-import com.acmerobotics.roadrunner.ftc.Encoder
 import com.commonlibs.units.Duration
 import com.commonlibs.units.SleepAction
 import com.commonlibs.units.s
-import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.robotcore.external.Telemetry
-import org.firstinspires.ftc.teamcode.library.controller.PIDController
-import kotlin.math.abs
 
 class Spindexer(
-    val motor: DcMotorEx,
-    val encoder: Encoder,
+    val servoTransfer1: Servo,
+    val servoTransfer2: Servo,
     val finger: Servo,
     val colorSensor: NormalizedColorSensor
 )
 {
     @Config
-    data object transferConfig {
-        @JvmField
-        var controller = PIDController(
-            kP = 0.003,
-            kD = 0.0001,
-            kI = 0.02,
-            stabilityThreshold = 50.0
-        )
-
-        @JvmField
-        val fingerUpPosition = 0.5
-        @JvmField
-        val fingerDownPosition = 0.9
+    data object TransferConfig {
+        @JvmField val fingerUpPosition = 0.5
+        @JvmField val fingerDownPosition = 0.8
+        @JvmField val shootOffset = 0.07
     }
 
-    enum class Mode {
-        PID,
-        MANUAL
+    enum class BallColor {
+        PURPLE,
+        GREEN,
+        EMPTY
     }
+
+    val intakePositions = listOf(
+        0.15, // slot 0 intake position
+        0.50, // slot 1 intake position
+        0.85  // slot 2 intake position
+    )
 
     enum class SensorColor {
         PURPLE,
         GREEN,
         NONE
+    }
+
+    val slots: MutableList<BallColor> = mutableListOf(
+        BallColor.EMPTY,
+        BallColor.EMPTY,
+        BallColor.EMPTY
+    )
+
+    var currentPosition: Double
+        get() = servoTransfer1.position
+        set(value) {
+            servoTransfer1.position = value
+            servoTransfer2.position = value
+        }
+
+    var activeIntakeSlot: Int? = null
+
+    private fun servoDistance(a: Double, b: Double): Double =
+        kotlin.math.abs(a - b)
+
+    fun closestSlotToShoot(target: BallColor): Int? {
+        return slots
+            .mapIndexedNotNull { index, color ->
+                if (color == target) index else null
+            }
+            .minByOrNull { index ->
+                servoDistance(
+                    currentPosition,
+                    shootPositionForSlot(index)
+                )
+            }
+    }
+
+    fun closestSlotToIntake(): Int? {
+        return slots
+            .mapIndexedNotNull { index, color ->
+                if (color == BallColor.EMPTY) index else null
+            }
+            .minByOrNull { index ->
+                servoDistance(
+                    currentPosition,
+                    intakePositions[index]
+                )
+            }
+    }
+
+    fun shootPositionForSlot(slotIndex: Int): Double {
+        return intakePositions[slotIndex] + TransferConfig.shootOffset
+    }
+
+    fun goToShootSlot(slotIndex: Int) {
+        currentPosition = shootPositionForSlot(slotIndex)
+    }
+
+
+    fun goToIntakeSlot(slotIndex: Int) {
+        currentPosition = intakePositions[slotIndex]
+        activeIntakeSlot = slotIndex
+    }
+
+    fun storeBall(slotIndex: Int, color: BallColor) {
+        slots[slotIndex] = color
+    }
+
+    fun eraseBall(slotIndex: Int) {
+        slots[slotIndex] = BallColor.EMPTY
+    }
+
+    private var lastSensorColor: SensorColor = SensorColor.NONE
+
+    fun updateFromColorSensor() {
+        val slot = activeIntakeSlot ?: return
+
+        updateHue()
+        val current = sensorColor
+
+        val newBall =
+            lastSensorColor == SensorColor.NONE &&
+                    (current == SensorColor.GREEN || current == SensorColor.PURPLE)
+
+        if (newBall && slots[slot] == BallColor.EMPTY) {
+            slots[slot] = when (current) {
+                SensorColor.GREEN -> BallColor.GREEN
+                SensorColor.PURPLE -> BallColor.PURPLE
+                else -> BallColor.EMPTY
+            }
+        }
+
+        lastSensorColor = current
+    }
+
+    fun hasAnyBall(): Boolean {
+        return slots.any { it != BallColor.EMPTY }
+    }
+
+    fun closestSlotToShootAny(): Int? {
+        return closestSlotToShoot(BallColor.GREEN)
+            ?: closestSlotToShoot(BallColor.PURPLE)
     }
 
     var sensorHue: Float = 0f
@@ -75,83 +163,31 @@ class Spindexer(
         sensorHue = hsv[0]
     }
 
-    private var currentMode = Mode.PID
+    var transferPos
+        get() = servoTransfer1.position
+        set(value) {
+            servoTransfer1.position = value
+            servoTransfer2.position = value
+        }
 
-    val position get() = encoder.getPositionAndVelocity().position - offset
-
-    private var offset = encoder.getPositionAndVelocity().position
 
     var fingerPosition : Double = 0.5
         get() = finger.position
         set(value) {
             val clampedVal = value.coerceIn(0.0, 1.0)
-            //
-            // if (clampedVal == field) return
             field = clampedVal
             finger.position = field
         }
 
-    private var _power: Double
-        get() = motor.power
-        set(value) {
-            motor.power = value.coerceIn(-1.0, 1.0)
-        }
-
-    var power
-        get() = _power
-        set(value) {
-            if (value == 0.0 && currentMode == Mode.PID) return
-            currentMode = Mode.MANUAL
-            _power = value
-        }
-
     fun fingerUp() {
-        fingerPosition = transferConfig.fingerUpPosition
+        finger.position = TransferConfig.fingerUpPosition
     }
+
     fun fingerDown() {
-        fingerPosition = transferConfig.fingerDownPosition
+        finger.position = TransferConfig.fingerDownPosition
     }
 
-    fun shootAction() = SequentialAction(
-        InstantAction { fingerUp() },
-        SleepAction(0.5.s),
-        InstantAction { fingerDown() },
-        SleepAction(0.3.s)
-    )
-    var targetPosition : Double = position
-        set(value) {
-            currentMode = Mode.PID
-            field = value
-        }
-
-
-    fun goToPos(pos: Double, multiplier: Int = 0, offset: Double= 0.0) {
-        targetPosition = pos * multiplier + offset
-        fingerDown()
-    }
-
-    fun goToPosAction(pos: Double, multiplier: Int = 0, offset: Double = 1.0) = object : Action {
-        var init = true
-        override fun run(p: TelemetryPacket): Boolean {
-            if (init) {
-                init = false
-                goToPos(pos, multiplier, offset)
-            }
-            p.addLine("waiting for spindexer")
-            return abs(targetPosition - position) > 5
-        }
-    }
-
-    fun update(deltaTime: Duration) {
-        if (currentMode == Mode.PID) {
-            _power = transferConfig.controller.calculate(
-                position,
-                targetPosition,
-                deltaTime
-            )
-        }
-    }
-
+    // waits for specific color
     fun waitForColorAction(waitColor: SensorColor, maxTime: Duration = 1.s) = RaceAction(
         Action {
             updateHue()
@@ -168,13 +204,8 @@ class Spindexer(
     )
 
     fun addTelemetry(telemetry: Telemetry) {
-        telemetry.addData("transfer power", power)
-        telemetry.addData("spindexer pos", motor.currentPosition)
+        telemetry.addData("spindexer pos", transferPos)
         telemetry.addData("finger pos", fingerPosition)
         //telemetry.addData("lift current", rightMotor.getCurrent(CurrentUnit.AMPS) + leftMotor.getCurrent(CurrentUnit.AMPS))
-    }
-
-    fun resetPos() {
-        offset = encoder.getPositionAndVelocity().position
     }
 }

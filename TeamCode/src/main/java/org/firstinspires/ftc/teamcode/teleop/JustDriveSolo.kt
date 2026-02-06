@@ -16,8 +16,6 @@ import org.firstinspires.ftc.teamcode.robot.Robot
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor
 import java.util.concurrent.TimeUnit
 
-
-
 @TeleOp
 class JustDriveSolo : LinearOpMode(){
     @Config
@@ -36,7 +34,6 @@ class JustDriveSolo : LinearOpMode(){
         val robot = Robot(hardwareMap,Pose(0.0.cm, 0.0.cm, 0.0.deg))
         val timeKeep = TimeKeep()
         var lastPos : Boolean = false // false = intake true = shooter
-
 
         val intakeRight = ButtonReader { gamepad2.y}
         val intakeLeft = ButtonReader { gamepad2.a}
