@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.ParallelAction
 import com.acmerobotics.roadrunner.RaceAction
 import com.acmerobotics.roadrunner.SequentialAction
+import com.acmerobotics.roadrunner.SleepAction
 import com.acmerobotics.roadrunner.ftc.Encoder
 import com.acmerobotics.roadrunner.ftc.RawEncoder
 import com.commonlibs.units.Pose
@@ -53,14 +54,15 @@ class Robot(
     )
 
     fun intakeBalls(futureOuttakePos : Int) = SequentialAction(
-        InstantAction{intake.power = 0.75},
+        InstantAction{intake.power = 1.0},
+        SleepAction(0.5.s),
         transfer.goToPosAction(RobotConfig.pos, 0, RobotConfig.intakeOffset),
-        camera.waitForColors(3.s),
+        camera.waitForColors(4.s),
         SleepAction(0.5.s),
         transfer.goToPosAction(RobotConfig.pos, 1, 0.0),
-        camera.waitForColors(3.s),
+        camera.waitForColors(4.s),
 
-        SleepAction(0.3.s),
+        SleepAction(0.5.s),
         transfer.goToPosAction(RobotConfig.pos, 2, 0.0),
         camera.waitForColors(3.s),
 

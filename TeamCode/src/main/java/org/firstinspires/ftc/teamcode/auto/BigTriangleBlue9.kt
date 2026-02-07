@@ -25,14 +25,14 @@ import org.firstinspires.ftc.teamcode.robot.Robot.RobotConfig
 @Autonomous
 class BigTriangleBlue9 : LinearOpMode() {
     val startPose = Pose(-61.5.inch, -36.inch, 90.0.deg)
-    val bigTrianglePose = Pose(-16.5.inch, -16.inch, 230.0.deg)
+    val bigTrianglePose = Pose(-17.inch, -17.inch, 230.0.deg)
 
     val leftIntakePose = Pose(-11.5.inch, -28.inch, -90.0.deg)
-    val middleIntakePose = Pose(9.inch, -27.inch, -90.0.deg)
+    val middleIntakePose = Pose(10.inch, -27.inch, -90.0.deg)
     val leftIntakePoseBack = Pose(-11.5.inch, -28.inch, -90.0.deg)
     val middleIntakePoseBack = Pose(9.inch, -56.inch, -90.0.deg)
 
-    val openGatePose = Pose(2.inch, 55.inch, 90.0.deg)
+    val openGatePose = Pose(7.inch, -55.inch, -90.0.deg)
 
     val endPose = Pose(0.inch, -28.inch, -90.0.deg)
 
@@ -91,8 +91,7 @@ class BigTriangleBlue9 : LinearOpMode() {
                 robot.drive.actionBuilder(middleIntakePose)
                     .setTangent(-90.deg)
                     .lineToY(-54.inch, slowSpeed)
-                    .setTangent(-90.0.deg)
-                    .lineToY(-56.inch)
+                    .strafeToLinearHeading(openGatePose)
                     .build(),
                 robot.intakeBalls(1)
             ),
@@ -101,9 +100,9 @@ class BigTriangleBlue9 : LinearOpMode() {
                 robot.shooter.goToRpmAction(rpmClose),
             ),
 
-            robot.drive.actionBuilder(middleIntakePoseBack)
+            robot.drive.actionBuilder(openGatePose)
                 .setTangent(90.0.deg)
-                .splineToLinearHeading(bigTrianglePose, 90.deg)
+                .splineToLinearHeading(bigTrianglePose, -180.deg)
                 .build(),
             robot.drive.correctionAction(bigTrianglePose, 1.0.s),
 
@@ -146,7 +145,7 @@ class BigTriangleBlue9 : LinearOpMode() {
             ParallelAction (
                 robot.drive.actionBuilder(startPose)
                     .setTangent(45.0.deg)
-                    .splineToLinearHeading(bigTrianglePose, 45.0.deg)
+                    .splineToLinearHeading(bigTrianglePose, -45.0.deg)
                     .build(),
                 robot.transfer.goToPosAction(RobotConfig.pos, 1, RobotConfig.shooterOffset)
             ),
@@ -158,16 +157,15 @@ class BigTriangleBlue9 : LinearOpMode() {
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(bigTrianglePose)
                 .setTangent(45.deg)
-                .splineToLinearHeading(middleIntakePose, 45.deg)
+                .splineToLinearHeading(middleIntakePose, -45.deg)
                 .build(),
             robot.drive.correctionAction(middleIntakePose, 0.75.s),
 
             RaceAction(
                 robot.drive.actionBuilder(middleIntakePose)
-                    .setTangent(90.deg)
-                    .lineToY(54.inch, slowSpeed)
-                    .setTangent(90.0.deg)
-                    .lineToY(56.inch)
+                    .setTangent(-90.deg)
+                    .lineToY(-54.inch, slowSpeed)
+                    .strafeToLinearHeading(openGatePose)
                     .build(),
                 robot.intakeBalls(0)
             ),
@@ -176,9 +174,9 @@ class BigTriangleBlue9 : LinearOpMode() {
                 robot.shooter.goToRpmAction(rpmClose),
             ),
 
-            robot.drive.actionBuilder(middleIntakePoseBack)
-                .setTangent(-90.0.deg)
-                .splineToLinearHeading(bigTrianglePose, 180.deg)
+            robot.drive.actionBuilder(openGatePose)
+                .setTangent(90.0.deg)
+                .splineToLinearHeading(bigTrianglePose, -180.deg)
                 .build(),
             robot.drive.correctionAction(bigTrianglePose, 1.0.s),
 
@@ -188,14 +186,14 @@ class BigTriangleBlue9 : LinearOpMode() {
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(bigTrianglePose)
                 .setTangent(60.0.deg)
-                .splineToLinearHeading(leftIntakePose, 90.deg)
+                .splineToLinearHeading(leftIntakePose, -90.deg)
                 .build(),
             robot.drive.correctionAction(leftIntakePose, 0.75.s),
 
             RaceAction(
                 robot.drive.actionBuilder(leftIntakePose)
-                    .setTangent(90.deg)
-                    .lineToY(45.inch, slowSpeed)
+                    .setTangent(-90.deg)
+                    .lineToY(-48.inch, slowSpeed)
                     .build(),
                 robot.intakeBalls(1)
             ),
@@ -220,7 +218,7 @@ class BigTriangleBlue9 : LinearOpMode() {
             ParallelAction (
             robot.drive.actionBuilder(startPose)
                     .setTangent(45.0.deg)
-                    .splineToLinearHeading(bigTrianglePose, 45.0.deg)
+                    .splineToLinearHeading(bigTrianglePose, -45.0.deg)
                     .build(),
                 robot.transfer.goToPosAction(RobotConfig.pos, 0, RobotConfig.shooterOffset)
             ),
@@ -231,16 +229,15 @@ class BigTriangleBlue9 : LinearOpMode() {
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(bigTrianglePose)
                 .setTangent(45.deg)
-                .splineToLinearHeading(middleIntakePose, 45.deg)
+                .splineToLinearHeading(middleIntakePose, -45.deg)
                 .build(),
             robot.drive.correctionAction(middleIntakePose, 0.75.s),
 
             RaceAction(
                 robot.drive.actionBuilder(middleIntakePose)
-                    .setTangent(90.deg)
-                    .lineToY(54.inch, slowSpeed)
-                    .setTangent(90.0.deg)
-                    .lineToY(56.inch)
+                    .setTangent(-90.deg)
+                    .lineToY(-54.inch, slowSpeed)
+                    .strafeToLinearHeading(openGatePose)
                     .build(),
                 robot.intakeBalls(2)
             ),
@@ -249,9 +246,9 @@ class BigTriangleBlue9 : LinearOpMode() {
                 robot.shooter.goToRpmAction(rpmClose),
             ),
 
-            robot.drive.actionBuilder(middleIntakePoseBack)
-                .setTangent(-90.0.deg)
-                .splineToLinearHeading(bigTrianglePose, 180.deg)
+            robot.drive.actionBuilder(openGatePose)
+                .setTangent(90.0.deg)
+                .splineToLinearHeading(bigTrianglePose, -180.deg)
                 .build(),
             robot.drive.correctionAction(bigTrianglePose, 1.0.s),
 
@@ -261,14 +258,14 @@ class BigTriangleBlue9 : LinearOpMode() {
             robot.intake.startIntakeAction(),
             robot.drive.actionBuilder(bigTrianglePose)
                 .setTangent(60.0.deg)
-                .splineToLinearHeading(leftIntakePose, 90.deg)
+                .splineToLinearHeading(leftIntakePose, -90.deg)
                 .build(),
             robot.drive.correctionAction(leftIntakePose, 0.75.s),
 
             RaceAction(
                 robot.drive.actionBuilder(leftIntakePose)
-                    .setTangent(90.deg)
-                    .lineToY(45.inch, slowSpeed)
+                    .setTangent(-90.deg)
+                    .lineToY(-48.inch, slowSpeed)
                     .build(),
                 robot.intakeBalls(1)
             ),
