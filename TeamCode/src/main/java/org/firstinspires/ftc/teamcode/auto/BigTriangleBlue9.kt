@@ -218,7 +218,7 @@ class BigTriangleBlue9 : LinearOpMode() {
         val actionGPP = SequentialAction(
             robot.shooter.goToRpmAction(rpmClose),
             ParallelAction (
-                robot.drive.actionBuilder(startPose)
+            robot.drive.actionBuilder(startPose)
                     .setTangent(-45.0.deg)
                     .splineToLinearHeading(bigTrianglePose, -45.0.deg)
                     .build(),
@@ -287,7 +287,7 @@ class BigTriangleBlue9 : LinearOpMode() {
                 .strafeToLinearHeading(endPose)
                 .build(),
 
-            )
+        )
 
 
         while (opModeInInit()) {

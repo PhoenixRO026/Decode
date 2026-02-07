@@ -72,6 +72,7 @@ class Robot(
 
     fun shootBalls(rpm : Double, multiplier : Int) = SequentialAction(
         shooter.goToRpmAction(rpm),
+        SleepAction(0.1.s),
         transfer.goToPosAction(RobotConfig.pos, multiplier, RobotConfig.shooterOffset),
         shootBall(rpm),
         transfer.goToPosAction(RobotConfig.pos, multiplier + 1, RobotConfig.shooterOffset),

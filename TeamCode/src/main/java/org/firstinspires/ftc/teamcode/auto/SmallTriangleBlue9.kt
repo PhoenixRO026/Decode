@@ -117,7 +117,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
                 .setTangent(90.deg)
                 .splineToLinearHeading(bigTrianglePose, 180.deg)
                 .build(),
-            robot.drive.correctionAction(bigTrianglePose, 2.0.s),
+            robot.drive.correctionAction(bigTrianglePose, 2.5.s),
 
             robot.shootBalls(rpmClose, 1),
 
@@ -192,7 +192,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
                 .setTangent(90.deg)
                 .splineToLinearHeading(bigTrianglePose, 180.deg)
                 .build(),
-            robot.drive.correctionAction(bigTrianglePose, 2.0.s),
+            robot.drive.correctionAction(bigTrianglePose, 2.5.s),
 
             robot.shootBalls(rpmClose, 0),
 
@@ -268,7 +268,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
                 .setTangent(90.deg)
                 .splineToLinearHeading(bigTrianglePose, 180.deg)
                 .build(),
-            robot.drive.correctionAction(bigTrianglePose, 2.0.s),
+            robot.drive.correctionAction(bigTrianglePose, 2.5.s),
 
             robot.shootBalls(rpmClose, 2),
 

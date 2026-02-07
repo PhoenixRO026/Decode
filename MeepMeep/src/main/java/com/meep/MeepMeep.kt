@@ -47,7 +47,7 @@ data object redGoalV2{
 }
 
 data object redGoalV3{
-    val startPose = Pose(-52.inch, 50.inch, 215.0.deg)
+    val startPose = Pose(-61.5.inch, -38.inch, 90.0.deg)
     val bigTrianglePose = Pose(-16.5.inch, 16.inch, 136.0.deg)
 
     val leftIntakePose = Pose(-11.5.inch, 28.inch, 90.0.deg)

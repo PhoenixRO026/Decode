@@ -40,7 +40,7 @@ class BigTriangleBlue : LinearOpMode() {
     val endPose = Pose(0.inch, -28.inch, -90.0.deg)
 
     val rpmFar = 3280.0
-    val rpmClose = 2830.0
+    val rpmClose = 2730.0
 
     val shooterOffset = 94.0
 
@@ -310,7 +310,8 @@ class BigTriangleBlue : LinearOpMode() {
 
         val startAction =  InstantAction {
             robot.drive.actionBuilder(startPose)
-                .strafeToLinearHeading(bigTrianglePose)}
+                .setTangent(-45.deg)
+                .splineToLinearHeading(bigTrianglePose,-45.deg)}
 
         while (opModeInInit()) {
             robot.limelight.updateCase()
