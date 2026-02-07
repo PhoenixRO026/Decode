@@ -12,12 +12,13 @@ import com.commonlibs.units.cm
 import com.commonlibs.units.deg
 import com.commonlibs.units.inch
 import com.commonlibs.units.s
+import com.meep.redGoalV3.openGatePose
 import com.noahbres.meepmeep.MeepMeep
 import com.noahbres.meepmeep.MeepMeep.Background
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder
 
 data object redGoal{
-    val startPose = Pose(-61.5.inch, 38.inch, -90.0.deg)
+    val startPose = Pose(-61.5.inch, -38.inch, 90.0.deg)
     val smallTrianglePose = Pose(55.inch, -10.inch, 201.0.deg)
     val bigTrianglePose = Pose(-16.5.inch, 16.inch, 136.0.deg)
 
@@ -34,7 +35,7 @@ data object redGoal{
 }
 
 data object redGoalV2{
-    val startPose = Pose(63.inch, 11.inch, 180.0.deg)
+    val startPose = Pose(-61.5.inch, -38.inch, 90.0.deg)
     val smallTrianglePose = Pose(55.inch, 10.inch, 159.0.deg)
     val humanPlayerPose = Pose(45.inch, 58.inch, 20.0.deg)
 
@@ -47,15 +48,19 @@ data object redGoalV2{
 }
 
 data object redGoalV3{
-    val startPose = Pose(-61.5.inch, -38.inch, 90.0.deg)
+    val startPose = Pose(-61.5.inch, 36.inch, 270.0.deg)
     val bigTrianglePose = Pose(-16.5.inch, 16.inch, 136.0.deg)
 
-    val leftIntakePose = Pose(-11.5.inch, 28.inch, 90.0.deg)
-    val middleIntakePose = Pose(9.inch, 29.inch, 90.0.deg)
+    val rightIntakePose = Pose(36.inch, 30.inch, 90.0.deg)
+    val rightIntakePoseBack = Pose(36.inch, 45.inch, 90.0.deg)
+    val middleIntakePose = Pose(12.inch, 28.inch, 90.0.deg)
+    val middleIntakePoseBack = Pose(12.inch, 45.inch, 90.0.deg)
+    val leftIntakePose = Pose(-11.inch, 28.inch, 90.0.deg)
+    val leftIntakePoseBack = Pose(-12.inch, 45.inch, 90.0.deg)
 
-    val openGatePose = Pose(2.inch, 55.inch, 90.0.deg)
+    val openGatePose = Pose(10.inch, 55.inch, 90.0.deg)
 
-    val endPose = Pose(38.inch, 10.inch, 90.0.deg)
+    val endPose = Pose(12.inch, 23.inch, 90.0.deg)
 }
 
 data object blueGoal{
@@ -67,7 +72,7 @@ data object blueGoal{
     val middleIntakePose = Pose(14.inch, -30.inch, -90.0.deg) //trebe modificat
     val leftIntakePose = Pose(-12.inch, -30.inch, -90.0.deg)
 
-
+    val openGatePose = Pose(2.inch, 55.inch, 90.0.deg)
     val endPose = Pose(58.inch, -28.inch, 180.0.deg)
 }
 
@@ -112,7 +117,8 @@ fun main() {
         .setTangent(45.deg)
         .splineToLinearHeading(redGoalV3.middleIntakePose, 45.deg)
         .setTangent(90.deg)
-        .lineToY(56.inch, slowSpeed)
+        .lineToY(45.inch, slowSpeed)
+        .strafeToLinearHeading(openGatePose)
         .setTangent(-90.0.deg)
         .splineToLinearHeading(redGoalV3.bigTrianglePose, 180.deg)
 

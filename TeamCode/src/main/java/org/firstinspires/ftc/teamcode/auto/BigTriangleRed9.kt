@@ -23,8 +23,8 @@ import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
 import org.firstinspires.ftc.teamcode.robot.Robot.RobotConfig
 
 @Autonomous
-class BigTriangleBlue9 : LinearOpMode() {
-    val startPose = Pose(-52.inch, 50.inch, 215.0.deg)
+class BigTriangleRed9 : LinearOpMode() {
+    val startPose = Pose(-61.5.inch, 36.inch, -90.0.deg)
     val bigTrianglePose = Pose(-16.5.inch, 16.inch, 136.0.deg)
 
     val leftIntakePose = Pose(-11.5.inch, 28.inch, 90.0.deg)
@@ -90,9 +90,8 @@ class BigTriangleBlue9 : LinearOpMode() {
             RaceAction(
                 robot.drive.actionBuilder(middleIntakePose)
                     .setTangent(90.deg)
-                    .lineToY(54.inch, slowSpeed)
-                    .setTangent(90.0.deg)
-                    .lineToY(56.inch)
+                    .lineToY(55.inch, slowSpeed)
+                    .strafeToLinearHeading(openGatePose)
                     .build(),
                 robot.intakeBalls(1)
             ),
@@ -120,7 +119,7 @@ class BigTriangleBlue9 : LinearOpMode() {
             RaceAction(
                 robot.drive.actionBuilder(leftIntakePose)
                     .setTangent(90.deg)
-                    .lineToY(45.inch, slowSpeed)
+                    .lineToY(46.inch, slowSpeed)
                     .build(),
                 robot.intakeBalls(2)
             ),
@@ -300,9 +299,9 @@ class BigTriangleBlue9 : LinearOpMode() {
         val action = SequentialAction(
             //startAction,
             when (robot.limelight.currentCase) {
-                AutoCase.GPP -> actionPGP
-                AutoCase.PGP -> actionPPG
-                else -> actionGPP
+                AutoCase.GPP -> actionGPP
+                AutoCase.PGP -> actionPGP
+                else -> actionPPG
             }
         )
 
