@@ -16,13 +16,6 @@ class Intake(
     val motor: DcMotorEx,
 )
 {
-
-    enum class SensorColor {
-        GREEN,
-        PURPLE,
-        OTHER
-    }
-
     var power
         get() = motor.power
         set(value) {
@@ -39,7 +32,7 @@ class Intake(
     )
 
     fun addTelemetry(telemetry: Telemetry) {
-        telemetry.addData("Outtake power", power)
+        telemetry.addData("Intake power", power)
 
         //telemetry.addData("lift current", rightMotor.getCurrent(CurrentUnit.AMPS) + leftMotor.getCurrent(CurrentUnit.AMPS))
     }

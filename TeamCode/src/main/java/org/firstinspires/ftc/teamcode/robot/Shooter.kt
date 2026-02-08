@@ -6,7 +6,6 @@ import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.ftc.Encoder
 import com.commonlibs.units.Duration
 import com.qualcomm.robotcore.hardware.DcMotorEx
-import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.hardware.VoltageSensor
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
@@ -70,11 +69,15 @@ class Shooter(
             }
         }
 
-    var powerTurret = motorTurret.power
+    var powerTurret
+        get() = motorTurret.power
+        set(value) {
+            motorTurret.power = value
+        }
 
     private var offset = 0
 
-    val position get() = encoderTurret.getPositionAndVelocity().position - offset
+    val turretPosition get() = encoderTurret.getPositionAndVelocity().position - offset
 
     var targetPos = 0.0
 
@@ -115,25 +118,18 @@ class Shooter(
                 targetPos = pos
             }
             p.addLine("waiting for turret")
-            return abs(targetPos - position) > ShooterConfig.targetPosTolerance
+            return abs(targetPos - turretPosition) > ShooterConfig.targetPosTolerance
         }
     }
 
-    fun updatePos(deltaTime: Duration) {
-        powerTurret = ShooterConfig.controllerTurret.calculate(position, targetPos, deltaTime)
+    fun updateTurretPos(deltaTime: Duration, error: Double) {
+        powerTurret = ShooterConfig.controllerTurret.calculate(0.0, error, deltaTime)
     }
-
-    fun update(deltaTime: Duration) {
-        updatePos(deltaTime)
-        updateRpm(deltaTime)
-    }
-
 
     fun addTelemetry(telemetry: Telemetry) {
         telemetry.addData("Outtake power", powerShooter)
         telemetry.addData("Outtake rpm", rpm)
         telemetry.addData("Turret power", powerTurret)
-        telemetry.addData("Turret pos", position)
-
+        telemetry.addData("Turret pos", turretPosition)
     }
 }

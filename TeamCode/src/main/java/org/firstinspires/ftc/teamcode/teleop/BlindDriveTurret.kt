@@ -9,24 +9,18 @@ import com.commonlibs.units.deg
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.buttons.ButtonReader
 import org.firstinspires.ftc.teamcode.library.buttons.ToggleButtonReader
 import org.firstinspires.ftc.teamcode.robot.Robot
-import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor
-import java.util.concurrent.TimeUnit
+import org.firstinspires.ftc.teamcode.robot.Spindexer.BallColor
+
 
 @TeleOp
-open class JustDriveAutohead : LinearOpMode(){
+open class BlindDriveTurret : LinearOpMode(){
     open val pip: Int = 1
     @Config
-    data object JustDriveAutoheadConfing {
-        @JvmField var ticksPerRev = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0)
-        @JvmField var pos = ticksPerRev / 3.0
-        @JvmField var multiplier = 0
-        @JvmField var shooterOffset = 94.0
-        @JvmField var intakeOffset = 0.0
+    data object BlindDrive {
         @JvmField var rpmSmall = 3260
         @JvmField var rpmBig = 2775
     }
@@ -36,14 +30,13 @@ open class JustDriveAutohead : LinearOpMode(){
 
         val robot = Robot(hardwareMap,Pose(0.0.cm, 0.0.cm, 0.0.deg))
         val timeKeep = TimeKeep()
-        var lastPos : Boolean = false // false = intake true = shooter
 
         robot.limelight.setPipeline(1)
 
-        val intakeRight = ButtonReader { gamepad2.y}
-        val intakeLeft = ButtonReader { gamepad2.a}
-        val shootRight = ButtonReader { gamepad2.b}
-        val shootLeft = ButtonReader { gamepad2.x}
+        val intakePosition = ButtonReader { gamepad2.y}
+        val shootGreen = ButtonReader { gamepad2.a}
+        val shootPurple = ButtonReader { gamepad2.b}
+        val shootAll = ButtonReader { gamepad2.x}
         val fingerUp = ButtonReader {gamepad2.dpad_up}
         val fingerDown = ButtonReader {gamepad2.dpad_down}
         val highRpm = ButtonReader {gamepad2.right_bumper}
@@ -51,7 +44,7 @@ open class JustDriveAutohead : LinearOpMode(){
         val stopShooter = ButtonReader {gamepad2.dpad_left}
         val snipe = ToggleButtonReader {gamepad1.x}
         val autoRpm = ButtonReader {gamepad2.dpad_right}
-        val buttons = listOf(intakeRight, intakeLeft, shootRight, shootLeft, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe, autoRpm)
+        val buttons = listOf(intakePosition, shootGreen, shootPurple, shootAll, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe, autoRpm)
         val stopButton = ButtonReader {gamepad2.touchpad}
 
         robot.transfer.finger.position = 0.9
@@ -63,21 +56,15 @@ open class JustDriveAutohead : LinearOpMode(){
             buttons.forEach { it.readValue() }
             robot.drive.updatePoseEstimateOdo()
 
+            robot.transfer.updateFromColorSensor()
+
             /// Drive
 
-            if (snipe.state) {
-                robot.limelight.driveWithHeading(
-                    -gamepad1.left_stick_y.toDouble(),
-                    -gamepad1.left_stick_x.toDouble(),
-                    timeKeep.deltaTime
-                )
-            } else {
-                robot.drive.driveFieldCentric(
-                    -gamepad1.left_stick_y.toDouble(),
-                    -gamepad1.left_stick_x.toDouble(),
-                    -gamepad1.right_stick_x.toDouble()
-                )
-            }
+            robot.drive.driveFieldCentric(
+                -gamepad1.left_stick_y.toDouble(),
+                -gamepad1.left_stick_x.toDouble(),
+                -gamepad1.right_stick_x.toDouble()
+            )
             if (gamepad1.y) {
                 robot.drive.resetFieldCentric()
             }
@@ -89,31 +76,53 @@ open class JustDriveAutohead : LinearOpMode(){
             if (fingerDown.wasJustPressed())
                 robot.transfer.fingerDown()
 
-            if (intakeRight.wasJustPressed()){
-                JustDriveAutoheadConfing.multiplier--
-                robot.transfer.goToPos(JustDriveAutoheadConfing.pos, JustDriveAutoheadConfing.multiplier, JustDriveAutoheadConfing.intakeOffset)
-                lastPos = false
+            if (intakePosition.wasJustPressed()) {
+                val emptySlot = robot.transfer.closestSlotToIntake()
+                if (emptySlot == null) {
+                    gamepad2.rumble(500)
+                } else {
+                    robot.transfer.goToIntakeSlot(emptySlot)
+                }
             }
 
-            if (intakeLeft.wasJustPressed()){
-                JustDriveAutoheadConfing.multiplier++
-                robot.transfer.goToPos(JustDriveAutoheadConfing.pos, JustDriveAutoheadConfing.multiplier, JustDriveAutoheadConfing.intakeOffset)
-                lastPos = false
+            if (shootGreen.wasJustPressed()) {
+                val slotGreen = robot.transfer.closestSlotToShoot(BallColor.GREEN)
+                if (slotGreen == null) {
+                    gamepad2.rumble(500)
+                } else {
+                    robot.transfer.goToShootSlot(slotGreen)
+                    robot.justShoot()
+                    robot.transfer.eraseBall(slotGreen)
+                }
             }
 
-            if (shootRight.wasJustPressed()){
-                if(lastPos) {
-                    JustDriveAutoheadConfing.multiplier--
+            if (shootPurple.wasJustPressed()) {
+                val slotPurple = robot.transfer.closestSlotToShoot(BallColor.PURPLE)
+                if (slotPurple == null) {
+                    gamepad2.rumble(500)
+                } else {
+                    robot.transfer.goToShootSlot(slotPurple)
+                    robot.justShoot()
+                    robot.transfer.eraseBall(slotPurple)
                 }
-                robot.transfer.goToPos(JustDriveAutoheadConfing.pos, JustDriveAutoheadConfing.multiplier,JustDriveAutoheadConfing.shooterOffset)
-                lastPos = true
             }
-            if (shootLeft.wasJustPressed()){
-                if (lastPos) {
-                    JustDriveAutoheadConfing.multiplier++
+
+            var shootAllActive = false
+            if (shootAll.wasJustPressed()) {
+                shootAllActive = true
+            }
+
+            if (shootAllActive) {
+                val slot = robot.transfer.closestSlotToShootAny()
+
+                if (slot == null) {
+                    shootAllActive = false
+                    gamepad2.rumble(500)
+                } else {
+                    robot.transfer.goToShootSlot(slot)
+                    robot.justShoot()
+                    robot.transfer.eraseBall(slot)
                 }
-                robot.transfer.goToPos(JustDriveAutoheadConfing.pos, JustDriveAutoheadConfing.multiplier,JustDriveAutoheadConfing.shooterOffset)
-                lastPos = true
             }
 
             /// Intake
@@ -130,10 +139,10 @@ open class JustDriveAutohead : LinearOpMode(){
 
             var rpm = 0.0
             if (highRpm.wasJustPressed()){ /// shoot far
-                robot.shooter.goToRmp(JustDriveAutoheadConfing.rpmSmall.toDouble())
+                robot.shooter.goToRmp(BlindDrive.rpmSmall.toDouble())
             }
             else if (lowRpm.wasJustPressed()) { /// shoot close
-                robot.shooter.goToRmp(JustDriveAutoheadConfing.rpmBig.toDouble())
+                robot.shooter.goToRmp(BlindDrive.rpmBig.toDouble())
             }
             else if (autoRpm.wasJustPressed()) {
                 rpm = robot.limelight.getRpm()
@@ -143,48 +152,26 @@ open class JustDriveAutohead : LinearOpMode(){
                 robot.shooter.goToRmp(0.0)
             }
 
-            if (gamepad1.dpad_left) {
-                robot.transfer.power = -0.1
-            } else if (gamepad1.dpad_right) {
-                robot.transfer.power = 0.1
-            } else {
-                robot.transfer.power = 0.0
-            }
-
-            if (gamepad1.dpad_up) {
-                robot.transfer.resetPos()
-            }
-
-//            if (stopButton.wasJustPressed()) {
-//                rpm = 0.0
-//
-//            }
-
-            robot.shooter.update(timeKeep.deltaTime)
+            robot.shooter.updateRpm(timeKeep.deltaTime)
+            robot.limelight.updateHeadingError()
+            robot.shooter.updateTurretPos(timeKeep.deltaTime, robot.limelight.headingErrorDeg)
 
             telemetry.addData("distance", robot.limelight.getDistance())
             telemetry.addData("auto rpm", rpm)
 
-            //telemetry.addData("target heading", robot.limelight.)
             telemetry.addData("error heading", robot.limelight.headingErrorDeg)
             telemetry.addData("a was pressed (set)", gamepad1.a)
             telemetry.addData("x was pressed (left)", gamepad1.x)
             telemetry.addData("b was pressed (right)", gamepad1.b)
             telemetry.addData("up was pressed (set)", gamepad1.dpad_up)
             telemetry.addData("down was pressed (left)", gamepad1.dpad_down)
-            telemetry.addData("shooter power", robot.shooter.power)
             telemetry.addData("rpm", robot.shooter.rpm)
             telemetry.addData("target rpm", robot.shooter.targetRpm)
-            telemetry.addData("pos", robot.transfer.position)
+            telemetry.addData("pos", robot.transfer.currentPosition)
             telemetry.addData("fingir pos", robot.transfer.finger.position)
-            telemetry.addData("target pos", robot.transfer.targetPosition)
-            telemetry.addData("power trans", robot.transfer.power)
             telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
             telemetry.addData("fps", 1.s / timeKeep.deltaTime)
-            telemetry.addData("multiplier", JustDriveAutoheadConfing.multiplier)
             telemetry.update()
-
-            robot.transfer.update(timeKeep.deltaTime)
         }
     }
 }

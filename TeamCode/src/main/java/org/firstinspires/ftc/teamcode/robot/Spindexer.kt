@@ -132,10 +132,6 @@ class Spindexer(
         lastSensorColor = current
     }
 
-    fun hasAnyBall(): Boolean {
-        return slots.any { it != BallColor.EMPTY }
-    }
-
     fun closestSlotToShootAny(): Int? {
         return closestSlotToShoot(BallColor.GREEN)
             ?: closestSlotToShoot(BallColor.PURPLE)
