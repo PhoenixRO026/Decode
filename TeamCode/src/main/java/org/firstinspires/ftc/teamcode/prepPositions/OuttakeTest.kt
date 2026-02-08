@@ -45,7 +45,7 @@ class OuttakeTest : LinearOpMode() {
             val dt = currentTime - lastTime
 
             if (currentTime - lastResetTime >= outtakeConfig.sampleWindow) {
-                val pos = robot.shooter.encoder.getPositionAndVelocity().position
+                val pos = robot.shooter.encoderOuttake.getPositionAndVelocity().position
                 val elapsed = currentTime - lastResetTime
                 val revs = pos / outtakeConfig.TICKS_PER_REV
                 rpm = (revs / elapsed) * 60.0
@@ -59,11 +59,11 @@ class OuttakeTest : LinearOpMode() {
 
             robot.shooter.targetRpm = outtakeConfig.targetRPM.toDouble()
 
-            robot.shooter.update(timeKeep.deltaTime)
+            robot.shooter.updateRpm(timeKeep.deltaTime)
 
             telemetry.addData("RPM", "%.2f", rpm)
             telemetry.addData("Target RPM", outtakeConfig.targetRPM)
-            telemetry.addData("Power", "%.3f", robot.shooter.power)
+            telemetry.addData("Power", "%.3f", robot.shooter.powerShooter)
             telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
             telemetry.addData("fps", 1.s / timeKeep.deltaTime)
             telemetry.update()

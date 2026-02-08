@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.robot
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
+import com.acmerobotics.roadrunner.InstantAction
+import com.acmerobotics.roadrunner.ParallelAction
 import com.acmerobotics.roadrunner.ftc.Encoder
 import com.commonlibs.units.Duration
 import com.qualcomm.robotcore.hardware.DcMotorEx
@@ -31,10 +33,8 @@ class Shooter(
         )
         @JvmField var targetRpmTolerance = 50
 
-        @JvmField
-        var kS = 0.8
-        @JvmField
-        var kV = 0.002146
+        @JvmField var kS = 0.8
+        @JvmField var kV = 0.002146
 
         @JvmField
         var controllerTurret = PIDController(
@@ -43,8 +43,19 @@ class Shooter(
             kI = 0.005,
             stabilityThreshold = 0.2
         )
+        @JvmField var targetPosTolerance = 20
+        @JvmField var minTurretPosition = 0.0
+        @JvmField var maxTurretPosition = 0.0
+        @JvmField var limitTolerence = 5
+
         @JvmField
-        var targetPosTolerance = 20
+        var controllerHeading = PIDController(
+            kP = 0.01,
+            kD = 0.00025,
+            kI = 0.005,
+            stabilityThreshold = 0.2
+        )
+        @JvmField var targetHeadingTolerance = 20
     }
 
     val rpm get() = encoderOuttake.getPositionAndVelocity().velocity / 28.0 * 60
@@ -122,8 +133,18 @@ class Shooter(
         }
     }
 
+    fun stopShootAction() = ParallelAction(
+        InstantAction { goToRpmAction(0.0)}
+    )
+
     fun updateTurretPos(deltaTime: Duration, error: Double) {
-        powerTurret = ShooterConfig.controllerTurret.calculate(0.0, error, deltaTime)
+        powerTurret = ShooterConfig.controllerHeading.calculate(0.0, error, deltaTime)
+        if (turretPosition > ShooterConfig.maxTurretPosition - ShooterConfig.limitTolerence) {
+            powerTurret = ShooterConfig.controllerTurret.calculate(turretPosition, ShooterConfig.minTurretPosition, deltaTime)
+        }
+        if (turretPosition < ShooterConfig.minTurretPosition + ShooterConfig.limitTolerence) {
+            powerTurret = ShooterConfig.controllerTurret.calculate(turretPosition, ShooterConfig.maxTurretPosition, deltaTime)
+        }
     }
 
     fun addTelemetry(telemetry: Telemetry) {

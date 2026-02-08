@@ -51,14 +51,6 @@ class Robot(
         SleepAction(0.2.s),
     )
 
-    fun stopShootAction() = ParallelAction(
-        InstantAction { shooter.goToRpmAction(0.0)}
-    )
-
-    fun stopIntakeAction() = ParallelAction(
-        InstantAction{ intake.power = 0.0 }
-    )
-
     init {
         val mecanumDrive = MecanumDrive(hardwareMap, pose.pose2d)
 
