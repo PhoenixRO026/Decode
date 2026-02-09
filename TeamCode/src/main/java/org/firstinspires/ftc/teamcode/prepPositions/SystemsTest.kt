@@ -54,10 +54,10 @@ class SystemsTest: LinearOpMode() {
             resetEncoders = false
         )
 
-        val intake = ToggleButtonReader{gamepad1.x}
-        val outtake = ToggleButtonReader{gamepad1.b}
-        val moveRight = ToggleButtonReader{gamepad2.b}
-        val moveStart = ToggleButtonReader{gamepad2.x}
+        val intake = ToggleButtonReader({gamepad1.x})
+        val outtake = ToggleButtonReader({gamepad1.b})
+        val moveRight = ToggleButtonReader({gamepad2.b})
+        val moveStart = ToggleButtonReader({gamepad2.x})
         val buttons = listOf(intake,outtake,moveRight,moveStart)
 
         var curr = 170

@@ -30,7 +30,7 @@ class SmallTriangleRed9 : LinearOpMode() {
     val rightIntakePose = Pose(37.inch, 31.inch, 90.0.deg)
     val rightIntakePoseBack = Pose(37.inch, 46.inch, 90.0.deg)
     val middleIntakePose = Pose(13.inch, 31.inch, 90.0.deg)
-    val middleIntakePoseBack = Pose(13.inch, 46.inch, 90.0.deg)
+    val middleIntakePoseBack = Pose(13.inch, 47.inch, 90.0.deg)
     val leftIntakePose = Pose(-11.5.inch, 28.inch, 90.0.deg)
 
     val endPose = Pose(0.inch, 28.inch, 90.0.deg)
@@ -110,7 +110,7 @@ class SmallTriangleRed9 : LinearOpMode() {
             RaceAction(
                 robot.drive.actionBuilder(middleIntakePose)
                     .setTangent(-90.deg)
-                    .lineToY(46.inch, slowSpeed)
+                    .lineToY(47.inch, slowSpeed)
                     .build(),
                 robot.intakeBalls(0)
             ),
@@ -188,7 +188,7 @@ class SmallTriangleRed9 : LinearOpMode() {
             RaceAction(
                 robot.drive.actionBuilder(middleIntakePose)
                     .setTangent(-90.deg)
-                    .lineToY(46.inch, slowSpeed)
+                    .lineToY(47.inch, slowSpeed)
                     .build(),
                 robot.intakeBalls(0)
             ),
@@ -268,7 +268,7 @@ class SmallTriangleRed9 : LinearOpMode() {
             RaceAction(
                 robot.drive.actionBuilder(middleIntakePose)
                     .setTangent(-90.deg)
-                    .lineToY(46.inch, slowSpeed)
+                    .lineToY(47.inch, slowSpeed)
                     .build(),
                 robot.intakeBalls(2)
             ),
@@ -294,7 +294,7 @@ class SmallTriangleRed9 : LinearOpMode() {
                 .strafeToLinearHeading(leftIntakePose)
                 .build(),
             robot.drive.correctionAction(leftIntakePose, 0.5.s),
-
+1
             robot.drive.actionBuilder(leftIntakePose)
                 .setTangent(90.deg)
                 .afterTime(0.s, robot.intakeBalls(0, 1))

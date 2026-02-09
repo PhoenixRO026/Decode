@@ -5,6 +5,8 @@ import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
+import com.acmerobotics.roadrunner.InstantAction
+import com.acmerobotics.roadrunner.SequentialAction
 import com.commonlibs.units.Pose
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
@@ -50,10 +52,12 @@ open class GoodDrive : LinearOpMode(){
         val highRpm = ButtonReader {gamepad2.right_bumper}
         val lowRpm = ButtonReader {gamepad2.left_bumper}
         val stopShooter = ButtonReader {gamepad2.dpad_left}
-        val snipe = ToggleButtonReader {gamepad1.x}
-        val autoRpm = ButtonReader {gamepad2.dpad_right}
+        val snipe = ToggleButtonReader ({gamepad1.x})
+        //val autoRpm = ButtonReader {gamepad2.dpad_right}
+        val autoIntake = ButtonReader {gamepad2.dpad_right}
         val shootBalls = ButtonReader{gamepad2.right_trigger >= 0.2}
-        val buttons = listOf(shootBalls, intakeRight, intakeLeft, shootRight, shootLeft, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe, autoRpm)
+        val intakeBalls = ToggleButtonReader({gamepad2.left_trigger >= 0.2})
+        val buttons = listOf(shootBalls, intakeBalls, intakeRight, intakeLeft, shootRight, shootLeft, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe, autoIntake)
         val stopButton = ButtonReader {gamepad2.touchpad}
 
         robot.transfer.finger.position = 0.9
@@ -93,45 +97,71 @@ open class GoodDrive : LinearOpMode(){
                 robot.transfer.fingerUp()
             if (fingerDown.wasJustPressed())
                 robot.transfer.fingerDown()
-
-            if (intakeRight.wasJustPressed()){
-                GoodDriveConfing.multiplier--
-                robot.transfer.goToPos(GoodDriveConfing.pos, GoodDriveConfing.multiplier, GoodDriveConfing.intakeOffset)
-                lastPos = false
-            }
-
-            if (intakeLeft.wasJustPressed()){
-                GoodDriveConfing.multiplier++
-                robot.transfer.goToPos(GoodDriveConfing.pos, GoodDriveConfing.multiplier, GoodDriveConfing.intakeOffset)
-                lastPos = false
-            }
-
-            if (shootRight.wasJustPressed()){
-                if(lastPos) {
-                    GoodDriveConfing.multiplier--
+            if (intakeBalls.state) {
+                if (driver1Action == null) {
+                    driver1Action = SequentialAction(
+                        robot.intakeTeleBalls(GoodDriveConfing.multiplier),
+                        InstantAction { intakeBalls.setState(false) },
+                        InstantAction { GoodDriveConfing.multiplier+= 2 }
+                    )
                 }
-                robot.transfer.goToPos(GoodDriveConfing.pos, GoodDriveConfing.multiplier,GoodDriveConfing.shooterOffset)
-                lastPos = true
-            }
-            if (shootLeft.wasJustPressed()){
-                if (lastPos) {
-                    GoodDriveConfing.multiplier++
-                }
-                robot.transfer.goToPos(GoodDriveConfing.pos, GoodDriveConfing.multiplier,GoodDriveConfing.shooterOffset)
-                lastPos = true
-            }
-
-            /// Intake
-
-            if (gamepad1.right_bumper) {
-                robot.intake.power = 0.8
-            }
-            else if (gamepad1.left_bumper) {
-                robot.intake.power = -1.0
             }
             else {
-                robot.intake.power = 0.0
+                /// Intake
+                if (gamepad1.right_bumper) {
+                    robot.intake.power = 1.0
+                }
+                else if (gamepad1.left_bumper) {
+                    robot.intake.power = -1.0
+                }
+                else {
+                    robot.intake.power = 0.0
+                }
+                if (intakeRight.wasJustPressed()) {
+                    GoodDriveConfing.multiplier--
+                    robot.transfer.goToPos(
+                        GoodDriveConfing.pos,
+                        GoodDriveConfing.multiplier,
+                        GoodDriveConfing.intakeOffset
+                    )
+                    lastPos = false
+                }
+
+                if (intakeLeft.wasJustPressed()) {
+                    GoodDriveConfing.multiplier++
+                    robot.transfer.goToPos(
+                        GoodDriveConfing.pos,
+                        GoodDriveConfing.multiplier,
+                        GoodDriveConfing.intakeOffset
+                    )
+                    lastPos = false
+                }
+
+                if (shootRight.wasJustPressed()) {
+                    if (lastPos) {
+                        GoodDriveConfing.multiplier--
+                    }
+                    robot.transfer.goToPos(
+                        GoodDriveConfing.pos,
+                        GoodDriveConfing.multiplier,
+                        GoodDriveConfing.shooterOffset
+                    )
+                    lastPos = true
+                }
+                if (shootLeft.wasJustPressed()) {
+                    if (lastPos) {
+                        GoodDriveConfing.multiplier++
+                    }
+                    robot.transfer.goToPos(
+                        GoodDriveConfing.pos,
+                        GoodDriveConfing.multiplier,
+                        GoodDriveConfing.shooterOffset
+                    )
+                    lastPos = true
+                }
             }
+
+
 
             var rpm = 0.0
             if (highRpm.wasJustPressed()){ /// shoot far
@@ -140,9 +170,8 @@ open class GoodDrive : LinearOpMode(){
             else if (lowRpm.wasJustPressed()) { /// shoot close
                 robot.shooter.goToRmp(GoodDriveConfing.rpmBig.toDouble())
             }
-            else if (autoRpm.wasJustPressed()) {
-                rpm = robot.limelight.getRpm()
-                robot.shooter.goToRmp(rpm)
+            else if (autoIntake.wasJustPressed()) {
+                robot.intakeTeleBalls(GoodDriveConfing.multiplier)
             }
             else if (stopShooter.wasJustPressed()) { /// stop shoot
                 robot.shooter.goToRmp(0.0)

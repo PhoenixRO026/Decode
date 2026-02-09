@@ -49,7 +49,7 @@ open class JustDriveAutohead : LinearOpMode(){
         val highRpm = ButtonReader {gamepad2.right_bumper}
         val lowRpm = ButtonReader {gamepad2.left_bumper}
         val stopShooter = ButtonReader {gamepad2.dpad_left}
-        val snipe = ToggleButtonReader {gamepad1.x}
+        val snipe = ToggleButtonReader ({gamepad1.x})
         val autoRpm = ButtonReader {gamepad2.dpad_right}
         val buttons = listOf(intakeRight, intakeLeft, shootRight, shootLeft, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe, autoRpm)
         val stopButton = ButtonReader {gamepad2.touchpad}

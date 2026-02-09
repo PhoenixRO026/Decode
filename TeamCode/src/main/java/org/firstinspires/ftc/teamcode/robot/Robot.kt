@@ -46,7 +46,7 @@ class Robot(
 
     fun shootBall(rpm : Double) = SequentialAction(
         shooter.goToRpmAction(rpm),
-        SleepAction(0.3.s),
+        SleepAction(0.2.s),
         InstantAction{transfer.fingerUp()},
         SleepAction(0.2.s),
         InstantAction{transfer.fingerDown()},
@@ -54,22 +54,19 @@ class Robot(
     )
 
     fun intakeBalls(futureOuttakePos : Int) = SequentialAction(
-        InstantAction{intake.power = 1.0},
-        SleepAction(0.5.s),
         transfer.goToPosAction(RobotConfig.pos, 0, RobotConfig.intakeOffset),
         camera.waitForColors(4.s),
-        SleepAction(0.5.s),
+        SleepAction(0.05.s),
         transfer.goToPosAction(RobotConfig.pos, 1, 0.0),
         camera.waitForColors(4.s),
 
-        SleepAction(0.5.s),
+        SleepAction(0.07.s),
         transfer.goToPosAction(RobotConfig.pos, 2, 0.0),
         camera.waitForColors(3.s),
 
-        SleepAction(0.4.s),
+        SleepAction(0.05.s),
         InstantAction{intake.power = 0.0},
         transfer.goToPosAction(RobotConfig.pos, futureOuttakePos, RobotConfig.shooterOffset),
-        InstantAction{intake.power = -1.0}
     )
 
     fun shootBalls(rpm : Double, multiplier : Int) = SequentialAction(
@@ -87,24 +84,17 @@ class Robot(
     )
 
     fun intakeTeleBalls(multiplier : Int) = SequentialAction(
-        InstantAction{intake.power = 0.75},
+        InstantAction{intake.power = 1.0},
         transfer.goToPosAction(RobotConfig.pos, multiplier, RobotConfig.intakeOffset),
-        RaceAction(
-            camera.waitForColors(2.s),
-            SleepAction(3.s)
-        ),
+        camera.waitForColors(7.s),
+        SleepAction(0.07.s),
         transfer.goToPosAction(RobotConfig.pos, multiplier + 1, 0.0),
-        RaceAction(
-            camera.waitForColors(2.s),
-            SleepAction(3.s)
-        ),
+        camera.waitForColors(7.s),
+        SleepAction(0.07.s),
         transfer.goToPosAction(RobotConfig.pos, multiplier + 2, 0.0),
-        RaceAction(
-            camera.waitForColors(2.s),
-            SleepAction(3.s)
-        ),
+        camera.waitForColors(7.s),
+        SleepAction(0.07.s),
         InstantAction{intake.power = 0.0},
-        transfer.goToPosAction(RobotConfig.pos, 0, RobotConfig.shooterOffset),
     )
 
     fun shootTeleBalls(rpm : Double, multiplier : Int) = SequentialAction(
