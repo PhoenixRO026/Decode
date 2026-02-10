@@ -58,33 +58,38 @@ class Spindexer(
 
     var activeIntakeSlot: Int? = null
 
-    private fun servoDistance(a: Double, b: Double): Double =
-        kotlin.math.abs(a - b)
 
     fun closestSlotToShoot(target: BallColor): Int? {
-        return slots
-            .mapIndexedNotNull { index, color ->
-                if (color == target) index else null
-            }
-            .minByOrNull { index ->
-                servoDistance(
-                    currentPosition,
-                    shootPositionForSlot(index)
-                )
-            }
+        if (slots[activeIntakeSlot!!] == target) {
+            return activeIntakeSlot!!
+        }
+        val nextSlot = (activeIntakeSlot!! + 1) % 3
+        val previousSlot = (activeIntakeSlot!! + 2) % 3
+
+        if (slots[nextSlot] == target) {
+            return nextSlot
+        }
+        if (slots[previousSlot] == target) {
+            return previousSlot
+        }
+        return null
     }
 
     fun closestSlotToIntake(): Int? {
-        return slots
-            .mapIndexedNotNull { index, color ->
-                if (color == BallColor.EMPTY) index else null
-            }
-            .minByOrNull { index ->
-                servoDistance(
-                    currentPosition,
-                    intakePositions[index]
-                )
-            }
+        val target = BallColor.EMPTY
+        if (slots[activeIntakeSlot!!] == BallColor.EMPTY) {
+            return activeIntakeSlot!!
+        }
+        val nextSlot = (activeIntakeSlot!! + 1) % 3
+        val previousSlot = (activeIntakeSlot!! + 2) % 3
+
+        if (slots[nextSlot] == target) {
+            return nextSlot
+        }
+        if (slots[previousSlot] == target) {
+            return previousSlot
+        }
+        return null
     }
 
     fun shootPositionForSlot(slotIndex: Int): Double {
