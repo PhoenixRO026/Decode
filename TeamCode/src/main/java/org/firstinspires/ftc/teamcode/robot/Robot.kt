@@ -1,12 +1,8 @@
 package org.firstinspires.ftc.teamcode.robot
 
 import com.acmerobotics.roadrunner.InstantAction
-import com.acmerobotics.roadrunner.ParallelAction
-import com.acmerobotics.roadrunner.RaceAction
 import com.acmerobotics.roadrunner.SequentialAction
-import com.acmerobotics.roadrunner.SleepAction
 import com.acmerobotics.roadrunner.ftc.Encoder
-import com.acmerobotics.roadrunner.ftc.OverflowEncoder
 import com.acmerobotics.roadrunner.ftc.RawEncoder
 import com.commonlibs.units.Pose
 import com.commonlibs.units.SleepAction
@@ -20,7 +16,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor
 import com.qualcomm.robotcore.hardware.Servo
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
 import kotlin.jvm.java
 
@@ -91,9 +86,9 @@ class Robot(
 
         ///  Transfer  ///
 
-        // motors //
-        val servoTransfer1 = hardwareMap.get(Servo::class.java, "servoTransfer1")
-        val servoTransfer2 = hardwareMap.get(Servo::class.java, "servoTransfer2")
+        // servos //
+        val servoTransferFront = hardwareMap.get(Servo::class.java, "servoTransferFront")
+        val servoTransferBack = hardwareMap.get(Servo::class.java, "servoTransferBack")
         val finger = hardwareMap.get(Servo::class.java, "finger")
 
         val colorSensor = hardwareMap.get(NormalizedColorSensor::class.java, "colorSensor")
@@ -113,8 +108,8 @@ class Robot(
             voltageSensor = voltageSensor
         )
         transfer = Spindexer(
-            servoTransfer1 = servoTransfer1,
-            servoTransfer2 = servoTransfer2,
+            servoTransfer1 = servoTransferFront,
+            servoTransfer2 = servoTransferBack,
             finger = finger,
             colorSensor = colorSensor
         )

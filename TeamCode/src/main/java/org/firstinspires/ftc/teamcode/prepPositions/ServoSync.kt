@@ -10,8 +10,8 @@ class ServoSync: LinearOpMode() {
 
     override fun runOpMode() {
 
-        val servoLeft = hardwareMap.get(Servo::class.java, "servoGearShiftLeft")
-        val servoRight = hardwareMap.get(Servo::class.java, "servoGearShiftRight")
+        val servoFront = hardwareMap.get(Servo::class.java, "servoTransferFront")
+        val servoBack = hardwareMap.get(Servo::class.java, "servoTransferBack")
 
         var previousTime: Double
         var deltaTime : Double
@@ -21,8 +21,8 @@ class ServoSync: LinearOpMode() {
         waitForStart()
         previousTime = now()
 
-        servoLeft.position = 0.5
-        servoRight.position = 0.5
+        servoFront.position = 0.0
+        servoBack.position = 0.0
 
         while (opModeIsActive()){
             now = now()
@@ -30,24 +30,24 @@ class ServoSync: LinearOpMode() {
             previousTime = now
 
             if(gamepad1.a) {
-                servoLeft.position += 0.1 * deltaTime
+                servoFront.position += 0.1 * deltaTime
             }
             else if(gamepad1.y) {
-                servoLeft.position -= 0.1 * deltaTime
+                servoFront.position -= 0.1 * deltaTime
             }
             if (gamepad1.x){
-                servoRight.position += 0.1 * deltaTime
+                servoBack.position += 0.1 * deltaTime
             }
             else if(gamepad1.b){
-                servoRight.position -= 0.1 * deltaTime
+                servoBack.position -= 0.1 * deltaTime
             }
 
             telemetry.addData("a Pressed", gamepad1.a)
             telemetry.addData("y Pressed", gamepad1.y)
             telemetry.addData("x Pressed", gamepad1.x)
             telemetry.addData("b Pressed", gamepad1.b)
-            telemetry.addData("ServoLeft", servoLeft.position)
-            telemetry.addData("ServoRight", servoRight.position)
+            telemetry.addData("ServoLeft", servoFront.position)
+            telemetry.addData("ServoRight", servoBack.position)
             telemetry.addData("deltaTime", deltaTime)
             telemetry.update()
         }
