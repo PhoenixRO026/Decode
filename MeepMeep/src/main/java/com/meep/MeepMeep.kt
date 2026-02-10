@@ -64,16 +64,19 @@ data object redGoalV3{
 }
 
 data object blueGoal{
-    val startPose = Pose(63.inch, -11.inch, 180.0.deg)
-    val smallTrianglePose = Pose(55.inch, -10.inch, 202.0.deg)
-    val bigTrianglePose = Pose(-16.inch, -16.inch, 221.0.deg) //trebe verficat?
+    val startPose = Pose(-61.5.inch, -36.inch, 90.0.deg)
+    val bigTrianglePose = Pose(-12.inch, -23.inch, 212.0.deg)
+    val smallTrianglePose = Pose(55.inch, -10.inch, 200.0.deg)
 
-    val rightIntakePose = Pose(36.inch, -30.inch, -90.0.deg)
-    val middleIntakePose = Pose(14.inch, -30.inch, -90.0.deg) //trebe modificat
-    val leftIntakePose = Pose(-12.inch, -30.inch, -90.0.deg)
+    val leftIntakePose = Pose(-11.5.inch, -28.5.inch, -90.0.deg)
+    val middleIntakePose = Pose(10.inch, -27.inch, -90.0.deg)
+    val leftIntakePoseBack = Pose(-11.5.inch, -28.inch, -90.0.deg)
+    val middleIntakePoseBack = Pose(9.inch, -56.inch, -90.0.deg)
+    val rightIntakePose = Pose(37.inch, -28.5.inch, -90.0.deg)
 
-    val openGatePose = Pose(2.inch, 55.inch, 90.0.deg)
-    val endPose = Pose(58.inch, -28.inch, 180.0.deg)
+    val openGatePose = Pose(7.inch, -57.inch, -90.0.deg)
+
+    val endPose = Pose(0.inch, -28.inch, -90.0.deg)
 }
 
 fun main() {
@@ -161,25 +164,39 @@ fun main() {
         .build()*/
     )
     blueBot.runAction(blueBot.drive.actionBuilder(blueGoal.startPose.pose2d).ex()
-        .strafeToLinearHeading(blueGoal.smallTrianglePose)
-        .waitSeconds(shootingTime)
 
-        .strafeToLinearHeading(blueGoal.rightIntakePose)
+        .setTangent(45.0.deg)
+        .splineToLinearHeading(blueGoal.bigTrianglePose, -45.0.deg)
+
+        .setTangent(45.deg)
+        .splineToLinearHeading(blueGoal.middleIntakePose, -45.deg)
+
         .setTangent(-90.deg)
-        .lineToY(-45.inch, slowSpeed)
-        .setTangent(0.0.deg)
-        .strafeToLinearHeading(blueGoal.smallTrianglePose)
+        .lineToY(-55.inch)
 
-        .strafeToLinearHeading(blueGoal.middleIntakePose)
+        .setTangent(90.0.deg)
+        .splineToLinearHeading(blueGoal.bigTrianglePose, -180.deg)
+
+        .setTangent(60.0.deg)
+        .splineToLinearHeading(blueGoal.leftIntakePose, -90.deg)
+
         .setTangent(-90.deg)
-        .lineToY(-45.inch, slowSpeed)
-        .setTangent(90.deg)
-        .splineToLinearHeading(blueGoal.bigTrianglePose, 180.deg)
-
-        .strafeToLinearHeading(blueGoal.leftIntakePose)
+        .lineToY(-48.inch)
 
         .setTangent(90.deg)
-        .lineToY(-45.inch, slowSpeed)
+        .splineToLinearHeading(blueGoal.bigTrianglePose, -90.deg)
+
+        .setTangent(0.deg)
+        .lineToXLinearHeading(37.inch, -90.deg)
+        /*.setTangent(-45.deg)
+        .splineToLinearHeading(blueGoal.rightIntakePose, -45.deg)*/
+
+        .setTangent(-90.deg)
+        .lineToY(-48.inch)
+
+        .setTangent(90.0.deg)
+        .splineToLinearHeading(blueGoal.smallTrianglePose, 45.deg)
+        //.strafeToLinearHeading(blueGoal.endPose)
 
         .build()
     )
@@ -187,7 +204,7 @@ fun main() {
     meepMeep.setBackground(Background.FIELD_DECODE_JUICE_DARK)
         .setDarkMode(true)
         .setBackgroundAlpha(0.95f)
-        //.addEntity(blueBot)
-        .addEntity(redBot)
+        .addEntity(blueBot)
+        //.addEntity(redBot)
         .start()
 }
