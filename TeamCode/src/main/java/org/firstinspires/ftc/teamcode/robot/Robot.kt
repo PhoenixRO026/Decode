@@ -74,6 +74,8 @@ class Robot(
         val encoderTurret : Encoder = RawEncoder(motorTurret)
 
         encoderOuttake.direction =DcMotorSimple.Direction.REVERSE
+        encoderTurret.direction = DcMotorSimple.Direction.REVERSE
+
 
         ///  Intake  ///
 
@@ -86,7 +88,7 @@ class Robot(
 
         ///  Transfer  ///
 
-        // servos //
+        // servos  //
         val servoTransferFront = hardwareMap.get(Servo::class.java, "servoTransferFront")
         val servoTransferBack = hardwareMap.get(Servo::class.java, "servoTransferBack")
         val finger = hardwareMap.get(Servo::class.java, "finger")

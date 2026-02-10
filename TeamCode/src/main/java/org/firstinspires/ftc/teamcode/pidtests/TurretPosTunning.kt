@@ -57,8 +57,8 @@ class TurretPosTunning : LinearOpMode() {
             timeKeep.resetDeltaTime()
 
             position = encoderTransfer.getPositionAndVelocity().position
-            targetPos = PositionTunningConfic.targetPos * PositionTunningConfic.multiplier + PositionTunningConfic.offset
-            motorTurret.power = PositionTunningConfic.controller.calculate(position, targetPos, timeKeep.deltaTime)
+            targetPos = PositionTunningConfic.targetPos
+            motorTurret.power = -PositionTunningConfic.controller.calculate(position, targetPos, timeKeep.deltaTime)
 
             telemetry.addData("transfer target pos", PositionTunningConfic.targetPos)
             telemetry.addData("transfer pos", position)

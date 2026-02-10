@@ -38,14 +38,14 @@ class Shooter(
 
         @JvmField
         var controllerTurret = PIDController(
-            kP = 0.01,
-            kD = 0.00025,
-            kI = 0.005,
+            kP = 0.0037,
+            kD = 0.0001,
+            kI = 0.0005,
             stabilityThreshold = 0.2
         )
-        @JvmField var targetPosTolerance = 20
-        @JvmField var minTurretPosition = 0.0
-        @JvmField var maxTurretPosition = 0.0
+        @JvmField var targetPosTolerance = 3
+        @JvmField var minTurretPosition = -1000.0
+        @JvmField var maxTurretPosition = 1000.0
         @JvmField var limitTolerence = 5
 
         @JvmField
