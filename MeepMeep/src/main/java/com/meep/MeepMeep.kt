@@ -165,17 +165,17 @@ fun main() {
     )
     blueBot.runAction(blueBot.drive.actionBuilder(blueGoal.startPose.pose2d).ex()
 
-        .setTangent(45.0.deg)
-        .splineToLinearHeading(blueGoal.bigTrianglePose, -45.0.deg)
+        .setTangent(30.0.deg)
+        .splineToLinearHeading(blueGoal.bigTrianglePose, 10.0.deg)
 
-        .setTangent(45.deg)
+        .setTangent(0.deg)
         .splineToLinearHeading(blueGoal.middleIntakePose, -45.deg)
 
         .setTangent(-90.deg)
         .lineToY(-55.inch)
 
         .setTangent(90.0.deg)
-        .splineToLinearHeading(blueGoal.bigTrianglePose, -180.deg)
+        .splineToLinearHeading(blueGoal.bigTrianglePose, 180.deg)
 
         .setTangent(60.0.deg)
         .splineToLinearHeading(blueGoal.leftIntakePose, -90.deg)
@@ -184,7 +184,7 @@ fun main() {
         .lineToY(-48.inch)
 
         .setTangent(90.deg)
-        .splineToLinearHeading(blueGoal.bigTrianglePose, -90.deg)
+        .splineToLinearHeading(blueGoal.bigTrianglePose, 90.deg)
 
         .setTangent(0.deg)
         .lineToXLinearHeading(37.inch, -90.deg)

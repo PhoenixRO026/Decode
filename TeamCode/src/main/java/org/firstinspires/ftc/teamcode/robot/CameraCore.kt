@@ -18,29 +18,12 @@ class CameraCore(
 ) {
     @Config
     data object CameraCoreConfig {
-        @JvmField
-        var controller = PIDController(
-            kP = 0.00001,
-            kD = 0.00001,
-            kI = 0.00001,
-            stabilityThreshold = 50.0
-        )
-        @JvmField var targetRpmTolerance = 50
 
-        @JvmField var colorWidth = 432
-        @JvmField var colorHeight = 240
-        @JvmField var liveView = false
-        @JvmField var decimation = 2.0f
-    }
-
-    enum class Cases{
-        PPG,
-        PGP,
-        GPP
+        @JvmField var colorWidth = 160
+        @JvmField var colorHeight = 120
     }
 
     var sensorColor = PredominantColorProcessor.Result()
-
 
     val colorSensor =
         PredominantColorProcessor.Builder()
