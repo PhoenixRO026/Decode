@@ -43,6 +43,8 @@ class Shooter(
             kI = 0.0005,
             stabilityThreshold = 0.2
         )
+        @JvmField var ticksPerRev = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0)
+
         @JvmField var targetPosTolerance = 3
         @JvmField var minTurretPosition = -1000.0
         @JvmField var maxTurretPosition = 1000.0
@@ -138,13 +140,14 @@ class Shooter(
     )
 
     fun updateTurretPos(deltaTime: Duration, error: Double) {
-        powerTurret = ShooterConfig.controllerHeading.calculate(0.0, error, deltaTime)
-        if (turretPosition > ShooterConfig.maxTurretPosition - ShooterConfig.limitTolerence) {
-            powerTurret = ShooterConfig.controllerTurret.calculate(turretPosition, ShooterConfig.minTurretPosition, deltaTime)
+        targetPos += error * (ShooterConfig.ticksPerRev / 360)
+        if (targetPos > ShooterConfig.maxTurretPosition - ShooterConfig.limitTolerence) {
+            targetPos = ShooterConfig.minTurretPosition
         }
-        if (turretPosition < ShooterConfig.minTurretPosition + ShooterConfig.limitTolerence) {
-            powerTurret = ShooterConfig.controllerTurret.calculate(turretPosition, ShooterConfig.maxTurretPosition, deltaTime)
+        if (targetPos < ShooterConfig.minTurretPosition + ShooterConfig.limitTolerence) {
+            targetPos = ShooterConfig.maxTurretPosition
         }
+        powerTurret = ShooterConfig.controllerTurret.calculate(turretPosition, targetPos, deltaTime)
     }
 
     fun addTelemetry(telemetry: Telemetry) {
