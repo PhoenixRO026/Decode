@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.robot
 import android.graphics.Color
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.roadrunner.Action
+import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.RaceAction
 import com.commonlibs.units.Duration
 import com.commonlibs.units.SleepAction
@@ -31,16 +32,14 @@ class Spindexer(
         EMPTY
     }
 
-    val intakePositions = listOf(
-        0.15, // slot 0 intake position
-        0.50, // slot 1 intake position
-        0.85  // slot 2 intake position
-    )
 
-    enum class SensorColor {
-        PURPLE,
-        GREEN,
-        NONE
+    enum class TransferPos (val pos : Double) {
+        intake0(0.0033),
+        intake1(0.1967),
+        intake2(0.4844),
+        shoot0(0.2950),
+        shoot1(0.1039),
+        shoot2(0.3939),
     }
 
     val slots: MutableList<BallColor> = mutableListOf(
@@ -49,108 +48,93 @@ class Spindexer(
         BallColor.EMPTY
     )
 
-    var currentPosition: Double
-        get() = servoTransfer1.position
+    var currentPos = TransferPos.intake0
         set(value) {
-            servoTransfer1.position = value
-            servoTransfer2.position = value
+            servoTransfer1.position = value.pos
+            servoTransfer2.position = value.pos
+            field = value
         }
 
     var activeIntakeSlot: Int? = null
 
 
-    fun closestSlotToShoot(target: BallColor): Int? {
-        if (slots[activeIntakeSlot!!] == target) {
-            return activeIntakeSlot!!
+    fun closestSlotToShoot(pos: TransferPos,target: BallColor): TransferPos? {
+        if(slots[pos.ordinal] == target) {
+            return pos
         }
-        val nextSlot = (activeIntakeSlot!! + 1) % 3
-        val previousSlot = (activeIntakeSlot!! + 2) % 3
-
-        if (slots[nextSlot] == target) {
-            return nextSlot
-        }
-        if (slots[previousSlot] == target) {
-            return previousSlot
-        }
-        return null
-    }
-
-    fun closestSlotToIntake(): Int? {
-        val target = BallColor.EMPTY
-        if (slots[activeIntakeSlot!!] == BallColor.EMPTY) {
-            return activeIntakeSlot!!
-        }
-        val nextSlot = (activeIntakeSlot!! + 1) % 3
-        val previousSlot = (activeIntakeSlot!! + 2) % 3
-
-        if (slots[nextSlot] == target) {
-            return nextSlot
-        }
-        if (slots[previousSlot] == target) {
-            return previousSlot
-        }
-        return null
-    }
-
-    fun shootPositionForSlot(slotIndex: Int): Double {
-        return intakePositions[slotIndex] + TransferConfig.shootOffset
-    }
-
-    fun goToShootSlot(slotIndex: Int) {
-        currentPosition = shootPositionForSlot(slotIndex)
-    }
-
-
-    fun goToIntakeSlot(slotIndex: Int) {
-        currentPosition = intakePositions[slotIndex]
-        activeIntakeSlot = slotIndex
-    }
-
-    fun storeBall(slotIndex: Int, color: BallColor) {
-        slots[slotIndex] = color
-    }
-
-    fun eraseBall(slotIndex: Int) {
-        slots[slotIndex] = BallColor.EMPTY
-    }
-
-    private var lastSensorColor: SensorColor = SensorColor.NONE
-
-    fun updateFromColorSensor() {
-        val slot = activeIntakeSlot ?: return
-
-        updateHue()
-        val current = sensorColor
-
-        val newBall =
-            lastSensorColor == SensorColor.NONE &&
-                    (current == SensorColor.GREEN || current == SensorColor.PURPLE)
-
-        if (newBall && slots[slot] == BallColor.EMPTY) {
-            slots[slot] = when (current) {
-                SensorColor.GREEN -> BallColor.GREEN
-                SensorColor.PURPLE -> BallColor.PURPLE
-                else -> BallColor.EMPTY
+        else {
+            if (pos == TransferPos.shoot0){
+                if (slots[pos.ordinal + 1] == target)
+                    return TransferPos.shoot1
+                else if (slots[pos.ordinal - 1] == target)
+                    return TransferPos.shoot2
+            }
+            else if (pos == TransferPos.shoot1){
+                if (slots[pos.ordinal + 1] == target)
+                    return TransferPos.shoot2
+                else if (slots[pos.ordinal - 1] == target)
+                    return TransferPos.shoot0
             }
         }
-
-        lastSensorColor = current
+        return null
     }
 
-    fun closestSlotToShootAny(): Int? {
-        return closestSlotToShoot(BallColor.GREEN)
-            ?: closestSlotToShoot(BallColor.PURPLE)
+    private fun updateSlot(pos: TransferPos, color: BallColor) {
+        slots[pos.ordinal] = color
     }
+
+    private fun emptySlot(pos: TransferPos) {
+        slots[pos.ordinal] = BallColor.EMPTY
+    }
+
+
+    fun updateBallSlot() {
+        updateHue()
+        updateSlot(currentPos, sensorColor)
+    }
+
+    fun goToPos(pos : TransferPos) {
+        currentPos = pos
+    }
+
+    fun goToNextShoot(pos : TransferPos) {
+        if (pos == TransferPos.shoot0) {
+            goToPos(TransferPos.shoot1)
+        }
+        else if (pos == TransferPos.shoot1) {
+            goToPos(TransferPos.shoot2)
+        }
+        else {
+            goToPos(TransferPos.shoot0)
+        }
+    }
+
+    fun goToNextIntake(pos : TransferPos) {
+        if (pos == TransferPos.intake0) {
+            goToPos(TransferPos.intake1)
+        }
+        else if(pos == TransferPos.intake1) {
+            goToPos(TransferPos.intake2)
+        }
+        else {
+            goToPos(TransferPos.intake0)
+        }
+    }
+
+    fun goToPosAction(pos : TransferPos) = InstantAction { goToPos(pos) }
+
+    fun goToNextShootAction() = InstantAction{ goToNextShoot(currentPos) }
+
+    fun goToNextIntakeAction() = InstantAction{ goToNextIntake(currentPos) }
 
     var sensorHue: Float = 0f
 
     var hsv = floatArrayOf(0f, 0f, 0f)
 
     val sensorColor get() = when {
-        hsv[1] != 0f && sensorHue in 0f..40f -> SensorColor.PURPLE
-        hsv[1] != 0f && sensorHue in 200f..280f -> SensorColor.GREEN
-        hsv[1] != 0f && sensorHue in 40f..110f -> SensorColor.NONE
-        else -> SensorColor.NONE
+        hsv[1] != 0f && sensorHue in 190f..300f -> BallColor.PURPLE
+        hsv[1] != 0f && sensorHue in 100f..175f -> BallColor.GREEN
+        else -> BallColor.EMPTY
     }
 
     fun updateHue() {
@@ -163,13 +147,6 @@ class Spindexer(
         )
         sensorHue = hsv[0]
     }
-
-    var transferPos
-        get() = servoTransfer1.position
-        set(value) {
-            servoTransfer1.position = value
-            servoTransfer2.position = value
-        }
 
 
     var fingerPosition : Double = 0.5
@@ -189,7 +166,7 @@ class Spindexer(
     }
 
     // waits for specific color
-    fun waitForColorAction(waitColor: SensorColor, maxTime: Duration = 1.s) = RaceAction(
+    fun waitForColorAction(waitColor: BallColor, maxTime: Duration = 1.s) = RaceAction(
         Action {
             updateHue()
             it.addLine("Waiting for $waitColor")
@@ -199,13 +176,13 @@ class Spindexer(
     )
 
     fun waitForColors(duration: Duration) = RaceAction(
-        waitForColorAction(SensorColor.PURPLE),
-        waitForColorAction(SensorColor.GREEN),
+        waitForColorAction(BallColor.PURPLE),
+        waitForColorAction(BallColor.GREEN),
         SleepAction(duration)
     )
 
     fun addTelemetry(telemetry: Telemetry) {
-        telemetry.addData("spindexer pos", transferPos)
+        telemetry.addData("spindexer pos", currentPos)
         telemetry.addData("finger pos", fingerPosition)
         //telemetry.addData("lift current", rightMotor.getCurrent(CurrentUnit.AMPS) + leftMotor.getCurrent(CurrentUnit.AMPS))
     }

@@ -38,15 +38,14 @@ class SensorTest : LinearOpMode() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
         val timeKeep = TimeKeep()
-        val intake = Robot(hardwareMap).intake
+        val robot = Robot(hardwareMap)
 
         waitForStart()
 
 
-
         while (opModeIsActive()) {
             timeKeep.resetDeltaTime()
-            intake.motor.power = sensorConfig.motorPower
+
 
             telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
             telemetry.addData("fps", 1.s / timeKeep.deltaTime)

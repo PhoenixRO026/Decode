@@ -94,6 +94,8 @@ class Robot(
         val finger = hardwareMap.get(Servo::class.java, "finger")
 
         val colorSensor = hardwareMap.get(NormalizedColorSensor::class.java, "colorSensor")
+        colorSensor.gain = 15f
+
         val limlit = hardwareMap.get(Limelight3A::class.java, "limelight")
         limlit.setPollRateHz(100)
         limlit.start()
