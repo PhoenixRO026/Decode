@@ -22,7 +22,7 @@ class Intake(
             motor.power = value
         }
 
-    fun startIntakeAction() = InstantAction { power = 0.75 }
+    fun startIntakeAction() = InstantAction { power = 1.0 }
     fun stopIntakeAction() = InstantAction { power = 0.0 }
 
     fun spew() = SequentialAction (

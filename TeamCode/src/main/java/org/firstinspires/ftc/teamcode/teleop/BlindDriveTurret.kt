@@ -80,7 +80,7 @@ open class BlindDriveTurret : LinearOpMode(){
             /// Intake
 
             if (gamepad1.right_bumper) {
-                robot.intake.power = 0.8
+                robot.intake.power = 1.0
             }
             else if (gamepad1.left_bumper) {
                 robot.intake.power = -1.0
