@@ -59,6 +59,22 @@ data object blueGoal{
     val endPose = Pose(58.inch, -28.inch, 180.0.deg)
 }
 
+data object blueGoal2{
+    val startPose = Pose(-61.5.inch, -38.inch, 90.0.deg)
+    val smallTrianglePose = Pose(55.inch, -10.inch, -90.deg)
+    val bigTrianglePose = Pose(-14.inch, -16.inch, -90.0.deg)
+
+    val rightIntakePose = Pose(36.inch, -30.inch, -90.0.deg)
+    val rightIntakePoseBack = Pose(36.inch, -47.inch, -90.0.deg)
+    val middleIntakePose = Pose(10.inch, -30.inch, -90.0.deg)
+    val middleIntakePoseBack = Pose(10.inch, -58.inch, -90.0.deg)
+    val leftIntakePose = Pose(-12.inch, -30.inch, -90.0.deg)
+    val leftIntakePoseBack = Pose(-12.inch, -47.inch, -90.0.deg)
+
+
+    val endPose = Pose(58.inch, -28.inch, 180.0.deg)
+}
+
 fun main() {
     System.setProperty("sun.java2d.opengl", "true")
 
@@ -86,6 +102,13 @@ fun main() {
             .build()
 
     val blueBot =
+        DefaultBotBuilder(meepMeep)
+            .setConstraints(60.0, 60.0, Math.toRadians(180.0), Math.toRadians(180.0), 15.0)
+            .setDimensions(16.5, 16.5)
+            .setStartPose(blueGoal.startPose.pose2d)
+            .build()
+
+    val blueBotClose =
         DefaultBotBuilder(meepMeep)
             .setConstraints(60.0, 60.0, Math.toRadians(180.0), Math.toRadians(180.0), 15.0)
             .setDimensions(16.5, 16.5)
@@ -147,10 +170,41 @@ fun main() {
         .build()
     )
 
+    blueBotClose.runAction(blueBot.drive.actionBuilder(blueGoal2.startPose.pose2d).ex()
+        .strafeToLinearHeading(blueGoal2.bigTrianglePose)
+
+        .setTangent(0.deg)
+        .splineToLinearHeading(blueGoal2.middleIntakePose, -90.deg)
+
+        .setTangent(-90.deg)
+        .lineToY(-58.inch, slowSpeed)
+
+        .setTangent(90.deg)
+        .splineToLinearHeading(blueGoal2.bigTrianglePose, 180.deg)
+
+        .setTangent(-90.deg)
+        .lineToY(-30.inch)
+        .lineToY(-47.inch, slowSpeed)
+
+        .setTangent(90.deg)
+        .lineToY(-16.inch)
+
+        .setTangent(0.deg)
+        .splineToLinearHeading(blueGoal2.rightIntakePose, -45.deg)
+        .setTangent(-90.deg)
+        .lineToY(-47.inch, slowSpeed)
+
+        .setTangent(90.deg)
+        .splineToLinearHeading(blueGoal2.smallTrianglePose, 0.deg)
+
+
+        .build()
+    )
+
     meepMeep.setBackground(Background.FIELD_DECODE_JUICE_DARK)
         .setDarkMode(true)
         .setBackgroundAlpha(0.95f)
         //.addEntity(blueBot)
-        .addEntity(redBot)
+        .addEntity(blueBotClose)
         .start()
 }
