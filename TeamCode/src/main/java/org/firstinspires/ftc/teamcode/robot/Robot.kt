@@ -30,20 +30,32 @@ class Robot(
     val intake: Intake
     val limelight: LimeLightCore
 
-    fun shootBall(rpm : Double) = SequentialAction(
-        shooter.goToRpmAction(rpm),
-        SleepAction(0.1.s),
-        InstantAction{transfer.fingerUp()},
-        SleepAction(0.2.s),
-        InstantAction{transfer.fingerDown()},
-        SleepAction(0.2.s),
+    fun intakeBalls() = SequentialAction (
+        transfer.waitForColors(0.75.s),
+        InstantAction{transfer.updateBallSlot()},
+        transfer.goToNextIntakeAction(),
+        transfer.waitForColors(0.75.s),
+        InstantAction{transfer.updateBallSlot()},
+        transfer.goToNextIntakeAction(),
+        transfer.waitForColors(0.75.s),
+        InstantAction{transfer.updateBallSlot()}
     )
 
-    fun justShoot() = SequentialAction (
+    fun shootBall(rpm : Double) = SequentialAction(
+        SleepAction(0.15.s),
         InstantAction{transfer.fingerUp()},
-        SleepAction(0.2.s),
+        SleepAction(0.25.s),
         InstantAction{transfer.fingerDown()},
-        SleepAction(0.2.s),
+        SleepAction(0.15.s),
+    )
+
+    fun shootBalls(rpm : Double) = SequentialAction (
+        transfer.goToPosAction(Spindexer.TransferPos.shoot0),
+        shootBall(rpm),
+        transfer.goToPosAction(Spindexer.TransferPos.shoot1),
+        shootBall(rpm),
+        transfer.goToPosAction(Spindexer.TransferPos.shoot2),
+        shootBall(rpm)
     )
 
     init {
