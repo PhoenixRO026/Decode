@@ -13,9 +13,12 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.teamcode.library.TimeKeep
+import org.firstinspires.ftc.teamcode.library.buttons.ButtonReader
+import org.firstinspires.ftc.teamcode.library.buttons.ToggleButtonReader
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
 import org.firstinspires.ftc.teamcode.robot.Robot
 import org.firstinspires.ftc.teamcode.robot.Shooter
+import org.firstinspires.ftc.teamcode.robot.Spindexer
 import org.firstinspires.ftc.teamcode.teleop.prepPositions.OuttakeTest.outtakeConfig
 import kotlin.math.abs
 import kotlin.time.toDuration
@@ -44,13 +47,12 @@ class  TransferTuning : LinearOpMode() {
     override fun runOpMode() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
-        val motorTransfer = hardwareMap.get(DcMotorEx::class.java, "motorTransfer")
+        val robot = Robot(hardwareMap)
 
-        motorTransfer.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        motorTransfer.direction = DcMotorSimple.Direction.REVERSE
-        motorTransfer.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-
-        val encoderTransfer : Encoder = RawEncoder(motorTransfer)
+        val move0 = ButtonReader { gamepad1.a }
+        val move1 = ButtonReader { gamepad1.x }
+        val move2 = ButtonReader { gamepad1.y }
+        val buttons = listOf(move1, move2, move0)
 
         val timeKeep = TimeKeep()
         var transferPower = 0.0
@@ -61,14 +63,20 @@ class  TransferTuning : LinearOpMode() {
 
         while (opModeIsActive()) {
             timeKeep.resetDeltaTime()
+            buttons.forEach { it.readValue() }
 
-            position = encoderTransfer.getPositionAndVelocity().position
-            targetPos = TransferTuningConfig.targetPos * TransferTuningConfig.multiplier + TransferTuningConfig.offset
-            motorTransfer.power = TransferTuningConfig.controller.calculate(position, targetPos, timeKeep.deltaTime)
+            if (move0.wasJustPressed())
+                robot.transfer.goToPos(Spindexer.TransferPos.shoot0)
+
+            if (move1.wasJustPressed())
+                robot.transfer.goToPos(Spindexer.TransferPos.shoot1)
+
+            if (move2.wasJustPressed())
+                robot.transfer.goToPos(Spindexer.TransferPos.shoot2)
 
             telemetry.addData("transfer target pos", TransferTuningConfig.targetPos)
-            telemetry.addData("transfer pos", position)
-            telemetry.addData("transfer power", motorTransfer.power)
+            telemetry.addData("transfer slot", robot.transfer.currentPos)
+            telemetry.addData("transfer pos", robot.transfer.servoTransfer1.position)
 
             telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
             telemetry.addData("fps", 1.s / timeKeep.deltaTime)

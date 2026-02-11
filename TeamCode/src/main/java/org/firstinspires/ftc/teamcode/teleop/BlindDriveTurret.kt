@@ -56,7 +56,7 @@ open class BlindDriveTurret : LinearOpMode(){
             buttons.forEach { it.readValue() }
             robot.drive.updatePoseEstimateOdo()
 
-            robot.transfer.updateFromColorSensor()
+            robot.transfer.updateBallSlot()
 
             /// Drive
 
@@ -76,54 +76,6 @@ open class BlindDriveTurret : LinearOpMode(){
             if (fingerDown.wasJustPressed())
                 robot.transfer.fingerDown()
 
-            if (intakePosition.wasJustPressed()) {
-                val emptySlot = robot.transfer.closestSlotToIntake()
-                if (emptySlot == null) {
-                    gamepad2.rumble(500)
-                } else {
-                    robot.transfer.goToIntakeSlot(emptySlot)
-                }
-            }
-
-            if (shootGreen.wasJustPressed()) {
-                val slotGreen = robot.transfer.closestSlotToShoot(BallColor.GREEN)
-                if (slotGreen == null) {
-                    gamepad2.rumble(500)
-                } else {
-                    robot.transfer.goToShootSlot(slotGreen)
-                    robot.justShoot()
-                    robot.transfer.eraseBall(slotGreen)
-                }
-            }
-
-            if (shootPurple.wasJustPressed()) {
-                val slotPurple = robot.transfer.closestSlotToShoot(BallColor.PURPLE)
-                if (slotPurple == null) {
-                    gamepad2.rumble(500)
-                } else {
-                    robot.transfer.goToShootSlot(slotPurple)
-                    robot.justShoot()
-                    robot.transfer.eraseBall(slotPurple)
-                }
-            }
-
-            var shootAllActive = false
-            if (shootAll.wasJustPressed()) {
-                shootAllActive = true
-            }
-
-            if (shootAllActive) {
-                val slot = robot.transfer.closestSlotToShootAny()
-
-                if (slot == null) {
-                    shootAllActive = false
-                    gamepad2.rumble(500)
-                } else {
-                    robot.transfer.goToShootSlot(slot)
-                    robot.justShoot()
-                    robot.transfer.eraseBall(slot)
-                }
-            }
 
             /// Intake
 
@@ -167,7 +119,6 @@ open class BlindDriveTurret : LinearOpMode(){
             telemetry.addData("down was pressed (left)", gamepad1.dpad_down)
             telemetry.addData("rpm", robot.shooter.rpm)
             telemetry.addData("target rpm", robot.shooter.targetRpm)
-            telemetry.addData("pos", robot.transfer.currentPosition)
             telemetry.addData("fingir pos", robot.transfer.finger.position)
             telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
             telemetry.addData("fps", 1.s / timeKeep.deltaTime)
