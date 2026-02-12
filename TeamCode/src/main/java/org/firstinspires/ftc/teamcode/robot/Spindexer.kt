@@ -79,6 +79,21 @@ class Spindexer(
         return null
     }
 
+    fun goToGreen() {
+        val target = closestSlotToShoot(currentPos, BallColor.GREEN)
+        if (target != null) {
+            goToPos(target)
+        }
+    }
+
+    fun goToPurple() {
+        val target = closestSlotToShoot(currentPos, BallColor.PURPLE)
+        if (target != null) {
+            goToPos(target)
+        }
+    }
+
+
     private fun updateSlot(pos: TransferPos, color: BallColor) {
         slots[pos.ordinal] = color
     }
