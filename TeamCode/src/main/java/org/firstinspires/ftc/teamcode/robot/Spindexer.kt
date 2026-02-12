@@ -97,11 +97,11 @@ class Spindexer(
         currentPos = pos
     }
 
-    fun goToNextShoot(pos : TransferPos) {
-        if (pos == TransferPos.shoot0) {
+    fun goToNextShoot() {
+        if (currentPos == TransferPos.shoot0) {
             goToPos(TransferPos.shoot1)
         }
-        else if (pos == TransferPos.shoot1) {
+        else if (currentPos == TransferPos.shoot1) {
             goToPos(TransferPos.shoot2)
         }
         else {
@@ -109,11 +109,11 @@ class Spindexer(
         }
     }
 
-    fun goToNextIntake(pos : TransferPos) {
-        if (pos == TransferPos.intake0) {
+    fun goToNextIntake() {
+        if (currentPos == TransferPos.intake0) {
             goToPos(TransferPos.intake1)
         }
-        else if(pos == TransferPos.intake1) {
+        else if(currentPos == TransferPos.intake1) {
             goToPos(TransferPos.intake2)
         }
         else {
@@ -123,9 +123,9 @@ class Spindexer(
 
     fun goToPosAction(pos : TransferPos) = InstantAction { goToPos(pos) }
 
-    fun goToNextShootAction() = InstantAction{ goToNextShoot(currentPos) }
+    fun goToNextShootAction() = InstantAction{ goToNextShoot() }
 
-    fun goToNextIntakeAction() = InstantAction{ goToNextIntake(currentPos) }
+    fun goToNextIntakeAction() = InstantAction{ goToNextIntake() }
 
     var sensorHue: Float = 0f
 

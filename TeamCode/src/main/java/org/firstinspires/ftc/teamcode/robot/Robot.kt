@@ -31,16 +31,27 @@ class Robot(
     val limelight: LimeLightCore
 
     fun intakeBalls(nextShoot: Spindexer.TransferPos) = SequentialAction (
-        transfer.waitForColors(0.75.s),
+        transfer.waitForColors(4.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
-        transfer.waitForColors(0.75.s),
+        transfer.waitForColors(3.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
-        transfer.waitForColors(0.75.s),
+        transfer.waitForColors(3.s),
         InstantAction{transfer.updateBallSlot()},
         intake.spew(),
         transfer.goToPosAction(nextShoot)
+    )
+
+    fun intakeTeleBalls() = SequentialAction (
+        transfer.waitForColors(10.s),
+        InstantAction{transfer.updateBallSlot()},
+        transfer.goToNextIntakeAction(),
+        transfer.waitForColors(10.s),
+        InstantAction{transfer.updateBallSlot()},
+        transfer.goToNextIntakeAction(),
+        transfer.waitForColors(10.s),
+        InstantAction{transfer.updateBallSlot()},
     )
 
     fun shootBall() = SequentialAction(
