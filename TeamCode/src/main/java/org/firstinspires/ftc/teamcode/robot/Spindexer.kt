@@ -34,12 +34,12 @@ class Spindexer(
 
 
     enum class TransferPos (val pos : Double) {
-        intake0(0.0033),
-        intake1(0.1967),
-        intake2(0.4844),
-        shoot0(0.2950),
-        shoot1(0.1039),
-        shoot2(0.3939),
+        intake0(0.0256),
+        intake1( 0.2189),
+        intake2(0.4056),
+        shoot0(0.3056),
+        shoot1( 0.5039),
+        shoot2(0.1139),
     }
 
     val slots: MutableList<BallColor> = mutableListOf(
