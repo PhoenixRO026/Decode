@@ -59,6 +59,8 @@ class  TransferTuning : LinearOpMode() {
         var targetPos = 0.0
         var position = 0.0
 
+        robot.transfer.goToPos(Spindexer.TransferPos.intake0)
+
         waitForStart()
 
         while (opModeIsActive()) {
