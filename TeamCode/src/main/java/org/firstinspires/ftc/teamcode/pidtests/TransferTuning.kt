@@ -52,7 +52,11 @@ class  TransferTuning : LinearOpMode() {
         val move0 = ButtonReader { gamepad1.a }
         val move1 = ButtonReader { gamepad1.x }
         val move2 = ButtonReader { gamepad1.y }
-        val buttons = listOf(move1, move2, move0)
+        val move3 = ButtonReader { gamepad1.dpad_down }
+        val move4 = ButtonReader { gamepad1.dpad_left }
+        val move5 = ButtonReader { gamepad1.dpad_up }
+
+        val buttons = listOf(move1, move2, move0, move5, move4, move3)
 
         val timeKeep = TimeKeep()
         var transferPower = 0.0
@@ -75,7 +79,14 @@ class  TransferTuning : LinearOpMode() {
 
             if (move2.wasJustPressed())
                 robot.transfer.goToPos(Spindexer.TransferPos.shoot2)
+            if (move0.wasJustPressed())
+                robot.transfer.goToPos(Spindexer.TransferPos.intake0)
 
+            if (move1.wasJustPressed())
+                robot.transfer.goToPos(Spindexer.TransferPos.intake1)
+
+            if (move2.wasJustPressed())
+                robot.transfer.goToPos(Spindexer.TransferPos.intake2)
             telemetry.addData("transfer target pos", TransferTuningConfig.targetPos)
             telemetry.addData("transfer slot", robot.transfer.currentPos)
             telemetry.addData("transfer pos", robot.transfer.servoTransfer1.position)
