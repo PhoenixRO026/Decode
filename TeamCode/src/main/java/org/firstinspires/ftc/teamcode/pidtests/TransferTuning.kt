@@ -76,6 +76,8 @@ class  TransferTuning : LinearOpMode() {
             if (move2.wasJustPressed())
                 robot.transfer.goToPos(Spindexer.TransferPos.shoot2)
 
+
+
             telemetry.addData("transfer target pos", TransferTuningConfig.targetPos)
             telemetry.addData("transfer slot", robot.transfer.currentPos)
             telemetry.addData("transfer pos", robot.transfer.servoTransfer1.position)
