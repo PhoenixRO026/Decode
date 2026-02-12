@@ -140,7 +140,7 @@ fun main() {
     meepMeep.setBackground(Background.FIELD_DECODE_JUICE_DARK)
         .setDarkMode(true)
         .setBackgroundAlpha(0.95f)
-        //.addEntity(blueBot)
-        .addEntity(blueBotFar)
+        .addEntity(blueBotClose)
+        //.addEntity(blueBotFar)
         .start()
 }

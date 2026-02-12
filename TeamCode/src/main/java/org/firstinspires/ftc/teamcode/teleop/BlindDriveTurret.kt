@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.robot.Spindexer.BallColor
 
 
 @TeleOp
-open class BlindDriveTurret : LinearOpMode(){
+class BlindDriveTurret : LinearOpMode(){
     open val pip: Int = 1
     @Config
     data object BlindDrive {
