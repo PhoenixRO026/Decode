@@ -27,7 +27,7 @@ class CameraCore(
 
     val colorSensor =
         PredominantColorProcessor.Builder()
-            .setRoi(ImageRegion.asUnityCenterCoordinates(0.25, 0.25, 1.0, -0.25))
+            .setRoi(ImageRegion.asUnityCenterCoordinates(0.3, 0.0, 0.8, -0.65))
             .setSwatches(
                 PredominantColorProcessor.Swatch.ARTIFACT_GREEN,
                 PredominantColorProcessor.Swatch.ARTIFACT_PURPLE,

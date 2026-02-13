@@ -67,13 +67,13 @@ public final class MecanumDrive {
 
         // drive model parameters
         public double inPerTick = 1.0 / 25.4;
-        public double lateralInPerTick = 0.025966219490203394;
-        public double trackWidthTicks = 352.8831820782668;
+        public double lateralInPerTick = 0.027049757456552723;
+        public double trackWidthTicks = 353.80930081216;
 
         // feedforward parameters (in tick units)
-        public double kS = 1.1369484318510699;
-        public double kV = 0.0052497464728588;
-        public double kA = 0.003;
+        public double kS = 1.1199148655550086;
+        public double kV = 0.005186828287292759;
+        public double kA = 0.0025;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 67;
@@ -245,7 +245,6 @@ public final class MecanumDrive {
 
         // TODO: reverse motor directions if needed
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html

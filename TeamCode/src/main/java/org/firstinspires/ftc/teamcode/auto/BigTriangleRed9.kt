@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot.RobotConfig
 @Autonomous
 class BigTriangleRed9 : LinearOpMode() {
     val startPose = Pose(-61.5.inch, 36.inch, -90.0.deg)
-    val bigTrianglePose = Pose(-16.5.inch, 16.inch, 136.0.deg)
+    val bigTrianglePose = Pose(-17.5.inch, 16.inch, 136.0.deg)
 
     val leftIntakePose = Pose(-11.5.inch, 27.inch, 90.0.deg)
     val middleIntakePose = Pose(9.inch, 28.inch, 90.0.deg)
@@ -87,7 +87,7 @@ class BigTriangleRed9 : LinearOpMode() {
                 .build(),
             robot.drive.correctionAction(middleIntakePose, 0.75.s),
 
-            RaceAction(
+            ParallelAction(
                 robot.drive.actionBuilder(middleIntakePose)
                     .setTangent(90.deg)
                     .lineToY(55.inch, slowSpeed)
@@ -116,7 +116,7 @@ class BigTriangleRed9 : LinearOpMode() {
                 .build(),
             robot.drive.correctionAction(leftIntakePose, 0.75.s),
 
-            RaceAction(
+            ParallelAction(
                 robot.drive.actionBuilder(leftIntakePose)
                     .setTangent(90.deg)
                     .lineToY(46.inch, slowSpeed)
@@ -161,7 +161,7 @@ class BigTriangleRed9 : LinearOpMode() {
                 .build(),
             robot.drive.correctionAction(middleIntakePose, 0.75.s),
 
-            RaceAction(
+            ParallelAction(
                 robot.drive.actionBuilder(middleIntakePose)
                     .setTangent(90.deg)
                     .lineToY(55.inch, slowSpeed)
@@ -190,7 +190,7 @@ class BigTriangleRed9 : LinearOpMode() {
                 .build(),
             robot.drive.correctionAction(leftIntakePose, 0.75.s),
 
-            RaceAction(
+            ParallelAction(
                 robot.drive.actionBuilder(leftIntakePose)
                     .setTangent(90.deg)
                     .lineToY(46.inch, slowSpeed)
@@ -233,7 +233,7 @@ class BigTriangleRed9 : LinearOpMode() {
                 .build(),
             robot.drive.correctionAction(middleIntakePose, 0.75.s),
 
-            RaceAction(
+            ParallelAction(
                 robot.drive.actionBuilder(openGatePose)
                     .setTangent(90.deg)
                     .lineToY(55.inch, slowSpeed)
@@ -262,7 +262,7 @@ class BigTriangleRed9 : LinearOpMode() {
                 .build(),
             robot.drive.correctionAction(leftIntakePose, 0.75.s),
 
-            RaceAction(
+            ParallelAction(
                 robot.drive.actionBuilder(leftIntakePose)
                     .setTangent(90.deg)
                     .lineToY(46.inch, slowSpeed)

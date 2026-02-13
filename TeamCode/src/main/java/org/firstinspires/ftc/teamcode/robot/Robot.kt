@@ -54,16 +54,16 @@ class Robot(
 
     fun intakeBalls(futureOuttakePos : Int) = SequentialAction(
         transfer.goToPosAction(RobotConfig.pos, 0, RobotConfig.intakeOffset),
-        camera.waitForColors(4.s),
+        camera.waitForColors(4.0.s),
         SleepAction(0.1.s),
         transfer.goToPosAction(RobotConfig.pos, 1, 0.0),
-        camera.waitForColors(4.s),
+        camera.waitForColors(4.0.s),
 
         SleepAction(0.1.s),
         transfer.goToPosAction(RobotConfig.pos, 2, 0.0),
-        camera.waitForColors(3.s),
+        camera.waitForColors(3.0.s),
 
-        SleepAction(0.1.s),
+        SleepAction(0.2.s),
         InstantAction{intake.power = 0.0},
         transfer.goToPosAction(RobotConfig.pos, futureOuttakePos, RobotConfig.shooterOffset),
     )
