@@ -60,7 +60,7 @@ class SmallTriangleBlue9 : LinearOpMode() {
 
         val slowSpeed: VelConstraint = MinVelConstraint(
             listOf(
-                kinematics.WheelVelConstraint(5.0),
+                kinematics.WheelVelConstraint(11.0),
                 AngularVelConstraint(Math.toRadians(180.0))
             )
         )
