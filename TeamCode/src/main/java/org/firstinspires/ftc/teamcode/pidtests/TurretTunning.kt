@@ -49,21 +49,11 @@ class TurretTunning : LinearOpMode() {
             robot.limelight.updateHeadingError()
 
             if (robot.limelight.tagVisible) {
-                val headingErrorDeg = robot.limelight.headingErrorDeg
-
-                var newHeading = TurretConfig.controller.calculate(
-                    0.0,
-                    headingErrorDeg,
-                    timeKeep.deltaTime
-                )
-
-                newHeading = newHeading.coerceIn(-TurretConfig.maxTurnPower, TurretConfig.maxTurnPower)
-
-                robot.shooter.powerTurret = newHeading
-
-                telemetry.addData("headingError", headingErrorDeg)
-                telemetry.addData("pidOutput", newHeading)
+                robot.shooter.updateTurretPos(timeKeep.deltaTime, robot.limelight.headingErrorDeg)
             }
+            telemetry.addData("current pos", robot.shooter.turretPosition)
+            telemetry.addData("target pos", robot.shooter.targetPos)
+            telemetry.addData("heading error", robot.limelight.headingErrorDeg)
             telemetry.addData("tagVisible", robot.limelight.tagVisible)
             telemetry.update()
         }

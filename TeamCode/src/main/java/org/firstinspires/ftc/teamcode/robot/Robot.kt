@@ -31,13 +31,13 @@ class Robot(
     val limelight: LimeLightCore
 
     fun intakeBalls() = SequentialAction (
-        transfer.waitForColors(0.75.s),
+        transfer.waitForColors(3.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
-        transfer.waitForColors(0.75.s),
+        transfer.waitForColors(3.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
-        transfer.waitForColors(0.75.s),
+        transfer.waitForColors(3.s),
         InstantAction{transfer.updateBallSlot()}
     )
 
