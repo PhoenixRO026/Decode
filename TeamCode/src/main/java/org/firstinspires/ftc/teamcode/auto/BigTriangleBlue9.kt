@@ -31,10 +31,10 @@ class BigTriangleBlue9 : LinearOpMode() {
 
     val leftIntakePose = Pose(-11.5.inch, -26.inch, -90.0.deg)
     val middleIntakePose = Pose(9.inch, -27.inch, -90.0.deg)
-    val leftIntakePoseBack = Pose(-11.5.inch, -48.inch, -90.0.deg)
+    val leftIntakePoseBack = Pose(-11.5.inch, -47.inch, -90.0.deg)
     val middleIntakePoseBack = Pose(9.inch, -57.inch, -90.0.deg)
     val rightIntakePose = Pose(37.inch, -24.inch, -90.0.deg)
-    val rightIntakePoseBack = Pose(37.inch, -49.inch, -90.0.deg)
+    val rightIntakePoseBack = Pose(37.inch, -47.inch, -90.0.deg)
     val openGatePose = Pose(6.inch, -57.inch, -90.0.deg)
 
     val endPose = Pose(0.inch, -28.inch, -90.0.deg)
