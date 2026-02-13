@@ -36,6 +36,7 @@ class CameraCore(
             .build()
 
     val portal: VisionPortal? = VisionPortal.Builder()
+        .enableLiveView(false)
         .addProcessor(colorSensor)
         .setCameraResolution(Size(CameraCoreConfig.colorWidth, CameraCoreConfig.colorHeight))
         .setCamera(cameraColor)

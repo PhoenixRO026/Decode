@@ -45,23 +45,23 @@ class Robot(
     }
 
     fun shootBall(rpm : Double) = SequentialAction(
-        SleepAction(0.15.s),
+        SleepAction(0.10.s),
         InstantAction{transfer.fingerUp()},
-        SleepAction(0.25.s),
+        SleepAction(0.17.s),
         InstantAction{transfer.fingerDown()},
-        SleepAction(0.15.s),
+        SleepAction(0.10.s),
     )
 
     fun intakeBalls(futureOuttakePos : Int) = SequentialAction(
         transfer.goToPosAction(RobotConfig.pos, 0, RobotConfig.intakeOffset),
         camera.waitForColors(4.0.s),
-        SleepAction(0.1.s),
+        SleepAction(0.07.s),
         transfer.goToPosAction(RobotConfig.pos, 1, 0.0),
-        camera.waitForColors(4.0.s),
-
-        SleepAction(0.1.s),
-        transfer.goToPosAction(RobotConfig.pos, 2, 0.0),
         camera.waitForColors(3.0.s),
+
+        SleepAction(0.07.s),
+        transfer.goToPosAction(RobotConfig.pos, 2, 0.0),
+        camera.waitForColors(2.0.s),
 
         SleepAction(0.2.s),
         InstantAction{intake.power = 0.0},
