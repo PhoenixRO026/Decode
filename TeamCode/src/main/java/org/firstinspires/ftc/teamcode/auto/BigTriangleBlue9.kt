@@ -67,258 +67,131 @@ class BigTriangleBlue9 : LinearOpMode() {
             )
         )
 
-        val actionPGP = SequentialAction(
-            ParallelAction (
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        fun buildBigTriangleAction(vararg shootPositions: Int): SequentialAction {
+            return SequentialAction(
                 robot.shooter.goToRpmAction(rpmClose),
-                robot.drive.actionBuilder(startPose)
-                    .setTangent(45.0.deg)
-                    .splineToLinearHeading(bigTrianglePose, -45.0.deg)
-                    .build(),
-                robot.transfer.goToPosAction(RobotConfig.pos, 0, RobotConfig.shooterOffset)
-            ),
+                ParallelAction (
+                    robot.drive.actionBuilder(startPose)
+                        .setTangent(30.0.deg)
+                        .splineToLinearHeading(bigTrianglePose, 10.0.deg)
+                        .build(),
+                    robot.transfer.goToPosAction(RobotConfig.pos, 0, RobotConfig.shooterOffset)
+                ),
 
-            robot.drive.correctionAction(bigTrianglePose, 1.0.s),
+                robot.drive.correctionAction(bigTrianglePose, 0.01.s),
 
-            robot.shootBalls(rpmClose, 0),
+                robot.shootBalls(rpmClose, 0),
 
-            robot.intake.startIntakeAction(),
-            robot.drive.actionBuilder(bigTrianglePose)
-                .setTangent(45.deg)
-                .splineToLinearHeading(middleIntakePose, -45.deg)
-                .build(),
-            robot.drive.correctionAction(middleIntakePose, 0.75.s),
+                ParallelAction(
+                    robot.intake.startIntakeAction(),
+                    robot.drive.actionBuilder(bigTrianglePose)
+                        .setTangent(0.deg)
+                        .splineToLinearHeading(middleIntakePose, -45.deg)
+                        .build(),
+                ),
 
-            ParallelAction(
-                robot.drive.actionBuilder(middleIntakePose)
-                    .setTangent(-90.deg)
-                    .lineToY(-54.inch, slowSpeed)
-                    .strafeToLinearHeading(openGatePose)
-                    .build(),
-                robot.intakeBalls(1)
-            ),
-            ParallelAction(
-                robot.intake.stopIntakeAction(),
-                robot.shooter.goToRpmAction(rpmClose),
-            ),
+                robot.drive.correctionAction(middleIntakePose, 0.1.s),
 
-            robot.drive.actionBuilder(openGatePose)
-                .setTangent(90.0.deg)
-                .splineToLinearHeading(bigTrianglePose, -180.deg)
-                .build(),
-            robot.drive.correctionAction(bigTrianglePose, 1.0.s),
+                ParallelAction(
+                    robot.drive.actionBuilder(middleIntakePose)
+                        .setTangent(-90.deg)
+                        .lineToY(-57.inch, slowSpeed)
+                        .build(),
+                    robot.intakeBalls(shootPositions[0])
+                ),
 
-            robot.shootBalls(rpmClose, 1),
+                ParallelAction(
+                    robot.intake.stopIntakeAction(),
+                    robot.shooter.goToRpmAction(rpmClose),
+                    robot.drive.actionBuilder(middleIntakePoseBack)
+                        .setTangent(90.0.deg)
+                        .splineToLinearHeading(bigTrianglePose, 180.deg)
+                        .build(),
+                ),
+
+                robot.drive.correctionAction(bigTrianglePose, 0.02.s),
+
+                robot.shootBalls(rpmClose, shootPositions[0]),
+
+                ParallelAction(
+                    robot.intake.startIntakeAction(),
+                    robot.drive.actionBuilder(bigTrianglePose)
+                        .setTangent(60.0.deg)
+                        .splineToLinearHeading(leftIntakePose, -90.deg)
+                        .build(),
+                ),
+
+                robot.drive.correctionAction(leftIntakePose, 0.1.s),
+
+                ParallelAction(
+                    robot.drive.actionBuilder(leftIntakePose)
+                        .setTangent(-90.deg)
+                        .lineToY(-48.inch, slowSpeed)
+                        .build(),
+                    robot.intakeBalls(shootPositions[1])
+                ),
+                ParallelAction(
+                    robot.intake.stopIntakeAction(),
+                    robot.shooter.goToRpmAction(rpmClose),
+                    robot.drive.actionBuilder(leftIntakePoseBack)
+                        .setTangent(90.deg)
+                        .splineToLinearHeading(bigTrianglePose, 90.deg)
+                        .build(),
+                ),
+
+                robot.shootBalls(rpmClose, shootPositions[1]),
+
+                ParallelAction(
+                    robot.intake.startIntakeAction(),
+                    robot.drive.actionBuilder(bigTrianglePose)
+                        .setTangent(0.deg)
+                        .lineToXLinearHeading(37.inch, -90.deg)
+                        .build(),
+                ),
+
+                ParallelAction(
+                    robot.drive.actionBuilder(rightIntakePose)
+                        .setTangent(-90.deg)
+                        .lineToY(-49.inch, slowSpeed)
+                        .build(),
+                    robot.intakeBalls(shootPositions[2])
+                ),
+                ParallelAction(
+                    robot.intake.stopIntakeAction(),
+                    robot.shooter.goToRpmAction(rpmFar),
+                    robot.drive.actionBuilder(rightIntakePoseBack)
+                        .setTangent(90.0.deg)
+                        .splineToLinearHeading(smallTrianglePose, 45.deg)
+                        .build(),
+                ),
+
+                robot.drive.correctionAction(smallTrianglePose, 0.75.s),
 
 
-            robot.intake.startIntakeAction(),
-            robot.drive.actionBuilder(bigTrianglePose)
-                .setTangent(60.0.deg)
-                .splineToLinearHeading(leftIntakePose, -90.deg)
-                .build(),
-            robot.drive.correctionAction(leftIntakePose, 0.75.s),
+                robot.shootBalls(rpmClose, shootPositions[2]),
+            )
+        }
 
-            ParallelAction(
-                robot.drive.actionBuilder(leftIntakePose)
-                    .setTangent(-90.deg)
-                    .lineToY(-48.inch, slowSpeed)
-                    .build(),
-                robot.intakeBalls(2)
-            ),
-            ParallelAction(
-                robot.intake.stopIntakeAction(),
-                robot.shooter.goToRpmAction(rpmClose),
-            ),
-            robot.drive.actionBuilder(leftIntakePoseBack)
-                .setTangent(90.deg)
-                .splineToLinearHeading(bigTrianglePose, -90.deg)
-                .build(),
-            robot.drive.correctionAction(bigTrianglePose, 1.5.s),
-            robot.shootBalls(rpmClose, 2),
-
-            robot.drive.actionBuilder(bigTrianglePose)
-                .strafeToLinearHeading(endPose)
-                .build(),
+        val actionPGP = buildBigTriangleAction(
+            1,
+            2,
+            0
         )
 
-        val actionPPG = SequentialAction(
-            robot.shooter.goToRpmAction(rpmClose),
-            ParallelAction (
-                robot.drive.actionBuilder(startPose)
-                    .setTangent(30.0.deg)
-                    .splineToLinearHeading(bigTrianglePose, 10.0.deg)
-                    .build(),
-                robot.transfer.goToPosAction(RobotConfig.pos, 0, RobotConfig.shooterOffset)
-            ),
 
-            robot.drive.correctionAction(bigTrianglePose, 0.01.s),
-
-            robot.shootBalls(rpmClose, 0),
-
-            ParallelAction(
-                robot.intake.startIntakeAction(),
-                robot.drive.actionBuilder(bigTrianglePose)
-                    .setTangent(0.deg)
-                    .splineToLinearHeading(middleIntakePose, -45.deg)
-                    .build(),
-            ),
-
-            robot.drive.correctionAction(middleIntakePose, 0.1.s),
-
-            ParallelAction(
-                robot.drive.actionBuilder(middleIntakePose)
-                    .setTangent(-90.deg)
-                    .lineToY(-57.inch, slowSpeed)
-                    .build(),
-                robot.intakeBalls(0)
-            ),
-
-            ParallelAction(
-                robot.intake.stopIntakeAction(),
-                robot.shooter.goToRpmAction(rpmClose),
-                robot.drive.actionBuilder(middleIntakePoseBack)
-                    .setTangent(90.0.deg)
-                    .splineToLinearHeading(bigTrianglePose, 180.deg)
-                    .build(),
-            ),
-
-            robot.drive.correctionAction(bigTrianglePose, 0.02.s),
-
-            robot.shootBalls(rpmClose, 0),
-
-            ParallelAction(
-                robot.intake.startIntakeAction(),
-                robot.drive.actionBuilder(bigTrianglePose)
-                    .setTangent(60.0.deg)
-                    .splineToLinearHeading(leftIntakePose, -90.deg)
-                    .build(),
-            ),
-
-            robot.drive.correctionAction(leftIntakePose, 0.1.s),
-
-            ParallelAction(
-                robot.drive.actionBuilder(leftIntakePose)
-                    .setTangent(-90.deg)
-                    .lineToY(-48.inch, slowSpeed)
-                    .build(),
-                robot.intakeBalls(1)
-            ),
-            ParallelAction(
-                robot.intake.stopIntakeAction(),
-                robot.shooter.goToRpmAction(rpmClose),
-                robot.drive.actionBuilder(leftIntakePoseBack)
-                    .setTangent(90.deg)
-                    .splineToLinearHeading(bigTrianglePose, 90.deg)
-                    .build(),
-            ),
-
-            robot.shootBalls(rpmClose, 1),
-
-            ParallelAction(
-                robot.intake.startIntakeAction(),
-                robot.drive.actionBuilder(bigTrianglePose)
-                    .setTangent(0.deg)
-                    .lineToXLinearHeading(37.inch, -90.deg)
-                    .build(),
-            ),
-
-            ParallelAction(
-                robot.drive.actionBuilder(rightIntakePose)
-                    .setTangent(-90.deg)
-                    .lineToY(-49.inch, slowSpeed)
-                    .build(),
-                robot.intakeBalls(2)
-            ),
-            ParallelAction(
-                robot.intake.stopIntakeAction(),
-                robot.shooter.goToRpmAction(rpmFar),
-                robot.drive.actionBuilder(rightIntakePoseBack)
-                    .setTangent(90.0.deg)
-                    .splineToLinearHeading(smallTrianglePose, 45.deg)
-                    .build(),
-            ),
-
-            robot.drive.correctionAction(smallTrianglePose, 0.75.s),
-
-
-            robot.shootBalls(rpmClose, 2),
-
-
-            /*robot.drive.actionBuilder(bigTrianglePose)
-                .strafeToLinearHeading(endPose)
-                .build(),*/
+        val actionPPG = buildBigTriangleAction(
+            0,
+            1,
+            2
         )
 
-        val actionGPP = SequentialAction(
-            ParallelAction (
-                robot.shooter.goToRpmAction(rpmClose),
-            robot.drive.actionBuilder(startPose)
-                    .setTangent(45.0.deg)
-                    .splineToLinearHeading(bigTrianglePose, -45.0.deg)
-                    .build(),
-                robot.transfer.goToPosAction(RobotConfig.pos, 0, RobotConfig.shooterOffset)
-            ),
-            robot.drive.correctionAction(bigTrianglePose, 1.0.s),
 
-            robot.shootBalls(rpmClose, 0),
-
-            robot.intake.startIntakeAction(),
-            robot.drive.actionBuilder(bigTrianglePose)
-                .setTangent(45.deg)
-                .splineToLinearHeading(middleIntakePose, -45.deg)
-                .build(),
-            robot.drive.correctionAction(middleIntakePose, 0.75.s),
-
-            ParallelAction(
-                robot.drive.actionBuilder(middleIntakePose)
-                    .setTangent(-90.deg)
-                    .lineToY(-54.inch, slowSpeed)
-                    .strafeToLinearHeading(openGatePose)
-                    .build(),
-                robot.intakeBalls(2)
-            ),
-            ParallelAction(
-                robot.intake.stopIntakeAction(),
-                robot.shooter.goToRpmAction(rpmClose),
-            ),
-
-            robot.drive.actionBuilder(openGatePose)
-                .setTangent(90.0.deg)
-                .splineToLinearHeading(bigTrianglePose, -180.deg)
-                .build(),
-            robot.drive.correctionAction(bigTrianglePose, 1.0.s),
-
-            robot.shootBalls(rpmClose, 2),
-
-
-            robot.intake.startIntakeAction(),
-            robot.drive.actionBuilder(bigTrianglePose)
-                .setTangent(60.0.deg)
-                .splineToLinearHeading(leftIntakePose, -90.deg)
-                .build(),
-            robot.drive.correctionAction(leftIntakePose, 0.75.s),
-
-            ParallelAction(
-                robot.drive.actionBuilder(leftIntakePose)
-                    .setTangent(-90.deg)
-                    .lineToY(-48.inch, slowSpeed)
-                    .build(),
-                robot.intakeBalls(1)
-            ),
-            ParallelAction(
-                robot.intake.stopIntakeAction(),
-                robot.shooter.goToRpmAction(rpmClose),
-            ),
-            robot.drive.actionBuilder(leftIntakePoseBack)
-                .setTangent(90.deg)
-                .splineToLinearHeading(bigTrianglePose, -90.deg)
-                .build(),
-            robot.drive.correctionAction(bigTrianglePose, 1.5.s),
-            robot.shootBalls(rpmClose, 1),
-
-            robot.drive.actionBuilder(bigTrianglePose)
-                .strafeToLinearHeading(endPose)
-                .build(),
-
+        val actionGPP = buildBigTriangleAction(
+            2,
+            0,
+            1
         )
 
 
