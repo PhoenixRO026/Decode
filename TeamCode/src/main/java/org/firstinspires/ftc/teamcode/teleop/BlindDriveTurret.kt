@@ -3,6 +3,10 @@ package org.firstinspires.ftc.teamcode.teleop
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.acmerobotics.roadrunner.Action
+import com.acmerobotics.roadrunner.InstantAction
+import com.acmerobotics.roadrunner.SequentialAction
 import com.commonlibs.units.Pose
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
@@ -17,13 +21,15 @@ import org.firstinspires.ftc.teamcode.robot.Spindexer.BallColor
 
 
 @TeleOp
-open class BlindDriveTurret : LinearOpMode(){
-    open val pip: Int = 1
+abstract class BlindDriveTurret : LinearOpMode(){
+    abstract val pipeline : Int
     @Config
     data object BlindDrive {
         @JvmField var rpmSmall = 3260
         @JvmField var rpmBig = 2775
     }
+
+    private var driver1Action: Action? = null
 
     override fun runOpMode() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
@@ -33,7 +39,6 @@ open class BlindDriveTurret : LinearOpMode(){
 
         robot.limelight.setPipeline(1)
 
-        val intakePosition = ButtonReader { gamepad2.y}
         val shootGreen = ButtonReader { gamepad2.a}
         val shootPurple = ButtonReader { gamepad2.b}
         val shootAll = ButtonReader { gamepad2.x}
@@ -42,10 +47,11 @@ open class BlindDriveTurret : LinearOpMode(){
         val highRpm = ButtonReader {gamepad2.right_bumper}
         val lowRpm = ButtonReader {gamepad2.left_bumper}
         val stopShooter = ButtonReader {gamepad2.dpad_left}
-        val snipe = ToggleButtonReader {gamepad1.x}
-        val autoRpm = ButtonReader {gamepad2.dpad_right}
-        val buttons = listOf(intakePosition, shootGreen, shootPurple, shootAll, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe, autoRpm)
-        val stopButton = ButtonReader {gamepad2.touchpad}
+        val snipe = ToggleButtonReader ({gamepad1.x})
+        val nextIntake = ButtonReader {gamepad2.y}
+        val nextShoot = ButtonReader {gamepad2.x}
+        val buttons = listOf(shootGreen, shootPurple, shootAll, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe, nextIntake, nextShoot, nextIntake)
+
 
         robot.transfer.finger.position = 0.9
 
@@ -55,8 +61,6 @@ open class BlindDriveTurret : LinearOpMode(){
             timeKeep.resetDeltaTime()
             buttons.forEach { it.readValue() }
             robot.drive.updatePoseEstimateOdo()
-
-            robot.transfer.updateBallSlot()
 
             /// Drive
 
@@ -69,6 +73,35 @@ open class BlindDriveTurret : LinearOpMode(){
                 robot.drive.resetFieldCentric()
             }
 
+            /// Intake
+            if (snipe.state) {
+                if (driver1Action == null) {
+                    driver1Action = SequentialAction(
+                        robot.intakeTeleBalls(),
+                        InstantAction { snipe.setState(false) }
+                    )
+                }
+            }
+            else {
+                /// Intake
+                if (gamepad1.right_bumper) {
+                    robot.intake.power = 1.0
+                }
+                else if (gamepad1.left_bumper) {
+                    robot.intake.power = -1.0
+                }
+                else {
+                    robot.intake.power = 0.0
+                }
+                if (nextIntake.wasJustPressed()) {
+                    robot.transfer.goToNextIntake()
+                }
+
+                if (nextShoot.wasJustPressed()) {
+                    robot.transfer.goToNextShoot()
+                }
+            }
+
             /// Transfer
 
             if (fingerUp.wasJustPressed())
@@ -77,28 +110,11 @@ open class BlindDriveTurret : LinearOpMode(){
                 robot.transfer.fingerDown()
 
 
-            /// Intake
-
-            if (gamepad1.right_bumper) {
-                robot.intake.power = 1.0
-            }
-            else if (gamepad1.left_bumper) {
-                robot.intake.power = -1.0
-            }
-            else {
-                robot.intake.power = 0.0
-            }
-
-            var rpm = 0.0
             if (highRpm.wasJustPressed()){ /// shoot far
-                robot.shooter.goToRmp(BlindDrive.rpmSmall.toDouble())
+                robot.shooter.goToRmp(robot.shooter.rpmFar)
             }
             else if (lowRpm.wasJustPressed()) { /// shoot close
-                robot.shooter.goToRmp(BlindDrive.rpmBig.toDouble())
-            }
-            else if (autoRpm.wasJustPressed()) {
-                rpm = robot.limelight.getRpm()
-                robot.shooter.goToRmp(rpm)
+                robot.shooter.goToRmp(robot.shooter.rpmClose)
             }
             else if (stopShooter.wasJustPressed()) { /// stop shoot
                 robot.shooter.goToRmp(0.0)
@@ -109,7 +125,7 @@ open class BlindDriveTurret : LinearOpMode(){
             robot.shooter.updateTurretPos(timeKeep.deltaTime, robot.limelight.headingErrorDeg)
 
             telemetry.addData("distance", robot.limelight.getDistance())
-            telemetry.addData("auto rpm", rpm)
+            telemetry.addData("auto rpm", robot.shooter.rpm)
 
             telemetry.addData("error heading", robot.limelight.headingErrorDeg)
             telemetry.addData("a was pressed (set)", gamepad1.a)
@@ -123,6 +139,13 @@ open class BlindDriveTurret : LinearOpMode(){
             telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
             telemetry.addData("fps", 1.s / timeKeep.deltaTime)
             telemetry.update()
+        }
+    }
+    private fun runActions() {
+        driver1Action?.let {
+            if (!it.run(TelemetryPacket())) {
+                driver1Action = null
+            }
         }
     }
 }

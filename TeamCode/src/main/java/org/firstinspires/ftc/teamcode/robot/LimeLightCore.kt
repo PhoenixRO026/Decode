@@ -99,6 +99,7 @@ class LimeLightCore(
             headingErrorDeg = fid.targetXDegrees
             tagVisible = true
         } else {
+            headingErrorDeg = 0.0
             tagVisible = false
         }
     }
