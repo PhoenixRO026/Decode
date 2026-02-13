@@ -64,7 +64,7 @@ data object redGoalV3{
 }
 
 data object blueGoal{
-    val startPose = Pose(-61.5.inch, -36.inch, 90.0.deg)
+    val startPose = Pose(61.inch, -11.inch, 180.0.deg)
     val bigTrianglePose = Pose(-12.inch, -23.inch, 212.0.deg)
     val smallTrianglePose = Pose(55.inch, -10.inch, 200.0.deg)
 
@@ -75,6 +75,8 @@ data object blueGoal{
     val rightIntakePose = Pose(37.inch, -28.5.inch, -90.0.deg)
 
     val openGatePose = Pose(7.inch, -57.inch, -90.0.deg)
+    val humanIntakePose = Pose(55.inch, -59.inch, -60.0.deg)
+    val humanIntakePoseBack = Pose(60.inch, -59.inch, -70.0.deg)
 
     val endPose = Pose(0.inch, -28.inch, -90.0.deg)
 }
@@ -165,38 +167,25 @@ fun main() {
     )
     blueBot.runAction(blueBot.drive.actionBuilder(blueGoal.startPose.pose2d).ex()
 
-        .setTangent(30.0.deg)
-        .splineToLinearHeading(blueGoal.bigTrianglePose, 10.0.deg)
+        .setTangent(90.0.deg)
+        .strafeToLinearHeading(blueGoal.smallTrianglePose)
 
         .setTangent(0.deg)
-        .splineToLinearHeading(blueGoal.middleIntakePose, -45.deg)
+        .strafeToLinearHeading(blueGoal.rightIntakePose)
 
         .setTangent(-90.deg)
         .lineToY(-55.inch)
 
         .setTangent(90.0.deg)
-        .splineToLinearHeading(blueGoal.bigTrianglePose, 180.deg)
+        .strafeToLinearHeading(blueGoal.smallTrianglePose)
 
         .setTangent(60.0.deg)
-        .splineToLinearHeading(blueGoal.leftIntakePose, -90.deg)
+        .strafeToLinearHeading(blueGoal.humanIntakePose)
 
-        .setTangent(-90.deg)
-        .lineToY(-48.inch)
+        .setTangent(60.0.deg)
+        .strafeToLinearHeading(blueGoal.humanIntakePoseBack)
 
-        .setTangent(90.deg)
-        .splineToLinearHeading(blueGoal.bigTrianglePose, 90.deg)
 
-        .setTangent(0.deg)
-        .lineToXLinearHeading(37.inch, -90.deg)
-        /*.setTangent(-45.deg)
-        .splineToLinearHeading(blueGoal.rightIntakePose, -45.deg)*/
-
-        .setTangent(-90.deg)
-        .lineToY(-48.inch)
-
-        .setTangent(90.0.deg)
-        .splineToLinearHeading(blueGoal.smallTrianglePose, 45.deg)
-        //.strafeToLinearHeading(blueGoal.endPose)
 
         .build()
     )
