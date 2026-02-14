@@ -45,21 +45,21 @@ class Robot(
     }
 
     fun shootBall(rpm : Double) = SequentialAction(
-        SleepAction(0.10.s),
+        SleepAction(0.1.s),
         InstantAction{transfer.fingerUp()},
-        SleepAction(0.17.s),
+        SleepAction(0.2.s),
         InstantAction{transfer.fingerDown()},
-        SleepAction(0.10.s),
+        SleepAction(0.1.s),
     )
 
     fun intakeBalls(futureOuttakePos : Int) = SequentialAction(
         transfer.goToPosAction(RobotConfig.pos, 0, RobotConfig.intakeOffset),
-        camera.waitForColors(4.0.s),
-        SleepAction(0.07.s),
+        camera.waitForColors(5.0.s),
+        SleepAction(0.08.s),
         transfer.goToPosAction(RobotConfig.pos, 1, 0.0),
         camera.waitForColors(3.0.s),
 
-        SleepAction(0.07.s),
+        SleepAction(0.08.s),
         transfer.goToPosAction(RobotConfig.pos, 2, 0.0),
         camera.waitForColors(2.0.s),
 
@@ -73,6 +73,20 @@ class Robot(
         shootBall(rpm),
         transfer.goToPosAction(RobotConfig.pos, multiplier + 1, RobotConfig.shooterOffset),
         shootBall(rpm),
+        transfer.goToPosAction(RobotConfig.pos, multiplier + 2, RobotConfig.shooterOffset),
+        shootBall(rpm),
+        SleepAction(0.2.s),
+        transfer.goToPosAction(RobotConfig.pos, 0, 0.0),
+        shooter.goToRpmAction(0.0),
+    )
+
+    fun shootBallsSlow(rpm : Double, multiplier : Int) = SequentialAction(
+        transfer.goToPosAction(RobotConfig.pos, multiplier, RobotConfig.shooterOffset),
+        shootBall(rpm),
+        SleepAction(0.1.s),
+        transfer.goToPosAction(RobotConfig.pos, multiplier + 1, RobotConfig.shooterOffset),
+        shootBall(rpm),
+        SleepAction(0.1.s),
         transfer.goToPosAction(RobotConfig.pos, multiplier + 2, RobotConfig.shooterOffset),
         shootBall(rpm),
         SleepAction(0.2.s),
