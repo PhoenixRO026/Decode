@@ -23,21 +23,21 @@ import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
 import org.firstinspires.ftc.teamcode.robot.Robot.RobotConfig
 
 @Autonomous
-class BigTriangleBlue9 : LinearOpMode() {
-    val startPose = Pose(-61.5.inch, -36.inch, 90.0.deg)
-    val bigTrianglePose = Pose(-16.inch, -24.inch, -140.0.deg)
-    val smallTrianglePose = Pose(53.inch, -14.inch, 200.0.deg)
+class BigTriangleRedNew9 : LinearOpMode() {
+    val startPose = Pose(-61.5.inch, 36.inch, 90.0.deg)
+    val bigTrianglePose = Pose(-16.inch, 24.inch, 140.0.deg)
+    val smallTrianglePose = Pose(53.inch, 14.inch, -200.0.deg)
 
 
-    val leftIntakePose = Pose(-11.5.inch, -25.inch, -90.0.deg)
-    val middleIntakePose = Pose(9.5.inch, -27.inch, -90.0.deg)
-    val leftIntakePoseBack = Pose(-11.5.inch, -46.inch, -90.0.deg)
-    val middleIntakePoseBack = Pose(9.5.inch, -57.inch, -90.0.deg)
-    val rightIntakePose = Pose(37.inch, -24.inch, -90.0.deg)
-    val rightIntakePoseBack = Pose(37.inch, -46.inch, -90.0.deg)
-    val openGatePose = Pose(6.inch, -57.inch, -90.0.deg)
+    val leftIntakePose = Pose(-11.5.inch, 25.inch, 90.0.deg)
+    val middleIntakePose = Pose(9.5.inch, 27.inch, 90.0.deg)
+    val leftIntakePoseBack = Pose(-11.5.inch, 46.inch, 90.0.deg)
+    val middleIntakePoseBack = Pose(9.5.inch, 57.inch, 90.0.deg)
+    val rightIntakePose = Pose(37.inch, 24.inch, 90.0.deg)
+    val rightIntakePoseBack = Pose(37.inch, 46.inch, 90.0.deg)
+    val openGatePose = Pose(6.inch, 57.inch, 90.0.deg)
 
-    val endPose = Pose(0.inch, -28.inch, -90.0.deg)
+    val endPose = Pose(0.inch, 28.inch, 90.0.deg)
 
     val rpmFar = 3260.0
     val rpmClose = 2850.0

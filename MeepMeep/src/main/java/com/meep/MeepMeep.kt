@@ -64,19 +64,19 @@ data object redGoalV3{
 }
 
 data object blueGoal{
-    val startPose = Pose(61.inch, -11.inch, 180.0.deg)
+    val startPose = Pose(61.inch, 11.inch, 180.0.deg)
     val bigTrianglePose = Pose(-12.inch, -23.inch, 212.0.deg)
-    val smallTrianglePose = Pose(55.inch, -10.inch, 200.0.deg)
+    val smallTrianglePose = Pose(55.inch, 10.inch, -200.0.deg)
 
     val leftIntakePose = Pose(-11.5.inch, -28.5.inch, -90.0.deg)
     val middleIntakePose = Pose(10.inch, -27.inch, -90.0.deg)
     val leftIntakePoseBack = Pose(-11.5.inch, -28.inch, -90.0.deg)
     val middleIntakePoseBack = Pose(9.inch, -56.inch, -90.0.deg)
-    val rightIntakePose = Pose(37.inch, -28.5.inch, -90.0.deg)
+    val rightIntakePose = Pose(37.inch, 28.5.inch, 90.0.deg)
 
     val openGatePose = Pose(7.inch, -57.inch, -90.0.deg)
-    val humanIntakePose = Pose(55.inch, -59.inch, -60.0.deg)
-    val humanIntakePoseBack = Pose(60.inch, -59.inch, -70.0.deg)
+    val humanIntakePose = Pose(55.inch, 59.inch, 60.0.deg)
+    val humanIntakePoseBack = Pose(60.inch, 59.inch, 70.0.deg)
 
     val endPose = Pose(0.inch, -28.inch, -90.0.deg)
 }
@@ -173,8 +173,8 @@ fun main() {
         .setTangent(0.deg)
         .strafeToLinearHeading(blueGoal.rightIntakePose)
 
-        .setTangent(-90.deg)
-        .lineToY(-55.inch)
+        .setTangent(90.deg)
+        .lineToY(55.inch)
 
         .setTangent(90.0.deg)
         .strafeToLinearHeading(blueGoal.smallTrianglePose)
