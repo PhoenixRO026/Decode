@@ -33,13 +33,13 @@ class Spindexer(
     }
 
 
-    enum class TransferPos (val pos : Double) {
-        intake0(0.0256),
-        intake1( 0.2189),
-        intake2(0.4056),
-        shoot0(0.3056),
-        shoot1( 0.5039),
-        shoot2(0.1139),
+    enum class TransferPos (val pos : Double, val index: Int) {
+        intake0(0.0256, 0),
+        intake1( 0.2189, 1),
+        intake2(0.4056, 2),
+        shoot0(0.3056, 0),
+        shoot1( 0.5039, 1),
+        shoot2(0.1139, 2),
     }
 
     val slots: MutableList<BallColor> = mutableListOf(
@@ -59,23 +59,26 @@ class Spindexer(
 
 
     fun closestSlotToShoot(pos: TransferPos,target: BallColor): TransferPos? {
-        if(slots[pos.ordinal] == target) {
-            return pos
-        }
-        else {
-            if (pos == TransferPos.shoot0){
-                if (slots[pos.ordinal + 1] == target)
-                    return TransferPos.shoot1
-                else if (slots[pos.ordinal - 1] == target)
-                    return TransferPos.shoot2
+        when (pos) {
+            TransferPos.shoot0, TransferPos.shoot1, TransferPos.shoot2 -> {
+                if (slots[pos.index] == target) {
+                    return pos
+                }
             }
-            else if (pos == TransferPos.shoot1){
-                if (slots[pos.ordinal + 1] == target)
-                    return TransferPos.shoot2
-                else if (slots[pos.ordinal - 1] == target)
-                    return TransferPos.shoot0
-            }
+            else -> {}
         }
+
+        val lowerPos = findPreviousShoot(pos)
+
+        val upperPos = findNextShoot(pos)
+
+        if (slots[lowerPos.index] == target) {
+            return lowerPos
+        }
+        if (slots[upperPos.index] == target) {
+            return upperPos
+        }
+
         return null
     }
 
@@ -95,11 +98,11 @@ class Spindexer(
 
 
     private fun updateSlot(pos: TransferPos, color: BallColor) {
-        slots[pos.ordinal] = color
+        slots[pos.index] = color
     }
 
     private fun emptySlot(pos: TransferPos) {
-        slots[pos.ordinal] = BallColor.EMPTY
+        slots[pos.index] = BallColor.EMPTY
     }
 
 
@@ -112,28 +115,39 @@ class Spindexer(
         currentPos = pos
     }
 
+    fun findNextShoot(pos: TransferPos) = when (pos) {
+        TransferPos.intake0 -> TransferPos.shoot2
+        TransferPos.intake1 -> TransferPos.shoot0
+        TransferPos.intake2 -> TransferPos.shoot1
+        TransferPos.shoot0 -> TransferPos.shoot1
+        TransferPos.shoot1 -> TransferPos.shoot2
+        TransferPos.shoot2 -> TransferPos.shoot0
+    }
+
+    fun findPreviousShoot(pos: TransferPos) = when (pos) {
+        TransferPos.intake0 -> TransferPos.shoot1
+        TransferPos.intake1 -> TransferPos.shoot2
+        TransferPos.intake2 -> TransferPos.shoot0
+        TransferPos.shoot0 -> TransferPos.shoot2
+        TransferPos.shoot1 -> TransferPos.shoot0
+        TransferPos.shoot2 -> TransferPos.shoot1
+    }
+
     fun goToNextShoot() {
-        if (currentPos == TransferPos.shoot0) {
-            goToPos(TransferPos.shoot1)
-        }
-        else if (currentPos == TransferPos.shoot1) {
-            goToPos(TransferPos.shoot2)
-        }
-        else {
-            goToPos(TransferPos.shoot0)
-        }
+        goToPos(findNextShoot(currentPos))
+    }
+
+    fun findNextIntake(pos: TransferPos) = when (pos) {
+        TransferPos.intake0 -> TransferPos.intake1
+        TransferPos.intake1 -> TransferPos.intake2
+        TransferPos.intake2 -> TransferPos.intake0
+        TransferPos.shoot0 -> TransferPos.intake2
+        TransferPos.shoot1 -> TransferPos.intake0
+        TransferPos.shoot2 -> TransferPos.intake1
     }
 
     fun goToNextIntake() {
-        if (currentPos == TransferPos.intake0) {
-            goToPos(TransferPos.intake1)
-        }
-        else if(currentPos == TransferPos.intake1) {
-            goToPos(TransferPos.intake2)
-        }
-        else {
-            goToPos(TransferPos.intake0)
-        }
+        goToPos(findNextIntake(currentPos))
     }
 
     fun goToPosAction(pos : TransferPos) = InstantAction { goToPos(pos) }
@@ -147,8 +161,8 @@ class Spindexer(
     var hsv = floatArrayOf(0f, 0f, 0f)
 
     val sensorColor get() = when {
-        hsv[1] != 0f && sensorHue in 190f..300f -> BallColor.PURPLE
-        hsv[1] != 0f && sensorHue in 100f..175f -> BallColor.GREEN
+        hsv[1] != 0f && sensorHue in 190f..240f -> BallColor.PURPLE
+        hsv[1] != 0f && sensorHue in 120f..175f -> BallColor.GREEN
         else -> BallColor.EMPTY
     }
 
@@ -191,8 +205,8 @@ class Spindexer(
     )
 
     fun waitForColors(duration: Duration) = RaceAction(
-        waitForColorAction(BallColor.PURPLE),
-        waitForColorAction(BallColor.GREEN),
+        waitForColorAction(BallColor.PURPLE, duration),
+        waitForColorAction(BallColor.GREEN, duration),
         SleepAction(duration)
     )
 
@@ -200,5 +214,10 @@ class Spindexer(
         telemetry.addData("spindexer pos", currentPos)
         telemetry.addData("finger pos", fingerPosition)
         //telemetry.addData("lift current", rightMotor.getCurrent(CurrentUnit.AMPS) + leftMotor.getCurrent(CurrentUnit.AMPS))
+    }
+
+    fun init() {
+        currentPos = TransferPos.intake0
+        fingerDown()
     }
 }

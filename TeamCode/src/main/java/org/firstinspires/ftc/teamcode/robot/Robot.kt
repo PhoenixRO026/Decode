@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot
 
 import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.SequentialAction
+import com.acmerobotics.roadrunner.SleepAction
 import com.acmerobotics.roadrunner.ftc.Encoder
 import com.acmerobotics.roadrunner.ftc.RawEncoder
 import com.commonlibs.units.Pose
@@ -31,16 +32,20 @@ class Robot(
     val limelight: LimeLightCore
 
     fun intakeBalls(nextShoot: Spindexer.TransferPos) = SequentialAction (
-        transfer.waitForColors(4.s),
+        intake.startIntakeAction(),
+        transfer.waitForColors(5.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
-        transfer.waitForColors(3.s),
+        SleepAction(0.65.s),
+        transfer.waitForColors(5.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
-        transfer.waitForColors(3.s),
+        SleepAction(0.65.s),
+        transfer.waitForColors(5.0.s),
         InstantAction{transfer.updateBallSlot()},
+        transfer.goToPosAction(nextShoot),
+        SleepAction(0.5.s),
         intake.spew(),
-        transfer.goToPosAction(nextShoot)
     )
 
     fun intakeTeleBalls() = SequentialAction (
@@ -63,11 +68,13 @@ class Robot(
     )
 
     fun shootBalls() = SequentialAction (
+        shooter.goToRpmAction(shooter.rpmClose),
         shootBall(),
         transfer.goToNextShootAction(),
         shootBall(),
         transfer.goToNextShootAction(),
-        shootBall()
+        shootBall(),
+        transfer.goToPosAction(Spindexer.TransferPos.intake0)
     )
 
     init {
@@ -107,7 +114,7 @@ class Robot(
         val motorIntake = hardwareMap.get(DcMotorEx::class.java, "motorIntake")
 
         motorIntake.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        motorIntake.direction = DcMotorSimple.Direction.FORWARD
+        motorIntake.direction = DcMotorSimple.Direction.REVERSE
         motorIntake.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         ///  Transfer  ///
@@ -118,7 +125,7 @@ class Robot(
         val finger = hardwareMap.get(Servo::class.java, "finger")
 
         val colorSensor = hardwareMap.get(NormalizedColorSensor::class.java, "colorSensor")
-        colorSensor.gain = 15f
+        colorSensor.gain = 1.0f
 
         val limlit = hardwareMap.get(Limelight3A::class.java, "limelight")
         limlit.setPollRateHz(100)
