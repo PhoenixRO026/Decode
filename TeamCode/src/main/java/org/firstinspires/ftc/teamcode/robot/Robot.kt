@@ -101,7 +101,7 @@ class Robot(
         motorTurret.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         // encoders //
-        val encoderOuttake : Encoder = RawEncoder(mecanumDrive.rightBack)
+        val encoderOuttake : Encoder = RawEncoder(motorShooterTop)
         val encoderTurret : Encoder = RawEncoder(motorTurret)
 
         encoderOuttake.direction =DcMotorSimple.Direction.REVERSE
