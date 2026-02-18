@@ -43,7 +43,7 @@ class Shooter(
             kI = 0.0005,
             stabilityThreshold = 0.2
         )
-        @JvmField var ticksPerRev = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0)
+        @JvmField var ticksPerRev = 8192
 
         @JvmField var targetPosTolerance = 3
         @JvmField var minTurretPosition = -1000.0
