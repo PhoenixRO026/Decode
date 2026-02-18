@@ -41,16 +41,14 @@ class OuttakeTuning : LinearOpMode() {
         val motorShooterBottom = hardwareMap.get(DcMotorEx::class.java, "motorShooterBottom")
 
         motorShooterTop.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        motorShooterTop.direction = DcMotorSimple.Direction.FORWARD
+        motorShooterTop.direction = DcMotorSimple.Direction.REVERSE
         motorShooterTop.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         motorShooterBottom.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        motorShooterBottom.direction = DcMotorSimple.Direction.REVERSE
+        motorShooterBottom.direction = DcMotorSimple.Direction.FORWARD
         motorShooterBottom.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
-        val rightBack = hardwareMap.get(DcMotorEx::class.java, "motorRB")
-
-        val encoderOuttake : Encoder = OverflowEncoder(RawEncoder(rightBack))
+        val encoderOuttake : Encoder = OverflowEncoder(RawEncoder(motorShooterBottom))
 
         encoderOuttake.direction = DcMotorSimple.Direction.REVERSE
 

@@ -26,38 +26,29 @@ class Shooter(
     data object ShooterConfig {
         @JvmField
         var controllerRpm = PIDController(
-            kP = 0.002,
-            kD = 0.00004,
-            kI = 0.018,
+            kP = 0.0015,
+            kD = 0.00015,
+            kI = 0.000001,
             stabilityThreshold = 50.0
         )
         @JvmField var targetRpmTolerance = 50
 
-        @JvmField var kS = 0.8
-        @JvmField var kV = 0.002146
+        @JvmField var kS = 0.06
+        @JvmField var kV = 0.00303
 
         @JvmField
         var controllerTurret = PIDController(
-            kP = 0.0037,
-            kD = 0.0001,
-            kI = 0.0005,
+            kP = 0.0005,
+            kD = 0.00005,
+            kI = 0.00045,
             stabilityThreshold = 0.2
         )
-        @JvmField var ticksPerRev = 8192
+        @JvmField var ticksPerRev = 8192 * (15/22)
 
         @JvmField var targetPosTolerance = 3
-        @JvmField var minTurretPosition = -1000.0
-        @JvmField var maxTurretPosition = 1000.0
+        @JvmField var minTurretPosition = -14000.0
+        @JvmField var maxTurretPosition = 13300.0
         @JvmField var limitTolerence = 5
-
-        @JvmField
-        var controllerHeading = PIDController(
-            kP = 0.01,
-            kD = 0.00025,
-            kI = 0.005,
-            stabilityThreshold = 0.2
-        )
-        @JvmField var targetHeadingTolerance = 20
     }
 
     val rpm get() = encoderOuttake.getPositionAndVelocity().velocity / 28.0 * 60
@@ -146,7 +137,7 @@ class Shooter(
     )
 
     fun updateTurretPos(deltaTime: Duration, error: Double) {
-        targetPos += error * (ShooterConfig.ticksPerRev / 360)
+        targetPos += error * ((ShooterConfig.ticksPerRev * 108/15) / 360)
         if (targetPos > ShooterConfig.maxTurretPosition - ShooterConfig.limitTolerence) {
             targetPos = ShooterConfig.minTurretPosition
         }

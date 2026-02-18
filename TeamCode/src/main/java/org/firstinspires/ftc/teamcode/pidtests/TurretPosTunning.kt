@@ -20,9 +20,9 @@ class TurretPosTunning : LinearOpMode() {
     data object PositionTunningConfic {
         @JvmField
         var controller = PIDController(
-            kP = 0.0015,
-            kD = 0.000001,
-            kI = 0.0045,
+            kP = 0.0005,
+            kD = 0.00005,
+            kI = 0.00045,
             stabilityThreshold = 50.0
         )
         @JvmField
@@ -40,6 +40,7 @@ class TurretPosTunning : LinearOpMode() {
 
         val motorTurret = hardwareMap.get(DcMotorEx::class.java, "motorTurret")
 
+        motorTurret.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         motorTurret.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         motorTurret.direction = DcMotorSimple.Direction.REVERSE
         motorTurret.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE

@@ -37,7 +37,7 @@ abstract class BlindDriveTurret : LinearOpMode(){
         val robot = Robot(hardwareMap,Pose(0.0.cm, 0.0.cm, 0.0.deg))
         val timeKeep = TimeKeep()
 
-        robot.limelight.setPipeline(1)
+        robot.limelight.setPipeline(pipeline)
 
         val shootGreen = ButtonReader { gamepad2.a}
         val shootPurple = ButtonReader { gamepad2.b}
@@ -63,6 +63,13 @@ abstract class BlindDriveTurret : LinearOpMode(){
             robot.drive.updatePoseEstimateOdo()
 
             /// Drive
+
+            if(gamepad1.left_trigger >= 0.2) {
+                robot.drive.isSlowMode = true
+            }
+            else {
+                robot.drive.isSlowMode = false
+            }
 
             robot.drive.driveFieldCentric(
                 -gamepad1.left_stick_y.toDouble(),
