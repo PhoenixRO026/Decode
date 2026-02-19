@@ -26,11 +26,11 @@ class TrasferPositions : LinearOpMode() {
             deltaTime = now - previousTime
             previousTime = now
 
-            if (gamepad1.dpad_right) {
+            if (gamepad1.dpad_left) {
                 servo1.position += 0.1 * deltaTime
                 servo2.position += 0.1 * deltaTime
             }
-            if (gamepad1.dpad_left) {
+            if (gamepad1.dpad_right) {
                 servo1.position -= 0.1 * deltaTime
                 servo2.position -= 0.1 * deltaTime
             }
