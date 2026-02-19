@@ -89,11 +89,11 @@ class Robot(
 
 
         motorShooterTop.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        motorShooterTop.direction = DcMotorSimple.Direction.FORWARD
+        motorShooterTop.direction = DcMotorSimple.Direction.REVERSE
         motorShooterTop.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         motorShooterBottom.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        motorShooterBottom.direction = DcMotorSimple.Direction.REVERSE
+        motorShooterBottom.direction = DcMotorSimple.Direction.FORWARD
         motorShooterBottom.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         motorTurret.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER

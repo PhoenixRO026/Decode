@@ -25,9 +25,7 @@ class TransferPrep : LinearOpMode() {
 
         val buttons = listOf(intakeBalls, shootBalls)
 
-
         waitForStart()
-
 
 
         while (opModeIsActive()) {
