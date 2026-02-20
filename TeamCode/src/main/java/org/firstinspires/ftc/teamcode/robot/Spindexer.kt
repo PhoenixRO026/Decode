@@ -96,12 +96,14 @@ class Spindexer(
         }
     }
 
+    fun goToPurpleAction() = InstantAction {goToPurple()}
+    fun goToGreenAction() = InstantAction {goToGreen()}
 
     private fun updateSlot(pos: TransferPos, color: BallColor) {
         slots[pos.index] = color
     }
 
-    private fun emptySlot(pos: TransferPos) {
+    fun emptySlot(pos: TransferPos) {
         slots[pos.index] = BallColor.EMPTY
     }
 

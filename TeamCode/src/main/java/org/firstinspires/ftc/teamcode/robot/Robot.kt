@@ -65,6 +65,7 @@ class Robot(
         SleepAction(0.25.s),
         InstantAction{transfer.fingerDown()},
         SleepAction(0.15.s),
+        InstantAction{transfer.emptySlot(transfer.currentPos)}
     )
 
     fun shootBalls() = SequentialAction (
@@ -75,6 +76,16 @@ class Robot(
         transfer.goToNextShootAction(),
         shootBall(),
         transfer.goToPosAction(Spindexer.TransferPos.intake0)
+    )
+
+    fun shootPurple() = SequentialAction (
+        transfer.goToPurpleAction(),
+        shootBall()
+    )
+
+    fun shootGreen() = SequentialAction (
+        transfer.goToGreenAction(),
+        shootBall()
     )
 
     init {

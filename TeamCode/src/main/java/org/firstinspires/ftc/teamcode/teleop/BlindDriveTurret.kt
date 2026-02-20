@@ -116,6 +116,12 @@ abstract class BlindDriveTurret : LinearOpMode(){
             if (fingerDown.wasJustPressed())
                 robot.transfer.fingerDown()
 
+            if (shootGreen.wasJustPressed()) {
+                robot.shootGreen()
+            }
+            if (shootPurple.wasJustPressed()) {
+                robot.shootPurple()
+            }
 
             if (highRpm.wasJustPressed()){ /// shoot far
                 robot.shooter.goToRmp(robot.shooter.rpmFar)
