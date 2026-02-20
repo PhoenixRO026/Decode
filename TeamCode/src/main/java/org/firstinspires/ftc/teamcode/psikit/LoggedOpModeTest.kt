@@ -1,13 +1,12 @@
 package org.firstinspires.ftc.teamcode.psikit
 
-import android.util.Log
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.psilynx.psikit.core.Logger
 import org.psilynx.psikit.ftc.FtcLoggingSession
 import org.psilynx.psikit.ftc.autolog.PsiKitNoAutoLog
 
 @PsiKitNoAutoLog
-abstract class LoggedOpMode : LinearOpMode() {
+abstract class LoggedOpModeTest : LinearOpMode() {
     /** Port for the optional RLOG server. Set to 0 to disable. */
     protected open val rlogPort: Int = 5800
 
