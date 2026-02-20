@@ -27,6 +27,7 @@ class TransferPrep : LinearOpMode() {
 
         waitForStart()
 
+        robot.transfer.goToPos(Spindexer.TransferPos.intake0)
 
         while (opModeIsActive()) {
             timeKeep.resetDeltaTime()
