@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import org.firstinspires.ftc.teamcode.psikit.LoggedOpMode
 import org.firstinspires.ftc.teamcode.psikit.MockTelemetry
 import org.firstinspires.ftc.teamcode.psikit.PsiKitOpMode
 import org.firstinspires.ftc.teamcode.robot.Drive
@@ -12,17 +13,15 @@ import org.psilynx.psikit.ftc.FtcLoggingSession
 import org.psilynx.psikit.ftc.PinpointOdometryLogger
 
 @TeleOp
-class TestPsiKit: PsiKitOpMode() {
+class TestPsiKit: LoggedOpMode() {
     lateinit var drive: Drive
 
-    override fun runPsiKitOpMode() {
-        telemetry = MockTelemetry(telemetry)
-
+    override fun runLoggedOpMode() {
         drive = Drive(hardwareMap)
 
-        whileOpModeInInit {}
+        waitForStart()
 
-        whileOpModeIsActive {
+        while (isActive()) {
             drive.updatePoseEstimate()
 
             /// Drive
