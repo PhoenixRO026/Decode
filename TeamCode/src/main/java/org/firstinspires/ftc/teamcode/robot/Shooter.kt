@@ -43,15 +43,15 @@ class Shooter(
             kI = 0.00045,
             stabilityThreshold = 0.2
         )
-        @JvmField var ticksPerRev = 8192.0 * (15.0/22.0)
+        @JvmField var ticksPerRev = 8192.0 * (15.0 / 22.0)
 
-        @JvmField var targetPosTolerance = 3.0
+        @JvmField var targetPosTolerance = 3
         @JvmField var minTurretPosition = -14000.0
         @JvmField var maxTurretPosition = 13300.0
-        @JvmField var limitTolerence = 5.0
+        @JvmField var limitTolerence = 5
     }
 
-    val rpm get() = encoderOuttake.getPositionAndVelocity().velocity / 28.0 * 60.0
+    val rpm get() = encoderOuttake.getPositionAndVelocity().velocity / 28.0 * 60
 
     var rpmFar : Double = 3280.0
     var rpmClose : Double = 2830.0
@@ -137,7 +137,7 @@ class Shooter(
     )
 
     fun updateTurretPos(deltaTime: Duration, error: Double) {
-        targetPos += error * ((ShooterConfig.ticksPerRev * (108.0/15.0)) / 360.0)
+        targetPos += error * ((ShooterConfig.ticksPerRev * (15.0 / 108.0)) / 360.0)
         if (targetPos > ShooterConfig.maxTurretPosition - ShooterConfig.limitTolerence) {
             targetPos = ShooterConfig.minTurretPosition
         }
