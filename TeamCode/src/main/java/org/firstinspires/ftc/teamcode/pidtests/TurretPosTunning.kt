@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
+import org.firstinspires.ftc.teamcode.teleop.tests.TurretPosTunning.PositionTunningConfic.ticksPerRev
 
 @TeleOp
 class TurretPosTunning : LinearOpMode() {
@@ -20,19 +21,16 @@ class TurretPosTunning : LinearOpMode() {
     data object PositionTunningConfic {
         @JvmField
         var controller = PIDController(
-            kP = 0.0045,
-            kD = 0.00007,
-            kI = 0.000015,
+            kP = 0.001,
+            kD = 0.000027,
+            kI = 0.00125,
             stabilityThreshold = 0.2
         )
         @JvmField
-        var kV = 0.00025
-        @JvmField
         var targetPos = 0.0
         @JvmField
-        var multiplier = 1.0
-        @JvmField
-        var offset = 0.0
+        var ticksPerRev = 8192.0 * (108.0/ 22.0)
+        var DegPerTick = 360 / ticksPerRev
     }
 
     override fun runOpMode() {
@@ -52,17 +50,23 @@ class TurretPosTunning : LinearOpMode() {
         var targetPos = 0.0
         var position = 0.0
 
+        fun tickToDeg(ticks : Double) : Double {
+            return (360 / ticksPerRev) * ticks
+        }
+
         waitForStart()
 
         while (opModeIsActive()) {
             timeKeep.resetDeltaTime()
 
-            position = encoderTransfer.getPositionAndVelocity().position * (15.0 / 22.0)
+            position = encoderTransfer.getPositionAndVelocity().position
             targetPos = PositionTunningConfic.targetPos
             motorTurret.power = -PositionTunningConfic.controller.calculate(position, targetPos, timeKeep.deltaTime)
 
             telemetry.addData("transfer target pos", PositionTunningConfic.targetPos)
             telemetry.addData("transfer pos", position)
+            telemetry.addData("pos in deg", tickToDeg(position))/// 22 -> 15 -> 108 15/22
+            telemetry.addData("target in deg", targetPos * (108.0/22.0)/ 360.0)
             telemetry.addData("transfer power", motorTurret.power)
 
             telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)

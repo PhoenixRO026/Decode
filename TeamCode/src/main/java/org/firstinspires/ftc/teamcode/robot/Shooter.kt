@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.VoltageSensor
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
+import org.firstinspires.ftc.teamcode.teleop.tests.TurretPosTunning.PositionTunningConfic.ticksPerRev
 import kotlin.math.abs
 
 class Shooter(
@@ -38,17 +39,17 @@ class Shooter(
 
         @JvmField
         var controllerTurret = PIDController(
-            kP = 0.002,
-            kD = 0.00004,
-            kI = 0.000015,
+            kP = 0.001,
+            kD = 0.000027,
+            kI = 0.00125,
             stabilityThreshold = 0.2
         )
-        @JvmField var ticksPerRev = 8192.0 * (15.0 / 22.0)
+        @JvmField var ticksPerRev = 8192.0 * (108.0/22.0)
 
-        @JvmField var targetPosTolerance = 3
-        @JvmField var minTurretPosition = -14000.0
-        @JvmField var maxTurretPosition = 13300.0
-        @JvmField var limitTolerence = 5
+        @JvmField var targetPosTolerance = 50
+        @JvmField var minTurretPosition = -9000.0
+        @JvmField var maxTurretPosition = 9000.0
+        @JvmField var limitTolerence = 50
     }
 
     val rpm get() = encoderOuttake.getPositionAndVelocity().velocity / 28.0 * 60
@@ -90,6 +91,14 @@ class Shooter(
     val turretPosition get() = encoderTurret.getPositionAndVelocity().position - offset
 
     var targetPos = 0.0
+
+    fun tickToDeg(ticks : Double) : Double {
+        return (360 / ShooterConfig.ticksPerRev) * ticks
+    }
+
+    fun degToTick(deg : Double) : Double {
+        return (ShooterConfig.ticksPerRev / 360.0) * deg
+    }
 
     fun goToRmp(rpm : Double) {
         targetRpm = rpm
@@ -137,7 +146,7 @@ class Shooter(
     )
 
     fun updateTurretPos(deltaTime: Duration, error: Double) {
-        targetPos += error * ((ShooterConfig.ticksPerRev * (15.0 / 108.0)) / 360.0)
+        targetPos = turretPosition + degToTick(error)
         if (targetPos > ShooterConfig.maxTurretPosition - ShooterConfig.limitTolerence) {
             targetPos = ShooterConfig.minTurretPosition
         }

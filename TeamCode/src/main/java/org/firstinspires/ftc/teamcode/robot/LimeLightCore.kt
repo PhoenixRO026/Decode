@@ -39,6 +39,9 @@ class LimeLightCore(
     var headingErrorDeg: Double = 0.0
         private set
 
+    var previousErrorDeg : Double = 0.0
+        private set
+
     var tagVisible: Boolean = false
         private set
 
@@ -96,7 +99,8 @@ class LimeLightCore(
 
 
         if (fid != null) {
-            headingErrorDeg = fid.targetXDegrees
+            val currHeadingError = fid.targetXDegrees
+            headingErrorDeg = currHeadingError
             tagVisible = true
         } else {
             headingErrorDeg = 0.0
