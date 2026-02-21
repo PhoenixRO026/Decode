@@ -45,7 +45,7 @@ class Shooter(
         )
         @JvmField var ticksPerRev = 8192.0 * (108.0/22.0)
 
-        @JvmField var targetPosTolerance = 50
+        @JvmField var targetPosTolerance = 500
         @JvmField var minTurretPosition = -15000.0
         @JvmField var maxTurretPosition = 15000.0
         @JvmField var limitTolerence = 50
@@ -150,7 +150,7 @@ class Shooter(
     }
 
     fun updateTurret (deltaTime: Duration) {
-        powerTurret = -ShooterConfig.controllerTurret.calculate(turretPosition, targetPos, deltaTime)
+        powerTurret = ShooterConfig.controllerTurret.calculate(turretPosition, targetPos, deltaTime)
     }
 
     fun addTelemetry(telemetry: Telemetry) {
