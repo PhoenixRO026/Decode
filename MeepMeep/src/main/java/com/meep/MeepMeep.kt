@@ -73,7 +73,7 @@ data object blueGoalCloseDuo{
     val leftIntakePose = Pose(-12.inch, -30.inch, -90.0.deg)
     val leftIntakePoseBack = Pose(-12.inch, -47.inch, -90.0.deg)
 
-    val openGatePose = Pose(10.inch, -58.inch, -120.deg)
+    val openGatePose = Pose(10.inch, -58.inch, -130.deg)
 
 
     val endPose = Pose(58.inch, -30.inch, 180.0.deg)

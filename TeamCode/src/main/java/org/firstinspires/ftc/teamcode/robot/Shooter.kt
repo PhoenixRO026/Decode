@@ -38,9 +38,9 @@ class Shooter(
 
         @JvmField
         var controllerTurret = PIDController(
-            kP = 0.0005,
-            kD = 0.00005,
-            kI = 0.00045,
+            kP = 0.002,
+            kD = 0.00004,
+            kI = 0.000015,
             stabilityThreshold = 0.2
         )
         @JvmField var ticksPerRev = 8192.0 * (15.0 / 22.0)

@@ -98,7 +98,6 @@ class Robot(
         val motorShooterBottom = hardwareMap.get(DcMotorEx::class.java, "motorShooterBottom")
         val motorTurret = hardwareMap.get(DcMotorEx::class.java, "motorTurret")
 
-
         motorShooterTop.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         motorShooterTop.direction = DcMotorSimple.Direction.REVERSE
         motorShooterTop.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE

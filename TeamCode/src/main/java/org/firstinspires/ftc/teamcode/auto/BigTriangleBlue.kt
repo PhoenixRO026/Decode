@@ -78,7 +78,6 @@ class BigTriangleBlue : LinearOpMode() {
                         .setTangent(0.deg)
                         .splineToLinearHeading(middleIntakePose, -90.deg)
                         .build(),
-                    robot.intake.startIntakeAction()
                 ),
 
                 ParallelAction(

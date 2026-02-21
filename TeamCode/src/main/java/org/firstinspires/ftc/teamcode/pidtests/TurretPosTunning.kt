@@ -20,10 +20,10 @@ class TurretPosTunning : LinearOpMode() {
     data object PositionTunningConfic {
         @JvmField
         var controller = PIDController(
-            kP = 0.0005,
-            kD = 0.00005,
-            kI = 0.00045,
-            stabilityThreshold = 50.0
+            kP = 0.0045,
+            kD = 0.00007,
+            kI = 0.000015,
+            stabilityThreshold = 0.2
         )
         @JvmField
         var kV = 0.00025
@@ -57,7 +57,7 @@ class TurretPosTunning : LinearOpMode() {
         while (opModeIsActive()) {
             timeKeep.resetDeltaTime()
 
-            position = encoderTransfer.getPositionAndVelocity().position
+            position = encoderTransfer.getPositionAndVelocity().position * (15.0 / 22.0)
             targetPos = PositionTunningConfic.targetPos
             motorTurret.power = -PositionTunningConfic.controller.calculate(position, targetPos, timeKeep.deltaTime)
 

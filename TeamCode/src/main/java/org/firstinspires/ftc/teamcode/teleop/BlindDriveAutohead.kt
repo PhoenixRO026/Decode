@@ -119,6 +119,7 @@ open class BlindDriveAutohead : LinearOpMode(){
             }
 
             robot.shooter.updateRpm(timeKeep.deltaTime)
+            robot.limelight.updateHeadingError()
 
             telemetry.addData("distance", robot.limelight.getDistance())
             telemetry.addData("auto rpm", rpm)
