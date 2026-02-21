@@ -4,9 +4,11 @@ import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
+import com.commonlibs.units.Duration
 import com.commonlibs.units.Pose
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
+import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.library.TimeKeep
@@ -38,7 +40,7 @@ class OuttakeTest : LinearOpMode() {
         val nextIntake = ButtonReader {gamepad2.y}
         val nextShoot = ButtonReader {gamepad2.x}
         val buttons = listOf(shootGreen, shootPurple, shootAll, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe, nextIntake, nextShoot, nextIntake)
-
+        var timer : Duration = 0.s
 
         waitForStart()
 
@@ -64,10 +66,11 @@ class OuttakeTest : LinearOpMode() {
             if (gamepad1.y) {
                 robot.drive.resetFieldCentric()
             }
-
-            robot.limelight.updateHeadingError()
-            if(snipe.state) {
+            timer += timeKeep.deltaTime
+            if(timer >= 2.s) {
+                robot.limelight.updateHeadingError()
                 robot.shooter.updateTurretTargetPos(timeKeep.deltaTime, robot.limelight.headingErrorDeg)
+                timer= 0.s
             }
 
             robot.shooter.updateTurret(timeKeep.deltaTime)

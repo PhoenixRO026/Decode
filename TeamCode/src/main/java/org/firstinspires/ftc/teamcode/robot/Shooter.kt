@@ -146,14 +146,11 @@ class Shooter(
 
     fun updateTurretTargetPos(deltaTime: Duration, error: Double) {
         targetPos = turretPosition + degToTick(error)
-        if (targetPos > ShooterConfig.maxTurretPosition - ShooterConfig.limitTolerence || targetPos < ShooterConfig.minTurretPosition + ShooterConfig.limitTolerence) {
-            targetPos = turretPosition
-        }
         targetPos = targetPos.coerceIn(ShooterConfig.minTurretPosition, ShooterConfig.maxTurretPosition)
     }
 
     fun updateTurret (deltaTime: Duration) {
-        powerTurret = ShooterConfig.controllerTurret.calculate(turretPosition, targetPos, deltaTime)
+        powerTurret = -ShooterConfig.controllerTurret.calculate(turretPosition, targetPos, deltaTime)
     }
 
     fun addTelemetry(telemetry: Telemetry) {
