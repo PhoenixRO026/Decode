@@ -8,6 +8,6 @@ class BlindDriveBlue : BlindDriveTurret() {
 }
 
 @TeleOp
-class GoodDriveRed : BlindDriveTurret() {
+class BlindDriveRed : BlindDriveTurret() {
     override val pipeline = 2
 }

@@ -3,7 +3,14 @@ package org.firstinspires.ftc.teamcode.teleop.prepPositions
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.acmerobotics.dashboard.config.Config
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket
+import com.acmerobotics.roadrunner.Action
+import com.acmerobotics.roadrunner.InstantAction
+import com.acmerobotics.roadrunner.SequentialAction
 import com.acmerobotics.roadrunner.now
+import com.commonlibs.units.Pose
+import com.commonlibs.units.cm
+import com.commonlibs.units.deg
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -11,6 +18,8 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.teamcode.library.TimeKeep
+import org.firstinspires.ftc.teamcode.library.buttons.ButtonReader
+import org.firstinspires.ftc.teamcode.library.buttons.ToggleButtonReader
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
 import org.firstinspires.ftc.teamcode.robot.Robot
 import org.firstinspires.ftc.teamcode.robot.Shooter
@@ -19,56 +28,72 @@ import kotlin.math.min
 
 @TeleOp
 class OuttakeTest : LinearOpMode() {
-    @Config
-    data object outtakeConfig {
-        @JvmField var sampleWindow = 0.1
-        @JvmField var TICKS_PER_REV = 8192.0
-        @JvmField var targetRPM = 3400
-    }
+    private var driver1Action: Action? = null
 
     override fun runOpMode() {
-
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
-        val robot = Robot(hardwareMap)
-
-        var lastTime = now()
-        var lastResetTime = now()
-        var rpm = 0.0
+        val robot = Robot(hardwareMap,Pose(0.0.cm, 0.0.cm, 0.0.deg))
         val timeKeep = TimeKeep()
+
+        robot.limelight.setPipeline(1)
+
+        val shootGreen = ButtonReader { gamepad2.a}
+        val shootPurple = ButtonReader { gamepad2.b}
+        val shootAll = ButtonReader { gamepad2.x}
+        val fingerUp = ButtonReader {gamepad2.dpad_up}
+        val fingerDown = ButtonReader {gamepad2.dpad_down}
+        val highRpm = ButtonReader {gamepad2.right_bumper}
+        val lowRpm = ButtonReader {gamepad2.left_bumper}
+        val stopShooter = ButtonReader {gamepad2.dpad_left}
+        val snipe = ToggleButtonReader ({gamepad1.x})
+        val nextIntake = ButtonReader {gamepad2.y}
+        val nextShoot = ButtonReader {gamepad2.x}
+        val buttons = listOf(shootGreen, shootPurple, shootAll, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe, nextIntake, nextShoot, nextIntake)
+
 
         waitForStart()
 
         while (opModeIsActive()) {
             timeKeep.resetDeltaTime()
-            val currentTime = now()
-            val dt = currentTime - lastTime
+            buttons.forEach { it.readValue() }
+            robot.drive.updatePoseEstimateOdo()
 
-            if (currentTime - lastResetTime >= outtakeConfig.sampleWindow) {
-                val pos = robot.shooter.encoderOuttake.getPositionAndVelocity().position
-                val elapsed = currentTime - lastResetTime
-                val revs = pos / outtakeConfig.TICKS_PER_REV
-                rpm = (revs / elapsed) * 60.0
+            /// Drive
 
-
-                robot.drive.mecanumDrive.rightBack.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-                robot.drive.mecanumDrive.rightBack.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-
-                lastResetTime = currentTime
+            if(gamepad1.left_trigger >= 0.2) {
+                robot.drive.isSlowMode = true
+            }
+            else {
+                robot.drive.isSlowMode = false
             }
 
-            robot.shooter.targetRpm = outtakeConfig.targetRPM.toDouble()
+            robot.drive.driveFieldCentric(
+                -gamepad1.left_stick_y.toDouble(),
+                -gamepad1.left_stick_x.toDouble(),
+                -gamepad1.right_stick_x.toDouble()
+            )
+            if (gamepad1.y) {
+                robot.drive.resetFieldCentric()
+            }
 
-            robot.shooter.updateRpm(timeKeep.deltaTime)
+            robot.limelight.updateHeadingError()
+            robot.shooter.updateTurretPos(timeKeep.deltaTime, robot.limelight.headingErrorDeg)
 
-            telemetry.addData("RPM", "%.2f", rpm)
-            telemetry.addData("Target RPM", outtakeConfig.targetRPM)
-            telemetry.addData("Power", "%.3f", robot.shooter.powerShooter)
-            telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
-            telemetry.addData("fps", 1.s / timeKeep.deltaTime)
+            robot.shooter.addTelemetry(telemetry)
+
+            telemetry.addData("error heading", robot.limelight.headingErrorDeg)
+            telemetry.addData("turret power", robot.shooter.powerTurret)
+            telemetry.addData("pos", robot.shooter.turretPosition)
+            telemetry.addData("target pos", robot.shooter.targetPos)
             telemetry.update()
-
-            lastTime = currentTime
+        }
+    }
+    private fun runActions() {
+        driver1Action?.let {
+            if (!it.run(TelemetryPacket())) {
+                driver1Action = null
+            }
         }
     }
 }

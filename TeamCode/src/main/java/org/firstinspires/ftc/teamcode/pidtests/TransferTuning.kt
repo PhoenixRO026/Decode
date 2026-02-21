@@ -19,7 +19,6 @@ import org.firstinspires.ftc.teamcode.library.controller.PIDController
 import org.firstinspires.ftc.teamcode.robot.Robot
 import org.firstinspires.ftc.teamcode.robot.Shooter
 import org.firstinspires.ftc.teamcode.robot.Spindexer
-import org.firstinspires.ftc.teamcode.teleop.prepPositions.OuttakeTest.outtakeConfig
 import kotlin.math.abs
 import kotlin.time.toDuration
 

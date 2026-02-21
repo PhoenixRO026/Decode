@@ -16,8 +16,8 @@ import java.util.Objects;
 @Config
 public final class PinpointLocalizer implements Localizer {
     public static class Params {
-        public double parYTicks = -185.025; // y position of the parallel encoder (in tick units)
-        public double perpXTicks = 19.314; // x position of the perpendicular encoder (in tick units)
+        public double parYTicks = 183.167; // y position of the parallel encoder (in tick units)
+        public double perpXTicks = 31.5; // x position of the perpendicular encoder (in tick units)
     }
 
     public static Params PARAMS = new Params();
@@ -33,7 +33,8 @@ public final class PinpointLocalizer implements Localizer {
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         driver = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
 
-        driver.setEncoderResolution(19.894, DistanceUnit.MM);
+        driver.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        //noinspection SuspiciousNameCombination
         driver.setOffsets(PARAMS.parYTicks, PARAMS.perpXTicks, DistanceUnit.MM);
 
 

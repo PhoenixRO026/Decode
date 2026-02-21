@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
-import org.firstinspires.ftc.teamcode.teleop.prepPositions.OuttakeTest.outtakeConfig
 
 @TeleOp
 class MotorTest : LinearOpMode() {
@@ -70,16 +69,7 @@ class MotorTest : LinearOpMode() {
             val currentTime = now()
             val dt = currentTime - lastTime
 
-            if (currentTime - lastResetTime >= outtakeConfig.sampleWindow) {
-                val pos = motorShooterBottom.currentPosition
-                val elapsed = currentTime - lastResetTime
-                val revs = pos / outtakeConfig.TICKS_PER_REV
-                rpm = (revs / elapsed) * 60.0
 
-                motorShooterBottom.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-                motorShooterBottom.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-                lastResetTime = currentTime
-            }
 
             motorShooterTop.power= motorConfig.basePower1
             motorShooterBottom.power= motorConfig.basePower1

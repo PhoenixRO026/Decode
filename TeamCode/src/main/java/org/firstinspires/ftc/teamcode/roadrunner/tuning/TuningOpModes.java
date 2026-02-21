@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.roadrunner.tuning;
 
-import static org.firstinspires.ftc.teamcode.roadrunner.tuning.PinpointViewUtilKt.makePinpointView;
-
-import androidx.annotation.NonNull;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.acmerobotics.roadrunner.MotorFeedforward;
@@ -30,17 +26,12 @@ import com.acmerobotics.roadrunner.ftc.OTOSHeadingOffsetTuner;
 import com.acmerobotics.roadrunner.ftc.OTOSIMU;
 import com.acmerobotics.roadrunner.ftc.OTOSLinearScalarTuner;
 import com.acmerobotics.roadrunner.ftc.OTOSPositionOffsetTuner;
-import com.acmerobotics.roadrunner.ftc.PinpointEncoderGroup;
-import com.acmerobotics.roadrunner.ftc.PinpointIMU;
-import com.acmerobotics.roadrunner.ftc.PinpointView;
-import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.RobotLog;
 
-import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.OTOSLocalizer;
@@ -117,11 +108,20 @@ public final class TuningOpModes {
                     perpEncs.add(new EncoderRef(0, 1));
                     lazyImu = new OTOSIMU(ol.otos);
                 }  else if (md.localizer instanceof PinpointLocalizer) {
-                    PinpointView pv = makePinpointView((PinpointLocalizer) md.localizer);
+                    /*PinpointView pv = makePinpointView((PinpointLocalizer) md.localizer);
                     encoderGroups.add(new PinpointEncoderGroup(pv));
                     parEncs.add(new EncoderRef(0, 0));
                     perpEncs.add(new EncoderRef(0, 1));
-                    lazyImu = new PinpointIMU(pv);
+                    lazyImu = new PinpointIMU(pv);*/
+                    PinpointLocalizer localizer = (PinpointLocalizer) md.localizer;
+                    RobotLog.addGlobalWarningMessage(
+                            "Disabling Pinpoint IMU. Perform a power cycle (turn the robot off and back on again) to reset it before running Feedback Tuner, LocalizationTest, or an auto (Angular Scalar now 0, previously %f)",
+                            localizer.driver.getYawScalar()
+                    );
+                    localizer.driver.setYawScalar(0.0);
+                    encoderGroups.add(TuningEx.fakeEncoderGroup(localizer));
+                    parEncs.add(new EncoderRef(0, 0));
+                    perpEncs.add(new EncoderRef(0, 1));
                 } else {
                     throw new RuntimeException("unknown localizer: " + md.localizer.getClass().getName());
                 }
@@ -193,13 +193,13 @@ public final class TuningOpModes {
                     ));
                     parEncs.add(new EncoderRef(0, 0));
                     perpEncs.add(new EncoderRef(0, 1));
-                }  else if (td.localizer instanceof PinpointLocalizer) {
+                }  /*else if (td.localizer instanceof PinpointLocalizer) {
                     PinpointView pv = makePinpointView((PinpointLocalizer) td.localizer);
                     encoderGroups.add(new PinpointEncoderGroup(pv));
                     parEncs.add(new EncoderRef(0, 0));
                     perpEncs.add(new EncoderRef(0, 1));
                     lazyImu = new PinpointIMU(pv);
-                } else if (td.localizer instanceof OTOSLocalizer) {
+                }*/ else if (td.localizer instanceof OTOSLocalizer) {
                     OTOSLocalizer ol = (OTOSLocalizer) td.localizer;
                     encoderGroups.add(new OTOSEncoderGroup(ol.otos));
                     parEncs.add(new EncoderRef(0, 0));

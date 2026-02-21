@@ -42,7 +42,7 @@ open class BlindDriveAutohead : LinearOpMode(){
         val highRpm = ButtonReader {gamepad2.right_bumper}
         val lowRpm = ButtonReader {gamepad2.left_bumper}
         val stopShooter = ButtonReader {gamepad2.dpad_left}
-        val snipe = ToggleButtonReader {gamepad1.x}
+        val snipe = ToggleButtonReader({gamepad1.x})
         val autoRpm = ButtonReader {gamepad2.dpad_right}
         val buttons = listOf(intakePosition, shootGreen, shootPurple, shootAll, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe, autoRpm)
         val stopButton = ButtonReader {gamepad2.touchpad}
@@ -119,6 +119,7 @@ open class BlindDriveAutohead : LinearOpMode(){
             }
 
             robot.shooter.updateRpm(timeKeep.deltaTime)
+            robot.limelight.updateHeadingError()
 
             telemetry.addData("distance", robot.limelight.getDistance())
             telemetry.addData("auto rpm", rpm)

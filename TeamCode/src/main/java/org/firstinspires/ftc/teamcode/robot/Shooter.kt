@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.VoltageSensor
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
+import org.firstinspires.ftc.teamcode.teleop.tests.TurretPosTunning.PositionTunningConfic.ticksPerRev
 import kotlin.math.abs
 
 class Shooter(
@@ -26,38 +27,29 @@ class Shooter(
     data object ShooterConfig {
         @JvmField
         var controllerRpm = PIDController(
-            kP = 0.002,
-            kD = 0.00004,
-            kI = 0.018,
+            kP = 0.0015,
+            kD = 0.00015,
+            kI = 0.000001,
             stabilityThreshold = 50.0
         )
         @JvmField var targetRpmTolerance = 50
 
-        @JvmField var kS = 0.8
-        @JvmField var kV = 0.002146
+        @JvmField var kS = 0.06
+        @JvmField var kV = 0.00303
 
         @JvmField
         var controllerTurret = PIDController(
-            kP = 0.0037,
-            kD = 0.0001,
-            kI = 0.0005,
+            kP = 0.001,
+            kD = 0.000027,
+            kI = 0.00125,
             stabilityThreshold = 0.2
         )
-        @JvmField var ticksPerRev = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0)
+        @JvmField var ticksPerRev = 8192.0 * (108.0/22.0)
 
-        @JvmField var targetPosTolerance = 3
-        @JvmField var minTurretPosition = -1000.0
-        @JvmField var maxTurretPosition = 1000.0
-        @JvmField var limitTolerence = 5
-
-        @JvmField
-        var controllerHeading = PIDController(
-            kP = 0.01,
-            kD = 0.00025,
-            kI = 0.005,
-            stabilityThreshold = 0.2
-        )
-        @JvmField var targetHeadingTolerance = 20
+        @JvmField var targetPosTolerance = 50
+        @JvmField var minTurretPosition = -9000.0
+        @JvmField var maxTurretPosition = 9000.0
+        @JvmField var limitTolerence = 50
     }
 
     val rpm get() = encoderOuttake.getPositionAndVelocity().velocity / 28.0 * 60
@@ -94,11 +86,19 @@ class Shooter(
             motorTurret.power = value
         }
 
-    private var offset = 0
+    private var offset = 0.0
 
     val turretPosition get() = encoderTurret.getPositionAndVelocity().position - offset
 
     var targetPos = 0.0
+
+    fun tickToDeg(ticks : Double) : Double {
+        return (360 / ShooterConfig.ticksPerRev) * ticks
+    }
+
+    fun degToTick(deg : Double) : Double {
+        return (ShooterConfig.ticksPerRev / 360.0) * deg
+    }
 
     fun goToRmp(rpm : Double) {
         targetRpm = rpm
@@ -146,7 +146,7 @@ class Shooter(
     )
 
     fun updateTurretPos(deltaTime: Duration, error: Double) {
-        targetPos += error * (ShooterConfig.ticksPerRev / 360)
+        targetPos = turretPosition + degToTick(error)
         if (targetPos > ShooterConfig.maxTurretPosition - ShooterConfig.limitTolerence) {
             targetPos = ShooterConfig.minTurretPosition
         }

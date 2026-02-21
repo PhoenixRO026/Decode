@@ -17,7 +17,7 @@ class ColorSersorTest : LinearOpMode() {
 
         val colorSensor = hardwareMap.get(NormalizedColorSensor::class.java, "colorSensor")
 
-        var gain = 2f
+        var gain = 15f
 
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
         val transfer = Spindexer(

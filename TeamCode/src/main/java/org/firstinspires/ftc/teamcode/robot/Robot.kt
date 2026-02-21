@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.robot
 
 import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.SequentialAction
+import com.acmerobotics.roadrunner.SleepAction
 import com.acmerobotics.roadrunner.ftc.Encoder
 import com.acmerobotics.roadrunner.ftc.RawEncoder
 import com.commonlibs.units.Pose
@@ -31,16 +32,20 @@ class Robot(
     val limelight: LimeLightCore
 
     fun intakeBalls(nextShoot: Spindexer.TransferPos) = SequentialAction (
-        transfer.waitForColors(4.s),
+        intake.startIntakeAction(),
+        transfer.waitForColors(5.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
-        transfer.waitForColors(3.s),
+        SleepAction(0.65.s),
+        transfer.waitForColors(5.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
-        transfer.waitForColors(3.s),
+        SleepAction(0.65.s),
+        transfer.waitForColors(5.0.s),
         InstantAction{transfer.updateBallSlot()},
+        transfer.goToPosAction(nextShoot),
+        SleepAction(0.5.s),
         intake.spew(),
-        transfer.goToPosAction(nextShoot)
     )
 
     fun intakeTeleBalls() = SequentialAction (
@@ -60,13 +65,26 @@ class Robot(
         SleepAction(0.25.s),
         InstantAction{transfer.fingerDown()},
         SleepAction(0.15.s),
+        InstantAction{transfer.emptySlot(transfer.currentPos)}
     )
 
     fun shootBalls() = SequentialAction (
+        shooter.goToRpmAction(shooter.rpmClose),
         shootBall(),
         transfer.goToNextShootAction(),
         shootBall(),
         transfer.goToNextShootAction(),
+        shootBall(),
+        transfer.goToPosAction(Spindexer.TransferPos.intake0)
+    )
+
+    fun shootPurple() = SequentialAction (
+        transfer.goToPurpleAction(),
+        shootBall()
+    )
+
+    fun shootGreen() = SequentialAction (
+        transfer.goToGreenAction(),
         shootBall()
     )
 
@@ -80,13 +98,12 @@ class Robot(
         val motorShooterBottom = hardwareMap.get(DcMotorEx::class.java, "motorShooterBottom")
         val motorTurret = hardwareMap.get(DcMotorEx::class.java, "motorTurret")
 
-
         motorShooterTop.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        motorShooterTop.direction = DcMotorSimple.Direction.FORWARD
+        motorShooterTop.direction = DcMotorSimple.Direction.REVERSE
         motorShooterTop.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         motorShooterBottom.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        motorShooterBottom.direction = DcMotorSimple.Direction.REVERSE
+        motorShooterBottom.direction = DcMotorSimple.Direction.FORWARD
         motorShooterBottom.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         motorTurret.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
@@ -94,7 +111,7 @@ class Robot(
         motorTurret.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         // encoders //
-        val encoderOuttake : Encoder = RawEncoder(mecanumDrive.rightBack)
+        val encoderOuttake : Encoder = RawEncoder(motorShooterBottom)
         val encoderTurret : Encoder = RawEncoder(motorTurret)
 
         encoderOuttake.direction =DcMotorSimple.Direction.REVERSE
@@ -107,7 +124,7 @@ class Robot(
         val motorIntake = hardwareMap.get(DcMotorEx::class.java, "motorIntake")
 
         motorIntake.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        motorIntake.direction = DcMotorSimple.Direction.FORWARD
+        motorIntake.direction = DcMotorSimple.Direction.REVERSE
         motorIntake.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         ///  Transfer  ///
@@ -118,7 +135,7 @@ class Robot(
         val finger = hardwareMap.get(Servo::class.java, "finger")
 
         val colorSensor = hardwareMap.get(NormalizedColorSensor::class.java, "colorSensor")
-        colorSensor.gain = 15f
+        colorSensor.gain = 1.0f
 
         val limlit = hardwareMap.get(Limelight3A::class.java, "limelight")
         limlit.setPollRateHz(100)

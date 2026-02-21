@@ -37,7 +37,7 @@ abstract class BlindDriveTurret : LinearOpMode(){
         val robot = Robot(hardwareMap,Pose(0.0.cm, 0.0.cm, 0.0.deg))
         val timeKeep = TimeKeep()
 
-        robot.limelight.setPipeline(1)
+        robot.limelight.setPipeline(pipeline)
 
         val shootGreen = ButtonReader { gamepad2.a}
         val shootPurple = ButtonReader { gamepad2.b}
@@ -63,6 +63,13 @@ abstract class BlindDriveTurret : LinearOpMode(){
             robot.drive.updatePoseEstimateOdo()
 
             /// Drive
+
+            if(gamepad1.left_trigger >= 0.2) {
+                robot.drive.isSlowMode = true
+            }
+            else {
+                robot.drive.isSlowMode = false
+            }
 
             robot.drive.driveFieldCentric(
                 -gamepad1.left_stick_y.toDouble(),
@@ -109,6 +116,12 @@ abstract class BlindDriveTurret : LinearOpMode(){
             if (fingerDown.wasJustPressed())
                 robot.transfer.fingerDown()
 
+            if (shootGreen.wasJustPressed()) {
+                robot.shootGreen()
+            }
+            if (shootPurple.wasJustPressed()) {
+                robot.shootPurple()
+            }
 
             if (highRpm.wasJustPressed()){ /// shoot far
                 robot.shooter.goToRmp(robot.shooter.rpmFar)
@@ -124,20 +137,25 @@ abstract class BlindDriveTurret : LinearOpMode(){
             robot.limelight.updateHeadingError()
             robot.shooter.updateTurretPos(timeKeep.deltaTime, robot.limelight.headingErrorDeg)
 
+            robot.shooter.addTelemetry(telemetry)
+
             telemetry.addData("distance", robot.limelight.getDistance())
             telemetry.addData("auto rpm", robot.shooter.rpm)
 
             telemetry.addData("error heading", robot.limelight.headingErrorDeg)
-            telemetry.addData("a was pressed (set)", gamepad1.a)
-            telemetry.addData("x was pressed (left)", gamepad1.x)
-            telemetry.addData("b was pressed (right)", gamepad1.b)
-            telemetry.addData("up was pressed (set)", gamepad1.dpad_up)
-            telemetry.addData("down was pressed (left)", gamepad1.dpad_down)
-            telemetry.addData("rpm", robot.shooter.rpm)
-            telemetry.addData("target rpm", robot.shooter.targetRpm)
-            telemetry.addData("fingir pos", robot.transfer.finger.position)
-            telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
-            telemetry.addData("fps", 1.s / timeKeep.deltaTime)
+            telemetry.addData("turret power", robot.shooter.powerTurret)
+            telemetry.addData("target pos", robot.shooter.targetPos)
+
+//            telemetry.addData("a was pressed (set)", gamepad1.a)
+//            telemetry.addData("x was pressed (left)", gamepad1.x)
+//            telemetry.addData("b was pressed (right)", gamepad1.b)
+//            telemetry.addData("up was pressed (set)", gamepad1.dpad_up)
+//            telemetry.addData("down was pressed (left)", gamepad1.dpad_down)
+//            telemetry.addData("rpm", robot.shooter.rpm)
+//            telemetry.addData("target rpm", robot.shooter.targetRpm)
+//            telemetry.addData("fingir pos", robot.transfer.finger.position)
+//            telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
+//            telemetry.addData("fps", 1.s / timeKeep.deltaTime)
             telemetry.update()
         }
     }
