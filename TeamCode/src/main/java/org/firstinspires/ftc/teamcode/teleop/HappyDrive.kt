@@ -49,7 +49,7 @@ open class HappyDrive : LinearOpMode(){
         val snipe = ToggleButtonReader ({gamepad1.x})
         val nextIntake = ButtonReader {gamepad2.y}
         val nextShoot = ButtonReader {gamepad2.x}
-        val buttons = listOf(shootGreen, shootPurple, shootAll, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe, nextIntake, nextShoot, nextIntake)
+        val buttons = listOf(shootGreen, shootPurple, shootAll, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe, nextIntake, nextShoot)
 
         robot.transfer.finger.position = 0.9
 
@@ -151,6 +151,9 @@ open class HappyDrive : LinearOpMode(){
 //            telemetry.addData("fingir pos", robot.transfer.finger.position)
 //            telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
 //            telemetry.addData("fps", 1.s / timeKeep.deltaTime)
+
+            runActions()
+
             telemetry.update()
         }
     }
