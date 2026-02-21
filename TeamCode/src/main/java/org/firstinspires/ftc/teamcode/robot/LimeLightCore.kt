@@ -18,14 +18,11 @@ class LimeLightCore(
     data object LimeLightConfig {
         @JvmField
         var controller = PIDController(
-            0.027,
-            0.05,
-            0.00001,
-            0.0,
+            0.036,
+            0.005,
+            0.0007,
             newTargetReset = true,
             zeroTargetReset = true,
-            derivativeFilter = LowPassFilter(0.0),
-            stabilityThreshold = 0.0
         )
         @JvmField var headingToleranceDeg = 1.0
         @JvmField var maxOutput = 0.6

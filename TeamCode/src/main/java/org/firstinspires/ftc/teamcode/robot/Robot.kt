@@ -49,20 +49,26 @@ class Robot(
     )
 
     fun intakeTeleBalls() = SequentialAction (
-        transfer.waitForColors(10.s),
+        transfer.goToPosAction(Spindexer.TransferPos.intake0),
+        intake.startIntakeAction(),
+        transfer.waitForColors(7.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
-        transfer.waitForColors(10.s),
+        SleepAction(0.65.s),
+        transfer.waitForColors(7.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
-        transfer.waitForColors(10.s),
+        SleepAction(0.65.s),
+        transfer.waitForColors(7.0.s),
         InstantAction{transfer.updateBallSlot()},
+        transfer.goToPosAction(Spindexer.TransferPos.shoot0),
+        SleepAction(0.5.s),
     )
 
     fun shootBall() = SequentialAction(
         SleepAction(0.15.s),
         InstantAction{transfer.fingerUp()},
-        SleepAction(0.25.s),
+        SleepAction(0.4.s),
         InstantAction{transfer.fingerDown()},
         SleepAction(0.15.s),
         InstantAction{transfer.emptySlot(transfer.currentPos)}

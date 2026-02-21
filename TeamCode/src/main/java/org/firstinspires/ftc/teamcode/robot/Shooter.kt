@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.VoltageSensor
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
+import org.firstinspires.ftc.teamcode.robot.LimeLightCore.LimeLightConfig
 import kotlin.math.abs
 
 class Shooter(
@@ -46,15 +47,15 @@ class Shooter(
         @JvmField var ticksPerRev = 8192.0 * (108.0/22.0)
 
         @JvmField var targetPosTolerance = 50
-        @JvmField var minTurretPosition = -15000.0
-        @JvmField var maxTurretPosition = 15000.0
+        @JvmField var minTurretPosition = -14000.0
+        @JvmField var maxTurretPosition = 14000.0
         @JvmField var limitTolerence = 50
     }
 
     val rpm get() = encoderOuttake.getPositionAndVelocity().velocity / 28.0 * 60
 
-    var rpmFar : Double = 3280.0
-    var rpmClose : Double = 2830.0
+    var rpmFar : Double = 3300.0
+    var rpmClose : Double = 2800.0
 
     var shootClosePos : Double = 500.0
     var shootFarPos : Double = 300.0
@@ -144,13 +145,20 @@ class Shooter(
         InstantAction { goToRpmAction(0.0)}
     )
 
-    fun updateTurretTargetPos(deltaTime: Duration, error: Double) {
-        targetPos = turretPosition + degToTick(error)
-        targetPos = targetPos.coerceIn(ShooterConfig.minTurretPosition, ShooterConfig.maxTurretPosition)
+    private fun computeHeadingPower(dt: Duration, error: Double): Double {
+        if (turretPosition >= ShooterConfig.maxTurretPosition && error > 0 ) {
+            return 0.0
+        } else if (turretPosition <= ShooterConfig.minTurretPosition && error < 0 ){
+            return 0.0
+        }
+        var raw = LimeLightConfig.controller.calculate(0.0, error, dt)
+        if(abs(raw) < 0.05)
+            raw = 0.0
+        return raw.coerceIn(-1.0, 1.0)
     }
 
-    fun updateTurret (deltaTime: Duration) {
-        powerTurret = -ShooterConfig.controllerTurret.calculate(turretPosition, targetPos, deltaTime)
+    fun updateTurret (deltaTime: Duration, error: Double) {
+        powerTurret = computeHeadingPower(deltaTime, error)
     }
 
     fun addTelemetry(telemetry: Telemetry) {

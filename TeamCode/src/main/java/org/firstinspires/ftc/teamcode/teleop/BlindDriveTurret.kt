@@ -133,7 +133,7 @@ abstract class BlindDriveTurret : LinearOpMode(){
 
             robot.shooter.updateRpm(timeKeep.deltaTime)
             robot.limelight.updateHeadingError()
-            robot.shooter.updateTurretTargetPos(timeKeep.deltaTime, robot.limelight.headingErrorDeg)
+            robot.shooter.updateTurret(timeKeep.deltaTime, robot.limelight.headingErrorDeg)
 
             robot.shooter.addTelemetry(telemetry)
 
