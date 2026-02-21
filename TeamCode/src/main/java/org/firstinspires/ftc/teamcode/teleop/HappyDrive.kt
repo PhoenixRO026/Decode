@@ -10,23 +10,24 @@ import com.acmerobotics.roadrunner.SequentialAction
 import com.commonlibs.units.Pose
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
+import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.buttons.ButtonReader
 import org.firstinspires.ftc.teamcode.library.buttons.ToggleButtonReader
 import org.firstinspires.ftc.teamcode.robot.Robot
+import org.firstinspires.ftc.teamcode.robot.Spindexer.BallColor
 
 
 @TeleOp
-abstract class BlindDriveTurret : LinearOpMode(){
-    abstract val pipeline : Int
+open class HappyDrive : LinearOpMode(){
+    open val pip: Int = 1
     @Config
     data object BlindDrive {
         @JvmField var rpmSmall = 3260
         @JvmField var rpmBig = 2775
     }
-
     private var driver1Action: Action? = null
 
     override fun runOpMode() {
@@ -35,11 +36,11 @@ abstract class BlindDriveTurret : LinearOpMode(){
         val robot = Robot(hardwareMap,Pose(0.0.cm, 0.0.cm, 0.0.deg))
         val timeKeep = TimeKeep()
 
-        robot.limelight.setPipeline(pipeline)
+        robot.limelight.setPipeline(1)
 
         val shootGreen = ButtonReader { gamepad2.a}
         val shootPurple = ButtonReader { gamepad2.b}
-        val shootAll = ButtonReader { gamepad2.x}
+        val shootAll = ButtonReader { gamepad2.dpad_right}
         val fingerUp = ButtonReader {gamepad2.dpad_up}
         val fingerDown = ButtonReader {gamepad2.dpad_down}
         val highRpm = ButtonReader {gamepad2.right_bumper}
@@ -49,7 +50,6 @@ abstract class BlindDriveTurret : LinearOpMode(){
         val nextIntake = ButtonReader {gamepad2.y}
         val nextShoot = ButtonReader {gamepad2.x}
         val buttons = listOf(shootGreen, shootPurple, shootAll, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe, nextIntake, nextShoot, nextIntake)
-
 
         robot.transfer.finger.position = 0.9
 
@@ -62,10 +62,9 @@ abstract class BlindDriveTurret : LinearOpMode(){
 
             /// Drive
 
-            if(gamepad1.left_trigger >= 0.2) {
+            if (gamepad1.left_trigger >= 0.2) {
                 robot.drive.isSlowMode = true
-            }
-            else {
+            } else {
                 robot.drive.isSlowMode = false
             }
 
@@ -86,16 +85,13 @@ abstract class BlindDriveTurret : LinearOpMode(){
                         InstantAction { snipe.setState(false) }
                     )
                 }
-            }
-            else {
+            } else {
                 /// Intake
                 if (gamepad1.right_bumper) {
                     robot.intake.power = 1.0
-                }
-                else if (gamepad1.left_bumper) {
+                } else if (gamepad1.left_bumper) {
                     robot.intake.power = -1.0
-                }
-                else {
+                } else {
                     robot.intake.power = 0.0
                 }
                 if (nextIntake.wasJustPressed()) {
@@ -120,20 +116,21 @@ abstract class BlindDriveTurret : LinearOpMode(){
             if (shootPurple.wasJustPressed()) {
                 robot.shootPurple()
             }
+            if (shootAll.wasJustPressed()) {
+                robot.shootBalls()
+            }
 
-            if (highRpm.wasJustPressed()){ /// shoot far
+            if (highRpm.wasJustPressed()) { /// shoot far
                 robot.shooter.goToRmp(robot.shooter.rpmFar)
-            }
-            else if (lowRpm.wasJustPressed()) { /// shoot close
+            } else if (lowRpm.wasJustPressed()) { /// shoot close
                 robot.shooter.goToRmp(robot.shooter.rpmClose)
-            }
-            else if (stopShooter.wasJustPressed()) { /// stop shoot
+            } else if (stopShooter.wasJustPressed()) { /// stop shoot
                 robot.shooter.goToRmp(0.0)
             }
 
             robot.shooter.updateRpm(timeKeep.deltaTime)
             robot.limelight.updateHeadingError()
-            robot.shooter.updateTurretTargetPos(timeKeep.deltaTime, robot.limelight.headingErrorDeg)
+            //robot.shooter.updateTurretPos(timeKeep.deltaTime, robot.limelight.headingErrorDeg)
 
             robot.shooter.addTelemetry(telemetry)
 

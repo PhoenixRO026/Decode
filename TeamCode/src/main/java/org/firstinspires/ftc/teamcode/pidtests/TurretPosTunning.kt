@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
+import org.firstinspires.ftc.teamcode.robot.Shooter.ShooterConfig
 import org.firstinspires.ftc.teamcode.teleop.tests.TurretPosTunning.PositionTunningConfic.ticksPerRev
 
 @TeleOp
@@ -54,13 +55,17 @@ class TurretPosTunning : LinearOpMode() {
             return (360 / ticksPerRev) * ticks
         }
 
+        fun degToTick(deg : Double) : Double {
+            return (ShooterConfig.ticksPerRev / 360.0) * deg
+        }
+
         waitForStart()
 
         while (opModeIsActive()) {
             timeKeep.resetDeltaTime()
 
             position = encoderTransfer.getPositionAndVelocity().position
-            targetPos = PositionTunningConfic.targetPos
+            targetPos = degToTick(PositionTunningConfic.targetPos)
             motorTurret.power = -PositionTunningConfic.controller.calculate(position, targetPos, timeKeep.deltaTime)
 
             telemetry.addData("transfer target pos", PositionTunningConfic.targetPos)

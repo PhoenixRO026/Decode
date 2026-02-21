@@ -2,29 +2,19 @@ package org.firstinspires.ftc.teamcode.teleop.prepPositions
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
-import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
-import com.acmerobotics.roadrunner.InstantAction
-import com.acmerobotics.roadrunner.SequentialAction
-import com.acmerobotics.roadrunner.now
+import com.commonlibs.units.Duration
 import com.commonlibs.units.Pose
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorEx
-import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.buttons.ButtonReader
 import org.firstinspires.ftc.teamcode.library.buttons.ToggleButtonReader
-import org.firstinspires.ftc.teamcode.library.controller.PIDController
 import org.firstinspires.ftc.teamcode.robot.Robot
-import org.firstinspires.ftc.teamcode.robot.Shooter
-import kotlin.math.max
-import kotlin.math.min
 
 @TeleOp
 class OuttakeTest : LinearOpMode() {
@@ -50,7 +40,7 @@ class OuttakeTest : LinearOpMode() {
         val nextIntake = ButtonReader {gamepad2.y}
         val nextShoot = ButtonReader {gamepad2.x}
         val buttons = listOf(shootGreen, shootPurple, shootAll, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe, nextIntake, nextShoot, nextIntake)
-
+        var timer : Duration = 0.s
 
         waitForStart()
 
@@ -76,15 +66,18 @@ class OuttakeTest : LinearOpMode() {
             if (gamepad1.y) {
                 robot.drive.resetFieldCentric()
             }
+            timer += timeKeep.deltaTime
+            if(timer >= 2.s) {
+                robot.limelight.updateHeadingError()
+                robot.shooter.updateTurretTargetPos(timeKeep.deltaTime, robot.limelight.headingErrorDeg)
+                timer= 0.s
+            }
 
-            robot.limelight.updateHeadingError()
-            robot.shooter.updateTurretPos(timeKeep.deltaTime, robot.limelight.headingErrorDeg)
+            robot.shooter.updateTurret(timeKeep.deltaTime)
 
-            robot.shooter.addTelemetry(telemetry)
-
-            telemetry.addData("error heading", robot.limelight.headingErrorDeg)
-            telemetry.addData("turret power", robot.shooter.powerTurret)
+            telemetry.addData("error", robot.limelight.headingErrorDeg)
             telemetry.addData("pos", robot.shooter.turretPosition)
+            telemetry.addData("error in tick", robot.shooter.degToTick(robot.limelight.headingErrorDeg))
             telemetry.addData("target pos", robot.shooter.targetPos)
             telemetry.update()
         }

@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.VoltageSensor
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
-import org.firstinspires.ftc.teamcode.teleop.tests.TurretPosTunning.PositionTunningConfic.ticksPerRev
 import kotlin.math.abs
 
 class Shooter(
@@ -47,8 +46,8 @@ class Shooter(
         @JvmField var ticksPerRev = 8192.0 * (108.0/22.0)
 
         @JvmField var targetPosTolerance = 50
-        @JvmField var minTurretPosition = -9000.0
-        @JvmField var maxTurretPosition = 9000.0
+        @JvmField var minTurretPosition = -15000.0
+        @JvmField var maxTurretPosition = 15000.0
         @JvmField var limitTolerence = 50
     }
 
@@ -145,15 +144,13 @@ class Shooter(
         InstantAction { goToRpmAction(0.0)}
     )
 
-    fun updateTurretPos(deltaTime: Duration, error: Double) {
+    fun updateTurretTargetPos(deltaTime: Duration, error: Double) {
         targetPos = turretPosition + degToTick(error)
-        if (targetPos > ShooterConfig.maxTurretPosition - ShooterConfig.limitTolerence) {
-            targetPos = ShooterConfig.minTurretPosition
-        }
-        if (targetPos < ShooterConfig.minTurretPosition + ShooterConfig.limitTolerence) {
-            targetPos = ShooterConfig.maxTurretPosition
-        }
-        powerTurret = ShooterConfig.controllerTurret.calculate(turretPosition, targetPos, deltaTime)
+        targetPos = targetPos.coerceIn(ShooterConfig.minTurretPosition, ShooterConfig.maxTurretPosition)
+    }
+
+    fun updateTurret (deltaTime: Duration) {
+        powerTurret = -ShooterConfig.controllerTurret.calculate(turretPosition, targetPos, deltaTime)
     }
 
     fun addTelemetry(telemetry: Telemetry) {
