@@ -20,8 +20,8 @@ import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
 import org.firstinspires.ftc.teamcode.robot.Spindexer
 
 @Autonomous
-class BigTriangleBlue : LinearOpMode() {
-    val startPose = Pose(-61.5.inch, -38.inch, 0.0.deg)
+class BigTriangleBlueSolo : LinearOpMode() {
+    val startPose = Pose(-61.5.inch, -38.inch, -90.0.deg)
     val smallTrianglePose = Pose(55.inch, -10.inch, -90.deg)
     val bigTrianglePose = Pose(-14.inch, -16.inch, -90.0.deg)
 
@@ -32,7 +32,8 @@ class BigTriangleBlue : LinearOpMode() {
     val leftIntakePose = Pose(-12.inch, -30.inch, -90.0.deg)
     val leftIntakePoseBack = Pose(-12.inch, -47.inch, -90.0.deg)
 
-    val endPose = Pose(58.inch, -28.inch, 180.0.deg)
+
+    val endPose = Pose(58.inch, -30.inch, 180.0.deg)
 
     val shooterOffset = 94.0
 
@@ -79,7 +80,7 @@ class BigTriangleBlue : LinearOpMode() {
                     robot.drive.actionBuilder(bigTrianglePose)
                         .setTangent(0.deg)
                         .splineToLinearHeading(middleIntakePose, -90.deg)
-                        .build(),
+                        .build()
                 ),
 
                 ParallelAction(
@@ -98,21 +99,13 @@ class BigTriangleBlue : LinearOpMode() {
                     robot.shooter.turretToPosAction(robot.shooter.shootClosePos),
                     robot.shooter.goToRpmAction(robot.shooter.rpmClose)
                 ),
+
                 robot.shootBalls(),
 
                 ParallelAction(
                     robot.drive.actionBuilder(bigTrianglePose)
-                        .setTangent(0.deg)
-                        .splineToLinearHeading(middleIntakePose, -90.deg)
-                        .build(),
-                    robot.intake.startIntakeAction()
-                ),
-
-                ParallelAction(
-                    robot.drive.actionBuilder(middleIntakePose)
                         .setTangent(-90.deg)
                         .lineToY(-30.inch)
-                        .setTangent(-90.0)
                         .lineToY(-47.inch, slowSpeed)
                         .build(),
                     robot.intakeBalls(shootPositions[1])
@@ -176,14 +169,14 @@ class BigTriangleBlue : LinearOpMode() {
             Spindexer.TransferPos.shoot1,
             Spindexer.TransferPos.shoot2
         )
+
         while (opModeInInit()) {
             robot.limelight.updateCase()
             telemetry.addData("case id", robot.limelight.currentCase)
-            telemetry.addData("turret angle", robot.shooter.tickToDeg(robot.shooter.turretPosition))
-            telemetry.addData("turret target angle", robot.shooter.tickToDeg(robot.shooter.targetPos))
             telemetry.update()
             sleep(20)
         }
+
         val action = when (robot.limelight.currentCase) {
             AutoCase.GPP -> actionGPP
             AutoCase.PGP -> actionPGP
@@ -210,7 +203,6 @@ class BigTriangleBlue : LinearOpMode() {
             running = action.run(packet)
 
             dash.sendTelemetryPacket(packet)
-            telemetry.addData("turret angle", robot.shooter.tickToDeg(robot.shooter.turretPosition))
             telemetry.addData("rpm", robot.shooter.rpm)
             telemetry.update()
         }

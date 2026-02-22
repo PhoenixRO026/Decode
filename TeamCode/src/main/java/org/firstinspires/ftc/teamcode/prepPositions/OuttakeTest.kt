@@ -66,14 +66,10 @@ class OuttakeTest : LinearOpMode() {
             if (gamepad1.y) {
                 robot.drive.resetFieldCentric()
             }
-            timer += timeKeep.deltaTime
-            if(timer >= 2.s) {
-                robot.limelight.updateHeadingError()
-                robot.shooter.updateTurretTargetPos(timeKeep.deltaTime, robot.limelight.headingErrorDeg)
-                timer= 0.s
-            }
 
-            robot.shooter.updateTurret(timeKeep.deltaTime)
+            robot.limelight.updateHeadingError()
+
+            robot.shooter.updateTurret(timeKeep.deltaTime, robot.limelight.headingErrorDeg)
 
             telemetry.addData("error", robot.limelight.headingErrorDeg)
             telemetry.addData("pos", robot.shooter.turretPosition)

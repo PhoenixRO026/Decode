@@ -25,8 +25,8 @@ open class HappyDrive : LinearOpMode(){
     open val pip: Int = 1
     @Config
     data object BlindDrive {
-        @JvmField var rpmSmall = 3260
-        @JvmField var rpmBig = 2775
+        @JvmField var rpmSmall = 3300
+        @JvmField var rpmBig = 2800
     }
     private var driver1Action: Action? = null
 
@@ -49,9 +49,11 @@ open class HappyDrive : LinearOpMode(){
         val snipe = ToggleButtonReader ({gamepad1.x})
         val nextIntake = ButtonReader {gamepad2.y}
         val nextShoot = ButtonReader {gamepad2.x}
-        val buttons = listOf(shootGreen, shootPurple, shootAll, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe, nextIntake, nextShoot, nextIntake)
+        val buttons = listOf(shootGreen, shootPurple, shootAll, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe, nextIntake, nextShoot)
 
         robot.transfer.finger.position = 0.9
+        robot.transfer.servoTransfer1.position = 0.0400
+        robot.transfer.servoTransfer2.position = 0.0400
 
         waitForStart()
 
@@ -101,6 +103,16 @@ open class HappyDrive : LinearOpMode(){
                 if (nextShoot.wasJustPressed()) {
                     robot.transfer.goToNextShoot()
                 }
+
+                if (shootGreen.wasJustPressed() && driver1Action == null) {
+                    driver1Action = robot.shootGreen()
+                }
+                if (shootPurple.wasJustPressed() && driver1Action == null) {
+                    driver1Action = robot.shootPurple()
+                }
+                if (shootAll.wasJustPressed() && driver1Action == null) {
+                    driver1Action = robot.shootBalls()
+                }
             }
 
             /// Transfer
@@ -110,15 +122,7 @@ open class HappyDrive : LinearOpMode(){
             if (fingerDown.wasJustPressed())
                 robot.transfer.fingerDown()
 
-            if (shootGreen.wasJustPressed()) {
-                robot.shootGreen()
-            }
-            if (shootPurple.wasJustPressed()) {
-                robot.shootPurple()
-            }
-            if (shootAll.wasJustPressed()) {
-                robot.shootBalls()
-            }
+
 
             if (highRpm.wasJustPressed()) { /// shoot far
                 robot.shooter.goToRmp(robot.shooter.rpmFar)
@@ -130,9 +134,13 @@ open class HappyDrive : LinearOpMode(){
 
             robot.shooter.updateRpm(timeKeep.deltaTime)
             robot.limelight.updateHeadingError()
-            //robot.shooter.updateTurretPos(timeKeep.deltaTime, robot.limelight.headingErrorDeg)
+            robot.shooter.updateTurret(timeKeep.deltaTime, robot.limelight.headingErrorDeg)
 
             robot.shooter.addTelemetry(telemetry)
+
+            telemetry.addData("slot 0", robot.transfer.slots[0])
+            telemetry.addData("slot 1", robot.transfer.slots[1])
+            telemetry.addData("slot 2", robot.transfer.slots[2])
 
             telemetry.addData("distance", robot.limelight.getDistance())
             telemetry.addData("auto rpm", robot.shooter.rpm)
@@ -141,16 +149,9 @@ open class HappyDrive : LinearOpMode(){
             telemetry.addData("turret power", robot.shooter.powerTurret)
             telemetry.addData("target pos", robot.shooter.targetPos)
 
-//            telemetry.addData("a was pressed (set)", gamepad1.a)
-//            telemetry.addData("x was pressed (left)", gamepad1.x)
-//            telemetry.addData("b was pressed (right)", gamepad1.b)
-//            telemetry.addData("up was pressed (set)", gamepad1.dpad_up)
-//            telemetry.addData("down was pressed (left)", gamepad1.dpad_down)
-//            telemetry.addData("rpm", robot.shooter.rpm)
-//            telemetry.addData("target rpm", robot.shooter.targetRpm)
-//            telemetry.addData("fingir pos", robot.transfer.finger.position)
-//            telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
-//            telemetry.addData("fps", 1.s / timeKeep.deltaTime)
+
+            runActions()
+
             telemetry.update()
         }
     }
