@@ -57,8 +57,8 @@ class Shooter(
     var rpmFar : Double = 3300.0
     var rpmClose : Double = 2800.0
 
-    var shootClosePos : Double = 500.0
-    var shootFarPos : Double = 300.0
+    var shootClosePos : Double = 5022.0
+    var shootFarPos : Double = 3351.0
 
     var targetRpm = 0.0
 
@@ -146,7 +146,7 @@ class Shooter(
     )
     
     fun updateTurretPosition(deltaTime: Duration) {
-        val powerTurret = ShooterConfig.controllerTurret.calculate(turretPosition, targetPos, deltaTime)
+        powerTurret = ShooterConfig.controllerTurret.calculate(turretPosition, targetPos, deltaTime)
     }
 
     private fun computeHeadingPower(dt: Duration, error: Double): Double {

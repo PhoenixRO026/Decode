@@ -31,6 +31,11 @@ class Robot(
     val intake: Intake
     val limelight: LimeLightCore
 
+    fun init(deg: Double){
+        transfer.goToPos(Spindexer.TransferPos.intake0)
+        shooter.goToPos(shooter.degToTick(deg))
+    }
+
     fun intakeBalls(nextShoot: Spindexer.TransferPos) = SequentialAction (
         intake.startIntakeAction(),
         transfer.waitForColors(5.0.s),
