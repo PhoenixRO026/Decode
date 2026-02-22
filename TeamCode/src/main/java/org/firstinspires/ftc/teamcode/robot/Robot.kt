@@ -108,6 +108,7 @@ class Robot(
         motorShooterTop.direction = DcMotorSimple.Direction.REVERSE
         motorShooterTop.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
+        motorShooterBottom.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         motorShooterBottom.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         motorShooterBottom.direction = DcMotorSimple.Direction.FORWARD
         motorShooterBottom.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE

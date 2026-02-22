@@ -163,7 +163,7 @@ class Spindexer(
     var hsv = floatArrayOf(0f, 0f, 0f)
 
     val sensorColor get() = when {
-        hsv[1] != 0f && sensorHue in 180f..250f -> BallColor.PURPLE
+        hsv[1] != 0f && sensorHue in 190f..250f -> BallColor.PURPLE
         hsv[1] != 0f && sensorHue in 120f..180f -> BallColor.GREEN
         else -> BallColor.EMPTY
     }
