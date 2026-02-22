@@ -28,7 +28,7 @@ class BigTriangleBlue : LinearOpMode() {
     val rightIntakePose = Pose(36.inch, -30.inch, -90.0.deg)
     val rightIntakePoseBack = Pose(36.inch, -47.inch, -90.0.deg)
     val middleIntakePose = Pose(10.inch, -30.inch, -90.0.deg)
-    val middleIntakePoseBack = Pose(10.inch, -58.inch, -90.0.deg)
+    val middleIntakePoseBack = Pose(10.inch, -55.inch, -90.0.deg)
     val leftIntakePose = Pose(-12.inch, -30.inch, -90.0.deg)
     val leftIntakePoseBack = Pose(-12.inch, -47.inch, -90.0.deg)
 
@@ -80,12 +80,13 @@ class BigTriangleBlue : LinearOpMode() {
                         .setTangent(0.deg)
                         .splineToLinearHeading(middleIntakePose, -90.deg)
                         .build(),
+                    robot.intake.startIntakeAction()
                 ),
 
                 ParallelAction(
                     robot.drive.actionBuilder(middleIntakePose)
                         .setTangent(-90.deg)
-                        .lineToY(-58.inch, slowSpeed)
+                        .lineToY(-55.inch, slowSpeed)
                         .build(),
                     robot.intakeBalls(shootPositions[0])
                 ),
@@ -103,15 +104,13 @@ class BigTriangleBlue : LinearOpMode() {
                 ParallelAction(
                     robot.drive.actionBuilder(bigTrianglePose)
                         .setTangent(0.deg)
-                        .splineToLinearHeading(middleIntakePose, -90.deg)
+                        .splineToLinearHeading(leftIntakePose, -90.deg)
                         .build(),
                     robot.intake.startIntakeAction()
                 ),
 
                 ParallelAction(
-                    robot.drive.actionBuilder(middleIntakePose)
-                        .setTangent(-90.deg)
-                        .lineToY(-30.inch)
+                    robot.drive.actionBuilder(leftIntakePose)
                         .setTangent(-90.0)
                         .lineToY(-47.inch, slowSpeed)
                         .build(),

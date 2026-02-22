@@ -38,15 +38,15 @@ class Robot(
 
     fun intakeBalls(nextShoot: Spindexer.TransferPos) = SequentialAction (
         intake.startIntakeAction(),
-        transfer.waitForColors(5.0.s),
+        transfer.waitForColors(3.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
         SleepAction(0.65.s),
-        transfer.waitForColors(5.0.s),
+        transfer.waitForColors(3.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
         SleepAction(0.65.s),
-        transfer.waitForColors(5.0.s),
+        transfer.waitForColors(3.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToPosAction(nextShoot),
         SleepAction(0.5.s),
@@ -73,9 +73,9 @@ class Robot(
     fun shootBall() = SequentialAction(
         SleepAction(0.15.s),
         InstantAction{transfer.fingerUp()},
-        SleepAction(0.4.s),
+        SleepAction(0.5.s),
         InstantAction{transfer.fingerDown()},
-        SleepAction(0.15.s),
+        SleepAction(0.3.s),
         InstantAction{transfer.emptySlot(transfer.currentPos)}
     )
 
