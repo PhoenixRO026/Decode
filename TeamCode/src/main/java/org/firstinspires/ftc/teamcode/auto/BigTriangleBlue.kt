@@ -198,6 +198,8 @@ class BigTriangleBlue : LinearOpMode() {
         while (running && opModeIsActive()) {
             timeKeep.resetDeltaTime()
             robot.shooter.updateRpm(timeKeep.deltaTime)
+            robot.shooter.updateTurretPosition(timeKeep.deltaTime)
+
 
             val packet = TelemetryPacket()
             packet.fieldOverlay().operations.addAll(c.operations)

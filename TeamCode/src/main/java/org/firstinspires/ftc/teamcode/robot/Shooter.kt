@@ -144,6 +144,10 @@ class Shooter(
     fun stopShootAction() = ParallelAction(
         InstantAction { goToRpmAction(0.0)}
     )
+    
+    fun updateTurretPosition(deltaTime: Duration) {
+        val powerTurret = ShooterConfig.controllerTurret.calculate(turretPosition, targetPos, deltaTime)
+    }
 
     private fun computeHeadingPower(dt: Duration, error: Double): Double {
         if (turretPosition >= ShooterConfig.maxTurretPosition && error > 0 ) {

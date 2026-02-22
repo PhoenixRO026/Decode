@@ -35,13 +35,14 @@ class Spindexer(
 
     enum class TransferPos (val pos : Double, val index: Int) {
         intake0(0.0400, 0),
-        intake1( 0.2328, 1),
+        intake1(0.2328, 1),
         intake2(0.4300, 2),
         shoot0(0.1400, 0),
         shoot1(0.3317, 1),
         shoot2(0.5222, 2),
+        pseudo0(0.7044, 3),
+        pseudo1(0.89, 4)
     }
-
     val slots: MutableList<BallColor> = mutableListOf(
         BallColor.EMPTY,
         BallColor.EMPTY,
@@ -123,7 +124,9 @@ class Spindexer(
         TransferPos.intake2 -> TransferPos.shoot1
         TransferPos.shoot0 -> TransferPos.shoot1
         TransferPos.shoot1 -> TransferPos.shoot2
-        TransferPos.shoot2 -> TransferPos.shoot0
+        TransferPos.shoot2 -> TransferPos.pseudo0
+        TransferPos.pseudo0 -> TransferPos.pseudo1
+        TransferPos.pseudo1 -> TransferPos.shoot0
     }
 
     fun findPreviousShoot(pos: TransferPos) = when (pos) {
@@ -133,6 +136,8 @@ class Spindexer(
         TransferPos.shoot0 -> TransferPos.shoot2
         TransferPos.shoot1 -> TransferPos.shoot0
         TransferPos.shoot2 -> TransferPos.shoot1
+        TransferPos.pseudo0 -> TransferPos.shoot2
+        TransferPos.pseudo1 -> TransferPos.pseudo0
     }
 
     fun goToNextShoot() {
@@ -146,6 +151,8 @@ class Spindexer(
         TransferPos.shoot0 -> TransferPos.intake2
         TransferPos.shoot1 -> TransferPos.intake0
         TransferPos.shoot2 -> TransferPos.intake1
+        TransferPos.pseudo0 -> TransferPos.intake2
+        TransferPos.pseudo1 -> TransferPos.intake2
     }
 
     fun goToNextIntake() {
