@@ -54,11 +54,13 @@ class Shooter(
 
     val rpm get() = encoderOuttake.getPositionAndVelocity().velocity / 28.0 * 60
 
-    var rpmFar : Double = 3300.0
-    var rpmClose : Double = 2800.0
+    var rpmFar : Double = 3900.0
+    var rpmClose : Double = 2700.0
 
-    var shootClosePos : Double = 5022.0
-    var shootFarPos : Double = 3351.0
+    var rpmRest : Double = 1000.0
+
+    var shootClosePos : Double = 5300.0
+    var shootFarPos : Double = 6769.0
 
     var targetRpm = 0.0
 
