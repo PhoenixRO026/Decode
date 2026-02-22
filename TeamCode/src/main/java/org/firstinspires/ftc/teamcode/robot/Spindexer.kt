@@ -40,8 +40,8 @@ class Spindexer(
         shoot0(0.1400, 0),
         shoot1(0.3317, 1),
         shoot2(0.5222, 2),
-        pseudo0(0.7044, 3),
-        pseudo1(0.89, 4)
+        pseudo0(0.7044, 0),
+        pseudo1(0.89, 1)
     }
     val slots: MutableList<BallColor> = mutableListOf(
         BallColor.EMPTY,

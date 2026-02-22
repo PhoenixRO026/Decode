@@ -21,16 +21,16 @@ import org.firstinspires.ftc.teamcode.robot.Spindexer
 
 @Autonomous
 class BigTriangleBlueSolo : LinearOpMode() {
-    val startPose = Pose(-61.5.inch, -38.inch, -90.0.deg)
+    val startPose = Pose(-61.5.inch, -38.inch, 90.0.deg)
     val smallTrianglePose = Pose(55.inch, -10.inch, -90.deg)
     val bigTrianglePose = Pose(-14.inch, -16.inch, -90.0.deg)
 
     val rightIntakePose = Pose(36.inch, -30.inch, -90.0.deg)
     val rightIntakePoseBack = Pose(36.inch, -47.inch, -90.0.deg)
-    val middleIntakePose = Pose(10.inch, -30.inch, -90.0.deg)
+    val middleIntakePose = Pose(8.inch, -30.inch, -100.0.deg)
     val middleIntakePoseBack = Pose(10.inch, -58.inch, -90.0.deg)
     val leftIntakePose = Pose(-12.inch, -30.inch, -90.0.deg)
-    val leftIntakePoseBack = Pose(-12.inch, -47.inch, -90.0.deg)
+    val leftIntakePoseBack = Pose(-12.inch, -49.inch, -90.0.deg)
 
 
     val endPose = Pose(58.inch, -30.inch, 180.0.deg)
@@ -105,8 +105,8 @@ class BigTriangleBlueSolo : LinearOpMode() {
                 ParallelAction(
                     robot.drive.actionBuilder(bigTrianglePose)
                         .setTangent(-90.deg)
-                        .lineToY(-30.inch)
-                        .lineToY(-47.inch, slowSpeed)
+                        .splineToLinearHeading(leftIntakePose, -90.deg)
+                        .lineToY(-49.inch, slowSpeed)
                         .build(),
                     robot.intakeBalls(shootPositions[1])
                 ),
