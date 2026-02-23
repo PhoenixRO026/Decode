@@ -10,14 +10,12 @@ import com.acmerobotics.roadrunner.SequentialAction
 import com.commonlibs.units.Pose
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
-import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.buttons.ButtonReader
 import org.firstinspires.ftc.teamcode.library.buttons.ToggleButtonReader
 import org.firstinspires.ftc.teamcode.robot.Robot
-import org.firstinspires.ftc.teamcode.robot.Spindexer.BallColor
 
 
 @TeleOp
@@ -38,18 +36,18 @@ open class HappyDrive : LinearOpMode(){
 
         robot.limelight.setPipeline(1)
 
-        val shootGreen = ButtonReader { gamepad2.a}
-        val shootPurple = ButtonReader { gamepad2.b}
+        val shootGreen = ButtonReader { gamepad2.y}
+        val shootPurple = ButtonReader { gamepad2.x}
         val shootAll = ButtonReader { gamepad2.dpad_right}
         val fingerUp = ButtonReader {gamepad2.dpad_up}
         val fingerDown = ButtonReader {gamepad2.dpad_down}
         val highRpm = ButtonReader {gamepad2.right_bumper}
         val lowRpm = ButtonReader {gamepad2.left_bumper}
         val stopShooter = ButtonReader {gamepad2.dpad_left}
-        val snipe = ToggleButtonReader ({gamepad1.x})
-        val nextIntake = ButtonReader {gamepad2.y}
-        val nextShoot = ButtonReader {gamepad2.x}
-        val buttons = listOf(shootGreen, shootPurple, shootAll, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, snipe, nextIntake, nextShoot)
+        val intakeBalls = ToggleButtonReader ({gamepad2.dpad_right})
+        val nextIntake = ButtonReader {gamepad2.b}
+        val nextShoot = ButtonReader {gamepad2.a}
+        val buttons = listOf(shootGreen, shootPurple, shootAll, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, intakeBalls, nextIntake, nextShoot)
 
         robot.transfer.finger.position = 0.9
         robot.transfer.servoTransfer1.position = 0.0400
@@ -80,11 +78,11 @@ open class HappyDrive : LinearOpMode(){
             }
 
             /// Intake
-            if (snipe.state) {
+            if (intakeBalls.state) {
                 if (driver1Action == null) {
                     driver1Action = SequentialAction(
                         robot.intakeTeleBalls(),
-                        InstantAction { snipe.setState(false) }
+                        InstantAction { intakeBalls.setState(false) }
                     )
                 }
             } else {
@@ -111,7 +109,7 @@ open class HappyDrive : LinearOpMode(){
                     driver1Action = robot.shootPurple()
                 }
                 if (shootAll.wasJustPressed() && driver1Action == null) {
-                    driver1Action = robot.shootBalls()
+                    driver1Action = robot.shootBalls(robot.shooter.rpmFar)
                 }
             }
 

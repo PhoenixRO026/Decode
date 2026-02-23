@@ -37,7 +37,7 @@ class Robot(
     }
 
     fun intakeBalls(nextShoot: Spindexer.TransferPos) = SequentialAction (
-        intake.startIntakeAction(),
+        //intake.startIntakeAction(),
         transfer.waitForColors(2.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
