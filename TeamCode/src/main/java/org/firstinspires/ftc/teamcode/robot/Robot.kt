@@ -38,15 +38,15 @@ class Robot(
 
     fun intakeBalls(nextShoot: Spindexer.TransferPos) = SequentialAction (
         intake.startIntakeAction(),
-        transfer.waitForColors(3.0.s),
+        transfer.waitForColors(2.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
         SleepAction(0.65.s),
-        transfer.waitForColors(3.0.s),
+        transfer.waitForColors(2.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
         SleepAction(0.65.s),
-        transfer.waitForColors(3.0.s),
+        transfer.waitForColors(2.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToPosAction(nextShoot),
         SleepAction(0.5.s),
@@ -71,16 +71,16 @@ class Robot(
     )
 
     fun shootBall() = SequentialAction(
-        SleepAction(0.15.s),
+        SleepAction(0.2.s),
         InstantAction{transfer.fingerUp()},
-        SleepAction(0.5.s),
+        SleepAction(0.35.s),
         InstantAction{transfer.fingerDown()},
-        SleepAction(0.3.s),
+        SleepAction(0.175.s),
         InstantAction{transfer.emptySlot(transfer.currentPos)}
     )
 
-    fun shootBalls() = SequentialAction (
-        shooter.goToRpmAction(shooter.rpmClose),
+    fun shootBalls(rpm: Double = shooter.rpmClose) = SequentialAction (
+        shooter.goToRpmAction(rpm),
         shootBall(),
         transfer.goToNextShootAction(),
         shootBall(),
@@ -147,7 +147,7 @@ class Robot(
         val finger = hardwareMap.get(Servo::class.java, "finger")
 
         val colorSensor = hardwareMap.get(NormalizedColorSensor::class.java, "colorSensor")
-        colorSensor.gain = 1.0f
+        colorSensor.gain = 1.5f
 
         val limlit = hardwareMap.get(Limelight3A::class.java, "limelight")
         limlit.setPollRateHz(100)

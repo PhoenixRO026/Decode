@@ -22,15 +22,16 @@ import org.firstinspires.ftc.teamcode.robot.Spindexer
 @Autonomous
 class BigTriangleBlueSolo : LinearOpMode() {
     val startPose = Pose(-61.5.inch, -38.inch, 90.0.deg)
-    val smallTrianglePose = Pose(55.inch, -10.inch, -90.deg)
-    val bigTrianglePose = Pose(-14.inch, -16.inch, -90.0.deg)
+    val smallTrianglePose = Pose(53.inch, -11.inch, -90.deg)
+    val bigTrianglePose = Pose(-5.inch, -16.inch, -90.0.deg)
 
-    val rightIntakePose = Pose(36.inch, -30.inch, -90.0.deg)
+    val rightIntakePose = Pose(36.inch, -28.inch, -90.0.deg)
     val rightIntakePoseBack = Pose(36.inch, -47.inch, -90.0.deg)
-    val middleIntakePose = Pose(8.inch, -30.inch, -100.0.deg)
-    val middleIntakePoseBack = Pose(10.inch, -58.inch, -90.0.deg)
-    val leftIntakePose = Pose(-12.inch, -30.inch, -90.0.deg)
-    val leftIntakePoseBack = Pose(-12.inch, -49.inch, -90.0.deg)
+    val middleIntakePose = Pose(12.inch, -28.inch, -90.0.deg)
+    val middleIntakePoseBack = Pose(12.inch, -48.inch, -90.0.deg)
+    val openGatePose = Pose(6.inch, -56.inch, -90.deg)
+    val leftIntakePose = Pose(-12.inch, -28.inch, -90.0.deg)
+    val leftIntakePoseBack = Pose(-12.inch, -52.inch, -90.0.deg)
 
 
     val endPose = Pose(58.inch, -30.inch, 180.0.deg)
@@ -56,7 +57,7 @@ class BigTriangleBlueSolo : LinearOpMode() {
 
         val slowSpeed: VelConstraint = MinVelConstraint(
             listOf(
-                kinematics.WheelVelConstraint(20.0),
+                kinematics.WheelVelConstraint(12.0),
                 AngularVelConstraint(Math.toRadians(180.0))
             )
         )
@@ -80,19 +81,24 @@ class BigTriangleBlueSolo : LinearOpMode() {
                     robot.drive.actionBuilder(bigTrianglePose)
                         .setTangent(0.deg)
                         .splineToLinearHeading(middleIntakePose, -90.deg)
-                        .build()
+                        .build(),
+                    robot.intake.startIntakeAction(),
+                    robot.shooter.goToRpmAction(robot.shooter.rpmRest)
                 ),
 
                 ParallelAction(
                     robot.drive.actionBuilder(middleIntakePose)
                         .setTangent(-90.deg)
-                        .lineToY(-58.inch, slowSpeed)
+                        .lineToY(-48.inch, slowSpeed)
+                        //.splineToLinearHeading(middleIntakePoseBack, -110.deg, slowSpeed)
                         .build(),
                     robot.intakeBalls(shootPositions[0])
                 ),
 
                 ParallelAction(
                     robot.drive.actionBuilder(middleIntakePoseBack)
+                        .setTangent(-110.deg)
+                        .strafeToLinearHeading(openGatePose)
                         .setTangent(90.deg)
                         .splineToLinearHeading(bigTrianglePose, 180.deg)
                         .build(),
@@ -104,11 +110,12 @@ class BigTriangleBlueSolo : LinearOpMode() {
 
                 ParallelAction(
                     robot.drive.actionBuilder(bigTrianglePose)
-                        .setTangent(-90.deg)
+                        .setTangent(-110.deg)
                         .splineToLinearHeading(leftIntakePose, -90.deg)
-                        .lineToY(-49.inch, slowSpeed)
+                        .lineToY(-50.inch, slowSpeed)
                         .build(),
-                    robot.intakeBalls(shootPositions[1])
+                    robot.intakeBalls(shootPositions[1]),
+                    robot.shooter.goToRpmAction(robot.shooter.rpmRest)
                 ),
 
                 ParallelAction(
@@ -127,7 +134,8 @@ class BigTriangleBlueSolo : LinearOpMode() {
                         .setTangent(0.deg)
                         .splineToLinearHeading(rightIntakePose, -45.deg)
                         .build(),
-                    robot.intake.startIntakeAction()
+                    robot.intake.startIntakeAction(),
+                    robot.shooter.goToRpmAction(robot.shooter.rpmRest)
                 ),
 
                 ParallelAction(
@@ -143,11 +151,11 @@ class BigTriangleBlueSolo : LinearOpMode() {
                         .setTangent(90.deg)
                         .splineToLinearHeading(smallTrianglePose, 0.deg)
                         .build(),
-                    robot.shooter.turretToPosAction(robot.shooter.shootClosePos),
-                    robot.shooter.goToRpmAction(robot.shooter.rpmClose)
+                    robot.shooter.turretToPosAction(robot.shooter.shootFarPos),
+                    robot.shooter.goToRpmAction(robot.shooter.rpmFar)
                 ),
 
-                robot.shootBalls()
+                robot.shootBalls(robot.shooter.shootFarPos)
             )
         }
 
