@@ -20,16 +20,16 @@ import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
 import org.firstinspires.ftc.teamcode.robot.Spindexer
 
 @Autonomous
-class SmallTriangleBlueDuo : LinearOpMode() {
-    val startPose = Pose(63.inch, -11.inch, 180.0.deg)
-    val smallTrianglePose = Pose(49.inch, -11.inch, -90.0.deg)
-    val rightIntakePose = Pose(36.inch, -28.inch, -90.0.deg)
-    val rightIntakePoseBack = Pose(36.inch, -47.inch, -90.0.deg)
+class SmallTriangleRedDuo : LinearOpMode() {
+    val startPose = Pose(63.inch, 11.inch, 180.0.deg)
+    val smallTrianglePose = Pose(49.inch, 11.inch, 90.0.deg)
+    val rightIntakePose = Pose(36.inch, 28.inch, 90.0.deg)
+    val rightIntakePoseBack = Pose(36.inch, 47.inch, 90.0.deg)
 
-    val humanIntakePose = Pose(55.inch, -59.inch, -60.0.deg)
-    val humanIntakePoseBack = Pose(60.inch, -60.inch, -50.0.deg)
+    val humanIntakePose = Pose(55.inch, 59.inch, 60.0.deg)
+    val humanIntakePoseBack = Pose(60.inch, 60.inch, 50.0.deg)
 
-    val endPose = Pose(58.inch, -30.inch, -90.0.deg)
+    val endPose = Pose(58.inch, 30.inch, 90.0.deg)
 
     val shooterOffset = 94.0
 
@@ -73,16 +73,16 @@ class SmallTriangleBlueDuo : LinearOpMode() {
 
                 ParallelAction(
                     robot.drive.actionBuilder(smallTrianglePose)
-                        .setTangent(-135.deg)
-                        .splineToLinearHeading(rightIntakePose, -90.deg)
+                        .setTangent(135.deg)
+                        .splineToLinearHeading(rightIntakePose, 90.deg)
                         .build(),
                     robot.intake.startIntakeAction()
                 ),
 
                 ParallelAction(
                     robot.drive.actionBuilder(rightIntakePoseBack)
-                        .setTangent(-90.deg)
-                        .lineToY(-47.inch, slowSpeed)
+                        .setTangent(90.deg)
+                        .lineToY(47.inch, slowSpeed)
                         .build(),
                     robot.intakeBalls(shootPositions[0])
                 ),
@@ -90,7 +90,7 @@ class SmallTriangleBlueDuo : LinearOpMode() {
                 ParallelAction(
                     robot.drive.actionBuilder(rightIntakePoseBack)
                         .setTangent(60.deg)
-                        .splineToLinearHeading(smallTrianglePose, -135.deg)
+                        .splineToLinearHeading(smallTrianglePose, 135.deg)
                         .build(),
                     robot.shooter.turretToPosAction(robot.shooter.shootFarPos),
                     robot.shooter.goToRpmAction(robot.shooter.rpmFar)
@@ -100,8 +100,8 @@ class SmallTriangleBlueDuo : LinearOpMode() {
 
                 ParallelAction(
                     robot.drive.actionBuilder(smallTrianglePose)
-                        .setTangent(-135.deg)
-                        .splineToLinearHeading(humanIntakePose, 135.deg)
+                        .setTangent(135.deg)
+                        .splineToLinearHeading(humanIntakePose, -135.deg)
                         .build(),
                     robot.intake.startIntakeAction()
                 ),
@@ -116,8 +116,8 @@ class SmallTriangleBlueDuo : LinearOpMode() {
 
                 ParallelAction(
                     robot.drive.actionBuilder(humanIntakePoseBack)
-                        .setTangent(90.deg)
-                        .splineToLinearHeading(smallTrianglePose, -135.deg)
+                        .setTangent(-90.deg)
+                        .splineToLinearHeading(smallTrianglePose, 135.deg)
                         .build(),
                     robot.shooter.turretToPosAction(robot.shooter.shootFarPos),
                     robot.shooter.goToRpmAction(robot.shooter.rpmFar)
@@ -126,8 +126,8 @@ class SmallTriangleBlueDuo : LinearOpMode() {
                 robot.shootBalls(robot.shooter.shootFarPos),
 
                 robot.drive.actionBuilder(smallTrianglePose)
-                    .setTangent(-90.deg)
-                    .lineToY(-20.inch)
+                    .setTangent(90.deg)
+                    .lineToY(20.inch)
                     .build()
             )
         }

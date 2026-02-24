@@ -88,7 +88,7 @@ class Shooter(
             motorTurret.power = value
         }
 
-    private var offset = 0.0
+    private var offset = encoderTurret.getPositionAndVelocity().position
 
     val turretPosition get() = encoderTurret.getPositionAndVelocity().position - offset
 
