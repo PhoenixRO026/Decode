@@ -7,6 +7,7 @@ import com.qualcomm.ftccommon.FtcEventLoop
 import org.firstinspires.ftc.ftccommon.external.OnCreateEventLoop
 import org.psilynx.psikit.ftc.FtcLogTuning
 import org.psilynx.psikit.ftc.autolog.PsiKitAutoLogSettings
+import org.psilynx.psikit.ftc.wrappers.MotorWrapper
 
 object PsiKitConfig {
     @JvmStatic
@@ -28,6 +29,11 @@ object PsiKitConfig {
             pinpointUseMinimalBulkReadScope = false
             pinpointWrapperPublishesOdometry = true
             pedroFollowerPublishesNamedOdometry = false
+        }
+        MotorWrapper.apply {
+            logProfile = MotorWrapper.LOG_PROFILE_BULK_ONLY
+            logVelocity = true
+            logBusy = false
         }
     }
 }
