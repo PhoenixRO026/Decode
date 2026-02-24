@@ -36,24 +36,20 @@ open class HappyDrive : LinearOpMode(){
 
         robot.limelight.setPipeline(1)
 
-        val shootGreen = ButtonReader { gamepad2.y}
-        val shootPurple = ButtonReader { gamepad2.x}
-        val shootAll = ButtonReader { gamepad2.dpad_right}
-        val fingerUp = ButtonReader {gamepad2.dpad_up}
-        val fingerDown = ButtonReader {gamepad2.dpad_down}
+        val shootGreen = ButtonReader { gamepad2.x }
+        val shootPurple = ButtonReader { gamepad2.b }
+        val shootAll = ButtonReader { gamepad2.y }
         val highRpm = ButtonReader {gamepad2.right_bumper}
         val lowRpm = ButtonReader {gamepad2.left_bumper}
         val stopShooter = ButtonReader {gamepad2.dpad_left}
-        val intakeBalls = ToggleButtonReader ({gamepad2.dpad_right})
-        val nextIntake = ButtonReader {gamepad2.b}
-        val nextShoot = ButtonReader {gamepad2.a}
-        val buttons = listOf(shootGreen, shootPurple, shootAll, fingerUp, fingerDown, highRpm, lowRpm, stopShooter, intakeBalls, nextIntake, nextShoot)
+        val intakeBalls = ToggleButtonReader ({gamepad1.x})
+        val buttons = listOf(shootGreen, shootPurple, shootAll, highRpm, lowRpm, stopShooter, intakeBalls)
+
+        waitForStart()
 
         robot.transfer.finger.position = 0.9
         robot.transfer.servoTransfer1.position = 0.0400
         robot.transfer.servoTransfer2.position = 0.0400
-
-        waitForStart()
 
         while (opModeIsActive()) {
             timeKeep.resetDeltaTime()
@@ -94,13 +90,6 @@ open class HappyDrive : LinearOpMode(){
                 } else {
                     robot.intake.power = 0.0
                 }
-                if (nextIntake.wasJustPressed()) {
-                    robot.transfer.goToNextIntake()
-                }
-
-                if (nextShoot.wasJustPressed()) {
-                    robot.transfer.goToNextShoot()
-                }
 
                 if (shootGreen.wasJustPressed() && driver1Action == null) {
                     driver1Action = robot.shootGreen()
@@ -109,18 +98,9 @@ open class HappyDrive : LinearOpMode(){
                     driver1Action = robot.shootPurple()
                 }
                 if (shootAll.wasJustPressed() && driver1Action == null) {
-                    driver1Action = robot.shootBalls(robot.shooter.rpmFar)
+                    driver1Action = robot.shootBallsTele()
                 }
             }
-
-            /// Transfer
-
-            if (fingerUp.wasJustPressed())
-                robot.transfer.fingerUp()
-            if (fingerDown.wasJustPressed())
-                robot.transfer.fingerDown()
-
-
 
             if (highRpm.wasJustPressed()) { /// shoot far
                 robot.shooter.goToRmp(robot.shooter.rpmFar)

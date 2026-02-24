@@ -22,7 +22,7 @@ class Spindexer(
     @Config
     data object TransferConfig {
         @JvmField val fingerUpPosition = 0.65
-        @JvmField val fingerDownPosition = 0.9
+        @JvmField val  fingerDownPosition = 0.9
         @JvmField val shootOffset = 0.07
     }
 
