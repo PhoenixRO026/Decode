@@ -7,11 +7,14 @@ import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.ParallelAction
 import com.acmerobotics.roadrunner.ftc.Encoder
 import com.commonlibs.units.Duration
+import com.commonlibs.units.deg
+import com.commonlibs.units.rev
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.VoltageSensor
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
 import org.firstinspires.ftc.teamcode.robot.LimeLightCore.LimeLightConfig
+import org.psilynx.psikit.core.Logger
 import kotlin.math.abs
 
 class Shooter(
@@ -27,15 +30,15 @@ class Shooter(
     data object ShooterConfig {
         @JvmField
         var controllerRpm = PIDController(
-            kP = 0.0015,
-            kD = 0.00015,
-            kI = 0.000001,
+            kP = 0.004,
+            kD = 0.00004,
+            kI = 0.018,
             stabilityThreshold = 50.0
         )
         @JvmField var targetRpmTolerance = 50
 
-        @JvmField var kS = 0.06
-        @JvmField var kV = 0.00303
+        @JvmField var kS = 1.4
+        @JvmField var kV = 0.0029
 
         @JvmField
         var controllerTurret = PIDController(
@@ -92,6 +95,8 @@ class Shooter(
     private var offset = encoderTurret.getPositionAndVelocity().position
 
     val turretPosition get() = encoderTurret.getPositionAndVelocity().position - offset
+
+    val turretAngle = (turretPosition / ShooterConfig.ticksPerRev + 360.0).deg
 
     var targetPos = 0.0
 
@@ -169,6 +174,10 @@ class Shooter(
     }
 
     fun addTelemetry(telemetry: Telemetry) {
+        Logger.recordOutput("Shooter/Outtake power", powerShooter)
+        Logger.recordOutput("Shooter/Outtake rpm", rpm)
+        Logger.recordOutput("Shooter/Turret power", powerTurret)
+        Logger.recordOutput("Shooter/Turret pos", turretPosition)
         telemetry.addData("Outtake power", powerShooter)
         telemetry.addData("Outtake rpm", rpm)
         telemetry.addData("Turret power", powerTurret)
