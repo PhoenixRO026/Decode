@@ -175,7 +175,7 @@ class Spindexer(
         else -> BallColor.EMPTY
     }
 
-    fun updateHue() {
+    fun  updateHue() {
         val normalizedColors = colorSensor.normalizedColors
         Color.RGBToHSV(
             (normalizedColors.red * 256).toInt(),
