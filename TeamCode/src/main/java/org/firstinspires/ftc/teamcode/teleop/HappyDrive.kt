@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot
 
 @TeleOp
 open class HappyDrive : LinearOpMode(){
-    open val pip: Int = 1
+    open val pipeline: Int = 1
     @Config
     data object BlindDrive {
         @JvmField var rpmSmall = 3300
@@ -34,7 +34,7 @@ open class HappyDrive : LinearOpMode(){
         val robot = Robot(hardwareMap,Pose(0.0.cm, 0.0.cm, 0.0.deg))
         val timeKeep = TimeKeep()
 
-        robot.limelight.setPipeline(1)
+        robot.limelight.setPipeline(pipeline)
 
         val shootGreen = ButtonReader { gamepad2.x }
         val shootPurple = ButtonReader { gamepad2.b }
@@ -47,7 +47,7 @@ open class HappyDrive : LinearOpMode(){
 
         waitForStart()
 
-        robot.transfer.finger.position = 0.9
+        robot.transfer.fingerDown()
         robot.transfer.servoTransfer1.position = 0.0400
         robot.transfer.servoTransfer2.position = 0.0400
 

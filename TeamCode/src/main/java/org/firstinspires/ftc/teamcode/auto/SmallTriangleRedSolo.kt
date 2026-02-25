@@ -136,7 +136,7 @@ class SmallTriangleRedSolo : LinearOpMode() {
                 ParallelAction(
                     robot.drive.actionBuilder(leftIntakePose)
                         .setTangent(90.deg)
-                        .lineToX(-47.inch, slowSpeed)
+                        .lineToY(-47.inch, slowSpeed)
                         .build(),
                     robot.intakeBalls(shootPositions[2])
                 ),

@@ -26,7 +26,7 @@ class ServoTest: LinearOpMode() {
         waitForStart()
         previousTime = now()
 
-        servo.position = 0.7
+        servo.position = 0.015
 
         while (opModeIsActive()){
             now = now()
