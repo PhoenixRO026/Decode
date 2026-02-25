@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.library
 
 import com.commonlibs.units.ms
+import com.commonlibs.units.s
 import org.psilynx.psikit.core.Logger
 
 class TimeKeep {
@@ -22,5 +23,5 @@ class TimeKeep {
         currentTime = timeNow()
     }
 
-    private fun timeNow() = (Logger.getTimestamp() / 1_000_000.0).ms
+    private fun timeNow() = Logger.getTimestamp().s
 }
