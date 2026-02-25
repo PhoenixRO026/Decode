@@ -2,7 +2,7 @@
 
 package com.commonlibs.units
 
-data class AngularAcceleration(@JvmField var angularVelocity: AngularVelocity, @JvmField var duration: Duration) {
+data class AngularAcceleration(@JvmField var angularVelocity: AngularVelocity, @JvmField var duration: Duration): MeasuredUnit {
     val asRadSec2 get() = this / (RAD / S / S)
     val asDegSec2 get() = this / (DEG / S / S)
     val asRevSec2 get() = this / (REV / S / S)
@@ -18,6 +18,8 @@ data class AngularAcceleration(@JvmField var angularVelocity: AngularVelocity, @
     operator fun unaryMinus() = AngularAcceleration(-angularVelocity, duration)
 
     override fun toString() = "$angularVelocity per " + if (duration.asS == 1.0) "second" else "$duration"
+    override val value by ::asRadSec2
+    override val unit = "radian per second squared"
 }
 
 val Number.radsec2 get() = this.rad / S / S

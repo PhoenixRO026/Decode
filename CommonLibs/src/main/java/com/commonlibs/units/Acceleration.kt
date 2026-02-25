@@ -2,7 +2,7 @@
 
 package com.commonlibs.units
 
-data class Acceleration(@JvmField var velocity: Velocity, @JvmField var duration: Duration) {
+data class Acceleration(@JvmField var velocity: Velocity, @JvmField var duration: Duration): MeasuredUnit {
     val asMSec2 get() = this / (M / S / S)
     val asCmSec2 get() = this / (CM / S / S)
     val asMmSec2 get() = this / (MM / S / S)
@@ -18,6 +18,8 @@ data class Acceleration(@JvmField var velocity: Velocity, @JvmField var duration
     operator fun unaryMinus() = Acceleration(-velocity, duration)
 
     override fun toString() = "$velocity per " + if (duration.asS == 1.0) "second" else "$duration"
+    override val value by ::asMSec2
+    override val unit = "meter per second squared"
 }
 
 val Number.msec2 get() = this.m / S / S
