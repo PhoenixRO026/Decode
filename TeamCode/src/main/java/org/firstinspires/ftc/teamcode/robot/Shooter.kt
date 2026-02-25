@@ -50,9 +50,10 @@ class Shooter(
         @JvmField var minTurretPosition = -14000.0
         @JvmField var maxTurretPosition = 14000.0
         @JvmField var limitTolerence = 50
+        @JvmField var gearRatio = 23.0 / 30.0
     }
 
-    val rpm get() = encoderOuttake.getPositionAndVelocity().velocity / 28.0 * 60
+    val rpm get() = encoderOuttake.getPositionAndVelocity().velocity / 28.0 * 60 * ShooterConfig.gearRatio
 
     var rpmFar : Double = 3200.0
     var rpmClose : Double = 2750.0

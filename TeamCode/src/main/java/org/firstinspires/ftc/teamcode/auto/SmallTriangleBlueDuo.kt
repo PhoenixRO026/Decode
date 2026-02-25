@@ -25,9 +25,8 @@ class SmallTriangleBlueDuo : LinearOpMode() {
     val smallTrianglePose = Pose(49.inch, -11.inch, -90.0.deg)
     val rightIntakePose = Pose(36.inch, -28.inch, -90.0.deg)
     val rightIntakePoseBack = Pose(36.inch, -47.inch, -90.0.deg)
-
-    val humanIntakePose = Pose(55.inch, -59.inch, -60.0.deg)
-    val humanIntakePoseBack = Pose(60.inch, -60.inch, -50.0.deg)
+    val humanIntakePose = Pose(53.inch, -54.inch, -60.0.deg)
+    val humanIntakePoseBack = Pose(59.inch, -59.inch, 0.0.deg)
 
     val endPose = Pose(58.inch, -30.inch, -90.0.deg)
 
@@ -84,7 +83,7 @@ class SmallTriangleBlueDuo : LinearOpMode() {
                         .setTangent(-90.deg)
                         .lineToY(-47.inch, slowSpeed)
                         .build(),
-                    robot.intakeBalls(shootPositions[0])
+                    //robot.intakeBalls(shootPositions[0])
                 ),
 
                 ParallelAction(
@@ -101,29 +100,30 @@ class SmallTriangleBlueDuo : LinearOpMode() {
                 ParallelAction(
                     robot.drive.actionBuilder(smallTrianglePose)
                         .setTangent(-135.deg)
-                        .splineToLinearHeading(humanIntakePose, 135.deg)
+                        .splineToLinearHeading(humanIntakePose, -45.deg)
                         .build(),
                     robot.intake.startIntakeAction()
                 ),
 
                 ParallelAction(
                     robot.drive.actionBuilder(humanIntakePose)
+                        .lineToYConstantHeading(-54.inch)
                         .setTangent(0.deg)
-                        .lineToX(60.inch, slowSpeed)
+                        .splineToLinearHeading(humanIntakePoseBack, 0.0.deg,slowSpeed)
                         .build(),
                     robot.intakeBalls(shootPositions[2])
                 ),
 
                 ParallelAction(
                     robot.drive.actionBuilder(humanIntakePoseBack)
-                        .setTangent(90.deg)
+                        .setTangent(110.deg)
                         .splineToLinearHeading(smallTrianglePose, -135.deg)
                         .build(),
                     robot.shooter.turretToPosAction(robot.shooter.shootFarPos),
                     robot.shooter.goToRpmAction(robot.shooter.rpmFar)
                 ),
 
-                robot.shootBalls(robot.shooter.shootFarPos),
+                //robot.shootBalls(robot.shooter.shootFarPos),
 
                 robot.drive.actionBuilder(smallTrianglePose)
                     .setTangent(-90.deg)
