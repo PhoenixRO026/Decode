@@ -111,8 +111,8 @@ open class HappyDrive : LinearOpMode(){
                 robot.shooter.goToRmp(0.0)
             }
 
-//            robot.shooter.updateRpm(timeKeep.deltaTime)
-//            robot.limelight.updateHeadingError()
+            robot.shooter.updateRpm(timeKeep.deltaTime)
+            robot.limelight.updateHeadingError()
             robot.shooter.updateTurret(timeKeep.deltaTime, robot.limelight.headingErrorDeg)
 
             robot.shooter.addTelemetry(telemetry)
