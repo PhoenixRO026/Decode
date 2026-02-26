@@ -64,7 +64,7 @@ class SmallTriangleBlueSolo12 : LinearOpMode() {
             )
         )
 
-        fun buildBigTriangleAction(vararg shootPositions: Spindexer.TransferPos): SequentialAction {
+        fun buildSmallTriangleAction(vararg shootPositions: Spindexer.TransferPos): SequentialAction {
 
             return SequentialAction(
                 ParallelAction(
@@ -165,20 +165,23 @@ class SmallTriangleBlueSolo12 : LinearOpMode() {
             )
         }
 
-        val actionPGP = buildBigTriangleAction(
+        val actionPGP = buildSmallTriangleAction(
+            Spindexer.TransferPos.shoot2,
+            Spindexer.TransferPos.shoot2,
+            Spindexer.TransferPos.shoot0,
+            Spindexer.TransferPos.shoot1
+        )
+
+
+        val actionPPG = buildSmallTriangleAction(
+            Spindexer.TransferPos.shoot1,
             Spindexer.TransferPos.shoot1,
             Spindexer.TransferPos.shoot2,
             Spindexer.TransferPos.shoot0
         )
 
-
-        val actionPPG = buildBigTriangleAction(
-            Spindexer.TransferPos.shoot2,
-            Spindexer.TransferPos.shoot1,
-            Spindexer.TransferPos.shoot0
-        )
-
-        val actionGPP = buildBigTriangleAction(
+        val actionGPP = buildSmallTriangleAction(
+            Spindexer.TransferPos.shoot0,
             Spindexer.TransferPos.shoot0,
             Spindexer.TransferPos.shoot1,
             Spindexer.TransferPos.shoot2

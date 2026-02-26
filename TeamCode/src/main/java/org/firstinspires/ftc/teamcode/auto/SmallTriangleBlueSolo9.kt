@@ -12,8 +12,10 @@ import com.acmerobotics.roadrunner.VelConstraint
 import com.commonlibs.units.Pose
 import com.commonlibs.units.deg
 import com.commonlibs.units.inch
+import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import com.qualcomm.robotcore.eventloop.opmode.LoggedOpMode
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.robot.Robot
 import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
@@ -26,11 +28,11 @@ class SmallTriangleBlueSolo9 : LinearOpMode() {
     val bigTrianglePose = Pose(-16.inch, -16.inch, -90.0.deg)
 
     val rightIntakePose = Pose(36.inch, -28.inch, -90.0.deg)
-    val rightIntakePoseBack = Pose(36.inch, -47.inch, -90.0.deg)
+    val rightIntakePoseBack = Pose(36.inch, -55.inch, -90.0.deg)
     val middleIntakePose = Pose(12.inch, -28.inch, -90.0.deg)
-    val middleIntakePoseBack = Pose(12.inch, -47.inch, -90.0.deg)
+    val middleIntakePoseBack = Pose(12.inch, -55.inch, -90.0.deg)
     val leftIntakePose = Pose(-12.inch, -28.inch, -90.0.deg)
-    val leftIntakePoseBack = Pose(-12.inch, -47.inch, -90.0.deg)
+    val leftIntakePoseBack = Pose(-12.inch, -50.inch, -90.0.deg)
 
 
     val humanIntakePose = Pose(55.inch, -59.inch, 300.0.deg)
@@ -64,18 +66,17 @@ class SmallTriangleBlueSolo9 : LinearOpMode() {
             )
         )
 
-        fun buildBigTriangleAction(vararg shootPositions: Spindexer.TransferPos): SequentialAction {
-
+        fun buildSmallTriangleAction(vararg shootPositions: Spindexer.TransferPos): SequentialAction {
             return SequentialAction(
                 ParallelAction(
                     robot.drive.actionBuilder(startPose)
                         .strafeToLinearHeading(smallTrianglePose)
                         .build(),
                     robot.shooter.goToRpmAction(robot.shooter.rpmFar),
-                    robot.transfer.goToPosAction(Spindexer.TransferPos.shoot0),
+                    robot.transfer.goToPosAction(shootPositions[0]),
                     robot.shooter.turretToPosAction(robot.shooter.shootFarPos)
                 ),
-
+                robot.drive.correctionAction(smallTrianglePose, 2.s),
                 robot.shootBalls(robot.shooter.rpmFar),
 
                 ParallelAction(
@@ -91,7 +92,7 @@ class SmallTriangleBlueSolo9 : LinearOpMode() {
                         .setTangent(-90.deg)
                         .lineToY(-55.inch, slowSpeed)
                         .build(),
-                    robot.intakeBalls(shootPositions[0])
+                    robot.intakeBalls(shootPositions[1])
                 ),
 
                 ParallelAction(
@@ -102,6 +103,7 @@ class SmallTriangleBlueSolo9 : LinearOpMode() {
                     robot.shooter.turretToPosAction(robot.shooter.shootFarPos),
                     robot.shooter.goToRpmAction(robot.shooter.rpmFar)
                 ),
+                robot.drive.correctionAction(smallTrianglePose, 2.s),
 
                 robot.shootBalls(robot.shooter.rpmFar),
 
@@ -117,22 +119,23 @@ class SmallTriangleBlueSolo9 : LinearOpMode() {
                     robot.drive.actionBuilder(middleIntakePose)
                         .lineToY(-55.inch, slowSpeed)
                         .build(),
-                    robot.intakeBalls(shootPositions[0])
+                    robot.intakeBalls(shootPositions[2])
                 ),
 
                 ParallelAction(
                     robot.drive.actionBuilder(middleIntakePoseBack)
-                        .setTangent(-90.deg)
-                        .strafeToLinearHeading(bigTrianglePose)
+                        .setTangent(90.deg)
+                        .splineToLinearHeading(bigTrianglePose, 180.deg)
                         .build(),
-                    robot.shooter.turretToPosAction(robot.shooter.shootFarPos),
-                    robot.shooter.goToRpmAction(robot.shooter.rpmFar)
+                    robot.shooter.turretToPosAction(robot.shooter.shootClosePos),
+                    robot.shooter.goToRpmAction(robot.shooter.rpmClose)
                 ),
+                robot.drive.correctionAction(bigTrianglePose, 2.s),
 
-                robot.shootBalls(robot.shooter.rpmFar),
+                robot.shootBalls(robot.shooter.rpmClose),
 
                 ParallelAction(
-                    robot.drive.actionBuilder(smallTrianglePose)
+                    robot.drive.actionBuilder(bigTrianglePose)
                         .setTangent(180.deg)
                         .strafeToLinearHeading(leftIntakePose)
                         .build(),
@@ -144,7 +147,7 @@ class SmallTriangleBlueSolo9 : LinearOpMode() {
                         .setTangent(-90.deg)
                         .lineToY(-50.inch, slowSpeed)
                         .build(),
-                    robot.intakeBalls(shootPositions[2])
+                    robot.intakeBalls(shootPositions[3])
                 ),
 
                 ParallelAction(
@@ -152,11 +155,12 @@ class SmallTriangleBlueSolo9 : LinearOpMode() {
                         .setTangent(45.deg)
                         .strafeToLinearHeading(bigTrianglePose)
                         .build(),
-                    robot.shooter.turretToPosAction(robot.shooter.shootFarPos),
-                    robot.shooter.goToRpmAction(robot.shooter.rpmFar)
+                    robot.shooter.turretToPosAction(robot.shooter.shootClosePos),
+                    robot.shooter.goToRpmAction(robot.shooter.rpmClose)
                 ),
 
-                robot.shootBalls(),
+                robot.drive.correctionAction(bigTrianglePose, 2.s),
+                robot.shootBalls(robot.shooter.rpmClose),
 
                 robot.drive.actionBuilder(smallTrianglePose)
                     .setTangent(-90.deg)
@@ -165,20 +169,23 @@ class SmallTriangleBlueSolo9 : LinearOpMode() {
             )
         }
 
-        val actionPGP = buildBigTriangleAction(
+        val actionPGP = buildSmallTriangleAction(
+            Spindexer.TransferPos.shoot2,
+            Spindexer.TransferPos.shoot2,
+            Spindexer.TransferPos.shoot0,
+            Spindexer.TransferPos.shoot1
+        )
+
+
+        val actionPPG = buildSmallTriangleAction(
+            Spindexer.TransferPos.shoot1,
             Spindexer.TransferPos.shoot1,
             Spindexer.TransferPos.shoot2,
             Spindexer.TransferPos.shoot0
         )
 
-
-        val actionPPG = buildBigTriangleAction(
-            Spindexer.TransferPos.shoot2,
-            Spindexer.TransferPos.shoot1,
-            Spindexer.TransferPos.shoot0
-        )
-
-        val actionGPP = buildBigTriangleAction(
+        val actionGPP = buildSmallTriangleAction(
+            Spindexer.TransferPos.shoot0,
             Spindexer.TransferPos.shoot0,
             Spindexer.TransferPos.shoot1,
             Spindexer.TransferPos.shoot2
