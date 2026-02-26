@@ -69,9 +69,15 @@ class Spindexer(
             else -> {}
         }
 
-        val lowerPos = findPreviousShoot(pos)
+        val lowerPos = findPreviousShootIndex(pos)
 
-        val upperPos = findNextShoot(pos)
+        val upperPos = findNextShootIndex(pos)
+
+        if (pos == TransferPos.intake0) {
+            if (slots[upperPos.index] == target) {
+                return upperPos
+            }
+        }
 
         if (slots[lowerPos.index] == target) {
             return lowerPos
@@ -81,7 +87,12 @@ class Spindexer(
         }
 
         if (slots[pos.index] == target) {
-            return pos
+            return when (pos) {
+                TransferPos.intake0 -> TransferPos.shoot0
+                TransferPos.intake1 -> TransferPos.shoot1
+                TransferPos.intake2 -> TransferPos.shoot2
+                else -> null
+            }
         }
 
         return null
@@ -133,10 +144,21 @@ class Spindexer(
         TransferPos.pseudo2 -> TransferPos.shoot0
     }
 
-    fun findPreviousShoot(pos: TransferPos) = when (pos) {
-        TransferPos.intake0 -> TransferPos.shoot0
-        TransferPos.intake1 -> TransferPos.shoot0
+    fun findNextShootIndex(pos: TransferPos) = when (pos) {
+        TransferPos.intake0 -> TransferPos.shoot1
+        TransferPos.intake1 -> TransferPos.shoot2
         TransferPos.intake2 -> TransferPos.shoot0
+        TransferPos.shoot1 -> TransferPos.shoot2
+        TransferPos.shoot2 -> TransferPos.shoot0
+        TransferPos.shoot0 -> TransferPos.pseudo1
+        TransferPos.pseudo1 -> TransferPos.pseudo2
+        TransferPos.pseudo2 -> TransferPos.shoot0
+    }
+
+    fun findPreviousShootIndex(pos: TransferPos) = when (pos) {
+        TransferPos.intake0 -> TransferPos.shoot2
+        TransferPos.intake1 -> TransferPos.shoot1
+        TransferPos.intake2 -> TransferPos.shoot2
         TransferPos.shoot0 -> TransferPos.shoot2
         TransferPos.shoot2 -> TransferPos.shoot1
         TransferPos.shoot1 -> TransferPos.shoot0
