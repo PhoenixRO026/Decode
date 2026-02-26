@@ -1,5 +1,3 @@
-@file:Suppress("unused")
-
 package org.firstinspires.ftc.teamcode
 
 import android.content.Context
@@ -9,6 +7,7 @@ import org.psilynx.psikit.ftc.FtcLogTuning
 import org.psilynx.psikit.ftc.autolog.PsiKitAutoLogSettings
 import org.psilynx.psikit.ftc.wrappers.MotorWrapper
 
+@Suppress("unused")
 object PsiKitConfig {
     @JvmStatic
     @OnCreateEventLoop
