@@ -37,11 +37,11 @@ class Spindexer(
         intake0(0.0400, 0),
         intake1(0.2328, 1),
         intake2(0.4300, 2),
-        shoot1(0.1400, 1),
-        shoot2(0.3317, 2),
-        shoot0(0.5222, 0),
-        pseudo1(0.7044, 1),
-        pseudo2(0.89, 2)
+        shoot2(0.1400, 2),
+        shoot0(0.3317, 0),
+        shoot1(0.5222, 1),
+        pseudo2(0.7044, 2),
+        pseudo0(0.89, 0)
     }
     val slots: MutableList<BallColor> = mutableListOf(
         BallColor.EMPTY,
@@ -74,6 +74,10 @@ class Spindexer(
         val upperPos = findNextShootIndex(pos)
 
         if (pos == TransferPos.intake0) {
+            if (slots[pos.index] == target) {
+                return TransferPos.shoot0
+            }
+
             if (slots[upperPos.index] == target) {
                 return upperPos
             }
@@ -134,36 +138,36 @@ class Spindexer(
     }
 
     fun findNextShoot(pos: TransferPos) = when (pos) {
-        TransferPos.intake0 -> TransferPos.shoot1
+        TransferPos.intake0 -> TransferPos.shoot2
         TransferPos.intake1 -> TransferPos.shoot2
         TransferPos.intake2 -> TransferPos.shoot0
-        TransferPos.shoot1 -> TransferPos.shoot2
+        TransferPos.shoot1 -> TransferPos.pseudo2
         TransferPos.shoot2 -> TransferPos.shoot0
-        TransferPos.shoot0 -> TransferPos.pseudo1
-        TransferPos.pseudo1 -> TransferPos.pseudo2
-        TransferPos.pseudo2 -> TransferPos.shoot0
+        TransferPos.shoot0 -> TransferPos.shoot1
+        TransferPos.pseudo2 -> TransferPos.pseudo0
+        TransferPos.pseudo0 -> TransferPos.shoot1
     }
 
     fun findNextShootIndex(pos: TransferPos) = when (pos) {
-        TransferPos.intake0 -> TransferPos.shoot1
-        TransferPos.intake1 -> TransferPos.shoot2
-        TransferPos.intake2 -> TransferPos.shoot0
-        TransferPos.shoot1 -> TransferPos.shoot2
+        TransferPos.intake0 -> TransferPos.shoot2
+        TransferPos.intake1 -> TransferPos.shoot0
+        TransferPos.intake2 -> TransferPos.shoot1
+        TransferPos.shoot1 -> TransferPos.pseudo2
         TransferPos.shoot2 -> TransferPos.shoot0
-        TransferPos.shoot0 -> TransferPos.pseudo1
-        TransferPos.pseudo1 -> TransferPos.pseudo2
-        TransferPos.pseudo2 -> TransferPos.shoot0
+        TransferPos.shoot0 -> TransferPos.shoot1
+        TransferPos.pseudo2 -> TransferPos.pseudo0
+        TransferPos.pseudo0 -> TransferPos.shoot1
     }
 
     fun findPreviousShootIndex(pos: TransferPos) = when (pos) {
-        TransferPos.intake0 -> TransferPos.shoot2
-        TransferPos.intake1 -> TransferPos.shoot1
-        TransferPos.intake2 -> TransferPos.shoot2
-        TransferPos.shoot0 -> TransferPos.shoot2
+        TransferPos.intake0 -> TransferPos.shoot0
+        TransferPos.intake1 -> TransferPos.shoot2
+        TransferPos.intake2 -> TransferPos.shoot0
+        TransferPos.shoot0 -> TransferPos.shoot1
         TransferPos.shoot2 -> TransferPos.shoot1
         TransferPos.shoot1 -> TransferPos.shoot0
-        TransferPos.pseudo1 -> TransferPos.shoot0
-        TransferPos.pseudo2 -> TransferPos.pseudo1
+        TransferPos.pseudo2 -> TransferPos.shoot1
+        TransferPos.pseudo0 -> TransferPos.pseudo2
     }
 
     fun goToNextShoot() {
@@ -177,8 +181,8 @@ class Spindexer(
         TransferPos.shoot0 -> TransferPos.intake0
         TransferPos.shoot1 -> TransferPos.intake0
         TransferPos.shoot2 -> TransferPos.intake0
-        TransferPos.pseudo1 -> TransferPos.intake0
         TransferPos.pseudo2 -> TransferPos.intake0
+        TransferPos.pseudo0 -> TransferPos.intake0
     }
 
     fun goToNextIntake() {
