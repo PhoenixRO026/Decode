@@ -39,15 +39,15 @@ class Robot(
 
     fun intakeBalls(nextShoot: Spindexer.TransferPos) = SequentialAction (
         intake.startIntakeAction(),
-        transfer.waitForColors(4.0.s),
-        InstantAction{transfer.updateBallSlot()},
-        transfer.goToNextIntakeAction(),
-        SleepAction(0.65.s),
         transfer.waitForColors(2.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
         SleepAction(0.65.s),
-        transfer.waitForColors(2.0.s),
+        transfer.waitForColors(1.0.s),
+        InstantAction{transfer.updateBallSlot()},
+        transfer.goToNextIntakeAction(),
+        SleepAction(0.65.s),
+        transfer.waitForColors(1.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToPosAction(nextShoot),
         SleepAction(0.15.s),
@@ -73,16 +73,16 @@ class Robot(
     )
 
     fun shootBall() = SequentialAction(
-        SleepAction(0.3.s),
+        SleepAction(0.2.s),
         InstantAction{transfer.fingerUp()},
-        SleepAction(0.3.s),
+        SleepAction(0.2.s),
         InstantAction{transfer.fingerDown()},
-        SleepAction(0.3.s),
+        SleepAction(0.2.s),
         InstantAction{transfer.emptySlot(transfer.currentPos)}
     )
 
     fun shootBalls(rpm: Double = shooter.rpmFar) = SequentialAction (
-        SleepAction(0.5.s),
+        //SleepAction(0.5.s),
         shooter.goToRpmAction(rpm),
         shootBall(),
         transfer.goToNextShootAction(),
