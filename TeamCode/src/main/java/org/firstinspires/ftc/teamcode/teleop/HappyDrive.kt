@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.buttons.ButtonReader
 import org.firstinspires.ftc.teamcode.library.buttons.ToggleButtonReader
 import org.firstinspires.ftc.teamcode.robot.Robot
+import org.firstinspires.ftc.teamcode.robot.Spindexer
 
 
 @TeleOp
@@ -116,6 +117,16 @@ open class HappyDrive : LinearOpMode(){
 
             robot.shooter.addTelemetry(telemetry)
 
+            telemetry.addData("transfer pos", when (robot.transfer.currentPos) {
+                Spindexer.TransferPos.intake0 -> "intake0"
+                Spindexer.TransferPos.intake1 -> "intake1"
+                Spindexer.TransferPos.intake2 -> "intake2"
+                Spindexer.TransferPos.shoot1 -> "shoot1"
+                Spindexer.TransferPos.shoot2 -> "shoot2"
+                Spindexer.TransferPos.shoot0 -> "shoot0"
+                Spindexer.TransferPos.pseudo0 -> "pseudo0"
+                Spindexer.TransferPos.pseudo2 -> "pseudo2"
+            })
             telemetry.addData("slot 0", robot.transfer.slots[0])
             telemetry.addData("slot 1", robot.transfer.slots[1])
             telemetry.addData("slot 2", robot.transfer.slots[2])
