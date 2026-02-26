@@ -69,7 +69,6 @@ class SmallTriangleBlueSolo : LinearOpMode() {
             return SequentialAction(
                 ParallelAction(
                     robot.drive.actionBuilder(startPose)
-                        .setTangent(45.deg)
                         .strafeToLinearHeading(smallTrianglePose)
                         .build(),
                     robot.shooter.goToRpmAction(robot.shooter.rpmFar),
@@ -77,58 +76,65 @@ class SmallTriangleBlueSolo : LinearOpMode() {
                     robot.shooter.turretToPosAction(robot.shooter.shootFarPos)
                 ),
 
-                robot.shootBalls(),
+                robot.shootBalls(robot.shooter.rpmFar),
 
                 ParallelAction(
                     robot.drive.actionBuilder(smallTrianglePose)
                         .setTangent(-135.deg)
-                        .splineToLinearHeading(rightIntakePose, -90.deg)
-                        .build()
+                        .strafeToLinearHeading(rightIntakePose)
+                        .build(),
+                    robot.intake.startIntakeAction()
                 ),
 
                 ParallelAction(
                     robot.drive.actionBuilder(rightIntakePose)
                         .setTangent(-90.deg)
-                        .lineToY(-47.inch, slowSpeed)
+                        .lineToY(-55.inch, slowSpeed)
                         .build(),
                     robot.intakeBalls(shootPositions[0])
                 ),
 
                 ParallelAction(
                     robot.drive.actionBuilder(rightIntakePoseBack)
-                        .setTangent(90.deg)
-                        .splineToLinearHeading(smallTrianglePose, -135.deg)
+                        .setTangent(60.deg)
+                        .strafeToLinearHeading(smallTrianglePose)
                         .build(),
                     robot.shooter.turretToPosAction(robot.shooter.shootFarPos),
                     robot.shooter.goToRpmAction(robot.shooter.rpmFar)
                 ),
 
-                robot.shootBalls(),
+                robot.shootBalls(robot.shooter.rpmFar),
 
                 ParallelAction(
                     robot.drive.actionBuilder(smallTrianglePose)
                         .setTangent(180.deg)
-                        .splineToLinearHeading(middleIntakePose, -90.deg)
-                        .lineToY(-47.inch, slowSpeed)
+                        .strafeToLinearHeading(middleIntakePose)
                         .build(),
-                    robot.intakeBalls(shootPositions[1])
+                    robot.intake.startIntakeAction()
+                ),
+
+                ParallelAction(
+                    robot.drive.actionBuilder(middleIntakePose)
+                        .lineToY(-55.inch, slowSpeed)
+                        .build(),
+                    robot.intakeBalls(shootPositions[0])
                 ),
 
                 ParallelAction(
                     robot.drive.actionBuilder(middleIntakePoseBack)
                         .setTangent(-90.deg)
-                        .splineToLinearHeading(smallTrianglePose, 180.deg)
+                        .strafeToLinearHeading(bigTrianglePose)
                         .build(),
                     robot.shooter.turretToPosAction(robot.shooter.shootFarPos),
                     robot.shooter.goToRpmAction(robot.shooter.rpmFar)
                 ),
 
-                robot.shootBalls(),
+                robot.shootBalls(robot.shooter.rpmFar),
 
                 ParallelAction(
                     robot.drive.actionBuilder(smallTrianglePose)
                         .setTangent(180.deg)
-                        .splineToLinearHeading(leftIntakePose, -135.deg)
+                        .strafeToLinearHeading(leftIntakePose)
                         .build(),
                     robot.intake.startIntakeAction()
                 ),
@@ -136,7 +142,7 @@ class SmallTriangleBlueSolo : LinearOpMode() {
                 ParallelAction(
                     robot.drive.actionBuilder(leftIntakePose)
                         .setTangent(-90.deg)
-                        .lineToX(47.inch, slowSpeed)
+                        .lineToY(-50.inch, slowSpeed)
                         .build(),
                     robot.intakeBalls(shootPositions[2])
                 ),
@@ -144,7 +150,7 @@ class SmallTriangleBlueSolo : LinearOpMode() {
                 ParallelAction(
                     robot.drive.actionBuilder(leftIntakePoseBack)
                         .setTangent(45.deg)
-                        .splineToLinearHeading(smallTrianglePose, 0.deg)
+                        .strafeToLinearHeading(bigTrianglePose)
                         .build(),
                     robot.shooter.turretToPosAction(robot.shooter.shootFarPos),
                     robot.shooter.goToRpmAction(robot.shooter.rpmFar)

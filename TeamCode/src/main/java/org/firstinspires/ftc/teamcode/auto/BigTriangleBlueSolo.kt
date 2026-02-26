@@ -57,7 +57,7 @@ class BigTriangleBlueSolo : LinearOpMode() {
 
         val slowSpeed: VelConstraint = MinVelConstraint(
             listOf(
-                kinematics.WheelVelConstraint(12.0),
+                kinematics.WheelVelConstraint(15.0),
                 AngularVelConstraint(Math.toRadians(180.0))
             )
         )

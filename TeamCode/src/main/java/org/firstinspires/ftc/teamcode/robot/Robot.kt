@@ -73,11 +73,11 @@ class Robot(
     )
 
     fun shootBall() = SequentialAction(
-        SleepAction(0.2.s),
+        SleepAction(0.3.s),
         InstantAction{transfer.fingerUp()},
-        SleepAction(0.35.s),
+        SleepAction(0.3.s),
         InstantAction{transfer.fingerDown()},
-        SleepAction(0.175.s),
+        SleepAction(0.3.s),
         InstantAction{transfer.emptySlot(transfer.currentPos)}
     )
 
@@ -86,10 +86,10 @@ class Robot(
         shooter.goToRpmAction(rpm),
         shootBall(),
         transfer.goToNextShootAction(),
-        SleepAction(0.05.s),
+        SleepAction(0.1.s),
         shootBall(),
         transfer.goToNextShootAction(),
-        SleepAction(0.05.s),
+        SleepAction(0.1.s),
         shootBall(),
         ParallelAction(
             transfer.goToPosAction(Spindexer.TransferPos.intake0),

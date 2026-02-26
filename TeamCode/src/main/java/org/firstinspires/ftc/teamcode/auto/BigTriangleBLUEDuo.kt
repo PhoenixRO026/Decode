@@ -73,15 +73,14 @@ class BigTriangleBLUEDuo : LinearOpMode() {
 
                 robot.shootBalls(),
 
-                // bigTriangle -> middleIntake
                 ParallelAction(
                     robot.drive.actionBuilder(bigTrianglePose)
                         .setTangent(0.deg)
                         .splineToLinearHeading(middleIntakePose, -90.deg)
-                        .build()
+                        .build(),
+                    robot.intake.startIntakeAction(),
                 ),
 
-                // middleIntake -> Y -47
                 ParallelAction(
                     robot.drive.actionBuilder(middleIntakePose)
                         .setTangent(-90.deg)
