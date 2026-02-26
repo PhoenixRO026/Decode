@@ -99,6 +99,7 @@ class Robot(
 
     fun shootBallsTele() = SequentialAction (
         transfer.goToPosAction(Spindexer.TransferPos.shoot0),
+        shooter.goToRpmAction(shooter.targetRpm),
         shootBall(),
         transfer.goToNextShootAction(),
         shootBall(),

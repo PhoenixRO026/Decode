@@ -23,9 +23,9 @@ import org.firstinspires.ftc.teamcode.robot.Spindexer
 open class HappyDrive : LinearOpMode(){
     open val pipeline: Int = 1
     @Config
-    data object BlindDrive {
-        @JvmField var rpmSmall = 3300
-        @JvmField var rpmBig = 2800
+    data object HappyDrive {
+        @JvmField var rpmSmall = 3300.0
+        @JvmField var rpmBig = 2975.0
     }
     private var driver1Action: Action? = null
 
@@ -104,15 +104,15 @@ open class HappyDrive : LinearOpMode(){
             }
 
             if (highRpm.wasJustPressed()) { /// shoot far
-                robot.shooter.goToRmp(robot.shooter.rpmFar)
+                robot.shooter.goToRmp(HappyDrive.rpmBig)
             } else if (lowRpm.wasJustPressed()) { /// shoot close
-                robot.shooter.goToRmp(robot.shooter.rpmClose)
+                robot.shooter.goToRmp(HappyDrive.rpmSmall)
             } else if (stopShooter.wasJustPressed()) { /// stop shoot
                 robot.shooter.goToRmp(0.0)
             }
 
-            robot.shooter.updateRpm(timeKeep.deltaTime)
-            robot.limelight.updateHeadingError()
+//            robot.shooter.updateRpm(timeKeep.deltaTime)
+//            robot.limelight.updateHeadingError()
             robot.shooter.updateTurret(timeKeep.deltaTime, robot.limelight.headingErrorDeg)
 
             robot.shooter.addTelemetry(telemetry)
