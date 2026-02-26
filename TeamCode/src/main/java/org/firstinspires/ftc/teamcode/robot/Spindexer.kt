@@ -163,7 +163,7 @@ class Spindexer(
         TransferPos.intake0 -> TransferPos.shoot0
         TransferPos.intake1 -> TransferPos.shoot2
         TransferPos.intake2 -> TransferPos.shoot0
-        TransferPos.shoot0 -> TransferPos.shoot1
+        TransferPos.shoot0 -> TransferPos.shoot2
         TransferPos.shoot2 -> TransferPos.shoot1
         TransferPos.shoot1 -> TransferPos.shoot0
         TransferPos.pseudo2 -> TransferPos.shoot1
