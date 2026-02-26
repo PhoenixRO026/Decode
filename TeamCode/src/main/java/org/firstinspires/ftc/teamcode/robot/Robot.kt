@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot
 
 import com.acmerobotics.roadrunner.InstantAction
+import com.acmerobotics.roadrunner.ParallelAction
 import com.acmerobotics.roadrunner.SequentialAction
 import com.acmerobotics.roadrunner.SleepAction
 import com.acmerobotics.roadrunner.ftc.Encoder
@@ -37,7 +38,7 @@ class Robot(
     }
 
     fun intakeBalls(nextShoot: Spindexer.TransferPos) = SequentialAction (
-        //intake.startIntakeAction(),
+        intake.startIntakeAction(),
         transfer.waitForColors(4.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
@@ -66,6 +67,7 @@ class Robot(
         SleepAction(0.6.s),
         transfer.waitForColors(7.0.s),
         InstantAction{transfer.updateBallSlot()},
+        intake.spew(),
         transfer.goToPosAction(Spindexer.TransferPos.shoot0),
         SleepAction(0.6.s),
     )
@@ -79,15 +81,20 @@ class Robot(
         InstantAction{transfer.emptySlot(transfer.currentPos)}
     )
 
-    fun shootBalls(rpm: Double = shooter.rpmClose) = SequentialAction (
-        SleepAction(0.01.s),
+    fun shootBalls(rpm: Double = shooter.rpmFar) = SequentialAction (
+        SleepAction(0.5.s),
         shooter.goToRpmAction(rpm),
         shootBall(),
         transfer.goToNextShootAction(),
+        SleepAction(0.05.s),
         shootBall(),
         transfer.goToNextShootAction(),
+        SleepAction(0.05.s),
         shootBall(),
-        transfer.goToPosAction(Spindexer.TransferPos.intake0)
+        ParallelAction(
+            transfer.goToPosAction(Spindexer.TransferPos.intake0),
+            shooter.goToRpmAction(shooter.rpmRest)
+        )
     )
 
     fun shootBallsTele() = SequentialAction (
