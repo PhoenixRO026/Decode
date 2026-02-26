@@ -16,11 +16,11 @@ kotlin {
 
 repositories {
     maven { url = 'https://maven.brott.dev/' }
-//    maven { url 'https://www.jitpack.io' }
+    maven { url 'https://www.jitpack.io' }
 }
 
 dependencies {
     compileOnly "com.acmerobotics.roadrunner:core:1.0.1"
     compileOnly "com.acmerobotics.roadrunner:actions:1.0.1"
-//    compileOnly 'com.github.ProNoob1029.PsiKit:core:0.1.0-beta2-ex14'
+    compileOnly 'com.github.ProNoob1029.PsiKit:core:0.2.0-beta1-ex1'
 }
