@@ -57,7 +57,7 @@ class Shooter(
         @JvmField var rpmFar = 3500.0
         @JvmField var rpmClose = 2850.0
         @JvmField var rpmRest = 1000.0
-        @JvmField var shootClosePos = 6500.0
+        @JvmField var shootClosePos = 6300.0
         @JvmField var shootFarPos = 6900.0
     }
 
