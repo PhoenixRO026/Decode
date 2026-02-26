@@ -85,7 +85,8 @@ class LimeLightCore(
 
     fun getRpm(): Double {
         updateDistance()
-        val rpm = -24.25548 * aprilTagDistance.pow(4.0) + 245.7718 * aprilTagDistance.pow(3.0) - 743.82234 * aprilTagDistance.pow(2.0) + 818.08553 * aprilTagDistance + 2723.19277
+        val rpm = -24.25548 * aprilTagDistance.pow(4.0) + 245.7718 * aprilTagDistance.pow(3.0) -
+                   743.82234 * aprilTagDistance.pow(2.0) + 818.08553 * aprilTagDistance + 2723.19277
         return rpm.coerceIn(0.0, 4000.0)
     }
 
