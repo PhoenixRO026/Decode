@@ -129,7 +129,7 @@ class Spindexer(
 
 
     fun updateBallSlot() {
-        updateHue()
+        //updateHue()
         updateSlot(currentPos, sensorColor)
     }
 
@@ -243,11 +243,20 @@ class Spindexer(
         SleepAction(maxTime)
     )
 
-    fun waitForColors(duration: Duration) = RaceAction(
+    fun waitForAnyColor(maxTime: Duration = 1.s) = RaceAction(
+        {
+            updateHue()
+            it.addLine("Waiting for any ball")
+            sensorColor == BallColor.EMPTY
+        },
+        SleepAction(maxTime)
+    )
+
+    fun waitForColors(duration: Duration) = waitForAnyColor(duration)/*RaceAction(
         waitForColorAction(BallColor.PURPLE, duration),
         waitForColorAction(BallColor.GREEN, duration),
         SleepAction(duration)
-    )
+    )*/
 
     fun addTelemetry(telemetry: Telemetry) {
         telemetry.addData("spindexer pos", currentPos)
