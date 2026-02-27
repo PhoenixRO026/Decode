@@ -25,7 +25,7 @@ class SmallTriangleBlueDuo : LoggedOpMode() {
     val startPose = Pose(63.inch, -11.inch, 180.0.deg)
     val smallTrianglePose = Pose(49.inch, -11.inch, -90.0.deg)
     val rightIntakePose = Pose(36.inch, -28.inch, -90.0.deg)
-    val rightIntakePoseBack = Pose(36.inch, -47.inch, -90.0.deg)
+    val rightIntakePoseBack = Pose(36.inch, -55.inch, -90.0.deg)
     val humanIntakePose = Pose(53.inch, -54.inch, -60.0.deg)
     val humanIntakePoseBack = Pose(59.inch, -59.inch, 0.0.deg)
 
@@ -82,7 +82,7 @@ class SmallTriangleBlueDuo : LoggedOpMode() {
                 ParallelAction(
                     robot.drive.actionBuilder(rightIntakePose)
                         .setTangent(-90.deg)
-                        .lineToY(-56.inch, slowSpeed)
+                        .lineToY(-55.inch, slowSpeed)
                         .build(),
                     robot.intakeBalls(shootPositions[0])
                 ),

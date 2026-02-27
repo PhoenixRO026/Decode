@@ -46,6 +46,11 @@ open class HappyDrive : LinearOpMode(){
         val intakeBalls = ToggleButtonReader ({gamepad1.x})
         val buttons = listOf(shootGreen, shootPurple, shootAll, highRpm, lowRpm, stopShooter, intakeBalls)
 
+        val intake = SequentialAction(
+            robot.intakeTeleBalls(),
+            InstantAction { intakeBalls.setState(false) }
+        )
+
         waitForStart()
 
         robot.transfer.fingerDown()
@@ -77,13 +82,12 @@ open class HappyDrive : LinearOpMode(){
             /// Intake
             if (intakeBalls.state) {
                 if (driver1Action == null) {
-                    driver1Action = SequentialAction(
-                        robot.intakeTeleBalls(),
-                        InstantAction { intakeBalls.setState(false) }
-                    )
+                    driver1Action = intake
                 }
             } else {
-                driver1Action = null
+                if (driver1Action == intake) {
+                    driver1Action = null
+                }
                 /// Intake
                 if (gamepad1.right_bumper) {
                     robot.intake.power = 1.0
