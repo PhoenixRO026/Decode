@@ -6,8 +6,10 @@ import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.ParallelAction
 import com.acmerobotics.roadrunner.ftc.Encoder
+import com.commonlibs.units.AngularVelocity
 import com.commonlibs.units.Duration
 import com.commonlibs.units.deg
+import com.commonlibs.units.radsec
 import com.commonlibs.units.rev
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.VoltageSensor
@@ -16,6 +18,8 @@ import org.firstinspires.ftc.teamcode.library.controller.PIDController
 import org.firstinspires.ftc.teamcode.robot.LimeLightCore.LimeLightConfig
 import org.psilynx.psikit.core.Logger
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 class Shooter(
     val motorTop: DcMotorEx,
@@ -35,6 +39,7 @@ class Shooter(
             kI = 0.018,
             stabilityThreshold = 50.0
         )
+        @JvmField var robotAngularVelkP = 0.15
         @JvmField var targetRpmTolerance = 50
 
         @JvmField var kS = 1.4
@@ -162,20 +167,24 @@ class Shooter(
         powerTurret = ShooterConfig.controllerTurret.calculate(turretPosition, targetPos, deltaTime)
     }
 
-    private fun computeHeadingPower(dt: Duration, error: Double): Double {
-        if (turretPosition >= ShooterConfig.maxTurretPosition && error > 0 ) {
-            return 0.0
-        } else if (turretPosition <= ShooterConfig.minTurretPosition && error < 0 ){
-            return 0.0
-        }
-        var raw = LimeLightConfig.controller.calculate(0.0, error, dt)
+    private fun computeHeadingPower(dt: Duration, error: Double, robotAngularVelocity: AngularVelocity = 0.radsec): Double {
+        var raw = LimeLightConfig.controller.calculate(0.0, error, dt) +
+                robotAngularVelocity.asRadSec * ShooterConfig.robotAngularVelkP
+
         if(abs(raw) < 0.05)
             raw = 0.0
+
+        if (turretPosition >= ShooterConfig.maxTurretPosition /*&& error > 0*/ ) {
+            raw = min(raw, 0.0)
+        } else if (turretPosition <= ShooterConfig.minTurretPosition /*&& error < 0*/ ){
+            raw = max(raw, 0.0)
+        }
+
         return raw.coerceIn(-1.0, 1.0)
     }
 
-    fun updateTurret (deltaTime: Duration, error: Double) {
-        powerTurret = computeHeadingPower(deltaTime, error)
+    fun updateTurret (deltaTime: Duration, error: Double, robotAngularVelocity: AngularVelocity = 0.radsec) {
+        powerTurret = computeHeadingPower(deltaTime, error, robotAngularVelocity)
     }
 
     fun addTelemetry(telemetry: Telemetry) {
