@@ -10,8 +10,10 @@ import com.acmerobotics.roadrunner.ParallelAction
 import com.acmerobotics.roadrunner.SequentialAction
 import com.acmerobotics.roadrunner.VelConstraint
 import com.commonlibs.units.Pose
+import com.commonlibs.units.SleepAction
 import com.commonlibs.units.deg
 import com.commonlibs.units.inch
+import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.library.TimeKeep
@@ -27,8 +29,8 @@ class BigTriangleBlueSolo : LinearOpMode() {
 
     val rightIntakePose = Pose(36.inch, -28.inch, -90.0.deg)
     val rightIntakePoseBack = Pose(36.inch, -58.inch, -90.0.deg)
-    val middleIntakePose = Pose(14.inch, -26.inch, -90.0.deg)
-    val middleIntakePoseBack = Pose(11.inch, -51.inch, -90.0.deg)
+    val middleIntakePose = Pose(14.inch, -25.inch, -90.0.deg)
+    val middleIntakePoseBack = Pose(10.inch, -51.inch, -90.0.deg)
     val openGatePose = Pose(6.inch, -56.inch, -90.deg)
     val leftIntakePose = Pose(-12.inch, -28.inch, -90.0.deg)
     val leftIntakePoseBack = Pose(-12.inch, -53.inch, -90.0.deg)
@@ -91,6 +93,7 @@ class BigTriangleBlueSolo : LinearOpMode() {
                         .build(),
                     robot.intakeBalls(shootPositions[2])
                 ),
+                SleepAction(0.2.s),
 
                 ParallelAction(
                     robot.drive.actionBuilder(middleIntakePoseBack)
