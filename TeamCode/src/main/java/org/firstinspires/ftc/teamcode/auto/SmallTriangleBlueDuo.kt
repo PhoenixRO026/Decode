@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
 import org.firstinspires.ftc.teamcode.robot.Spindexer
 
 @Autonomous
-class SmallTriangleBlueDuo : LoggedOpMode() {
+class SmallTriangleBlueDuo : LinearOpMode() {
     val startPose = Pose(63.inch, -11.inch, 180.0.deg)
     val smallTrianglePose = Pose(49.inch, -11.inch, -90.0.deg)
     val rightIntakePose = Pose(36.inch, -28.inch, -90.0.deg)
@@ -52,7 +52,7 @@ class SmallTriangleBlueDuo : LoggedOpMode() {
 
         val slowSpeed: VelConstraint = MinVelConstraint(
             listOf(
-                kinematics.WheelVelConstraint(25.0),
+                kinematics.WheelVelConstraint(28.0),
                 AngularVelConstraint(Math.toRadians(180.0))
             )
         )

@@ -27,7 +27,7 @@ class BigTriangleBlueSolo : LinearOpMode() {
 
     val rightIntakePose = Pose(36.inch, -28.inch, -90.0.deg)
     val rightIntakePoseBack = Pose(36.inch, -58.inch, -90.0.deg)
-    val middleIntakePose = Pose(13.inch, -26.inch, -90.0.deg)
+    val middleIntakePose = Pose(14.inch, -26.inch, -90.0.deg)
     val middleIntakePoseBack = Pose(11.inch, -51.inch, -90.0.deg)
     val openGatePose = Pose(6.inch, -56.inch, -90.deg)
     val leftIntakePose = Pose(-12.inch, -28.inch, -90.0.deg)
@@ -55,7 +55,7 @@ class BigTriangleBlueSolo : LinearOpMode() {
 
         val slowSpeed: VelConstraint = MinVelConstraint(
             listOf(
-                kinematics.WheelVelConstraint(25.0),
+                kinematics.WheelVelConstraint(20.0),
                 AngularVelConstraint(Math.toRadians(180.0))
             )
         )

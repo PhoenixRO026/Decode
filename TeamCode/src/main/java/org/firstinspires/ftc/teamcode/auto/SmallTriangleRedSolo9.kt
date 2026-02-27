@@ -27,11 +27,11 @@ class SmallTriangleRedSolo9 : LinearOpMode() {
     val bigTrianglePose = Pose(-6.inch, 11.inch, 90.0.deg)
 
     val rightIntakePose = Pose(36.inch, 28.inch, 90.0.deg)
-    val rightIntakePoseBack = Pose(36.inch, 55.inch, 90.0.deg)
-    val middleIntakePose = Pose(12.inch, 28.inch, 90.0.deg)
-    val middleIntakePoseBack = Pose(12.inch, 55.inch, 90.0.deg)
+    val rightIntakePoseBack = Pose(36.inch, 58.inch, 90.0.deg)
+    val middleIntakePose = Pose(13.inch, 28.inch, 90.0.deg)
+    val middleIntakePoseBack = Pose(13.inch, 58.inch, 90.0.deg)
     val leftIntakePose = Pose(-12.inch, 28.inch, 90.0.deg)
-    val leftIntakePoseBack = Pose(-12.inch, 50.inch, 90.0.deg)
+    val leftIntakePoseBack = Pose(-12.inch, 52.inch, 90.0.deg)
 
 
     val humanIntakePose = Pose(55.inch, -59.inch, 300.0.deg)
@@ -90,7 +90,7 @@ class SmallTriangleRedSolo9 : LinearOpMode() {
                 ParallelAction(
                     robot.drive.actionBuilder(rightIntakePose)
                         .setTangent(90.deg)
-                        .lineToY(55.inch, slowSpeed)
+                        .lineToY(58.inch, slowSpeed)
                         .build(),
                     robot.intakeBalls(shootPositions[1])
                 ),
@@ -117,7 +117,7 @@ class SmallTriangleRedSolo9 : LinearOpMode() {
 
                 ParallelAction(
                     robot.drive.actionBuilder(middleIntakePose)
-                        .lineToY(55.inch, slowSpeed)
+                        .lineToY(58.inch, slowSpeed)
                         .build(),
                     robot.intakeBalls(shootPositions[2])
                 ),
@@ -145,7 +145,7 @@ class SmallTriangleRedSolo9 : LinearOpMode() {
                 ParallelAction(
                     robot.drive.actionBuilder(leftIntakePose)
                         .setTangent(90.deg)
-                        .lineToY(50.inch, slowSpeed)
+                        .lineToY(52.inch, slowSpeed)
                         .build(),
                     robot.intakeBalls(shootPositions[3])
                 ),
