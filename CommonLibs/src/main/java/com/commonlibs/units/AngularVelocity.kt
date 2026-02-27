@@ -2,7 +2,7 @@
 
 package com.commonlibs.units
 
-data class AngularVelocity(@JvmField var angle: Angle, @JvmField var duration: Duration) {
+data class AngularVelocity(@JvmField var angle: Angle, @JvmField var duration: Duration): MeasuredUnit {
     val asRadSec get() = this / (RAD / S)
     val asDegSec get() = this / (DEG / S)
     val asRevSec get() = this / (REV / S)
@@ -19,6 +19,8 @@ data class AngularVelocity(@JvmField var angle: Angle, @JvmField var duration: D
     operator fun div(duration: Duration) = AngularAcceleration(this, duration)
 
     override fun toString() = "$angle per " + if (duration.asS == 1.0) "second" else "$duration"
+    override val value by ::asRadSec
+    override val unit = "radian per second"
 }
 
 val Number.radsec get() = this.rad / S

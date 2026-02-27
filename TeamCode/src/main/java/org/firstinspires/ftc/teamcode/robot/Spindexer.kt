@@ -21,8 +21,8 @@ class Spindexer(
 {
     @Config
     data object TransferConfig {
-        @JvmField val fingerUpPosition = 0.65
-        @JvmField val fingerDownPosition = 0.9
+        @JvmField val fingerUpPosition = 0.1672
+        @JvmField val  fingerDownPosition = 0.0067
         @JvmField val shootOffset = 0.07
     }
 
@@ -37,11 +37,11 @@ class Spindexer(
         intake0(0.0400, 0),
         intake1(0.2328, 1),
         intake2(0.4300, 2),
-        shoot0(0.1400, 0),
-        shoot1(0.3317, 1),
-        shoot2(0.5222, 2),
-        pseudo0(0.7044, 0),
-        pseudo1(0.89, 1)
+        shoot2(0.1400, 2),
+        shoot0(0.3317, 0),
+        shoot1(0.5222, 1),
+        pseudo2(0.7044, 2),
+        pseudo0(0.89, 0)
     }
     val slots: MutableList<BallColor> = mutableListOf(
         BallColor.EMPTY,
@@ -69,15 +69,34 @@ class Spindexer(
             else -> {}
         }
 
-        val lowerPos = findPreviousShoot(pos)
+        val lowerPos = findPreviousShootIndex(pos)
 
-        val upperPos = findNextShoot(pos)
+        val upperPos = findNextShootIndex(pos)
+
+        if (pos == TransferPos.intake0) {
+            if (slots[pos.index] == target) {
+                return TransferPos.shoot0
+            }
+
+            if (slots[upperPos.index] == target) {
+                return upperPos
+            }
+        }
 
         if (slots[lowerPos.index] == target) {
             return lowerPos
         }
         if (slots[upperPos.index] == target) {
             return upperPos
+        }
+
+        if (slots[pos.index] == target) {
+            return when (pos) {
+                TransferPos.intake0 -> TransferPos.shoot0
+                TransferPos.intake1 -> TransferPos.shoot1
+                TransferPos.intake2 -> TransferPos.shoot2
+                else -> null
+            }
         }
 
         return null
@@ -110,7 +129,7 @@ class Spindexer(
 
 
     fun updateBallSlot() {
-        updateHue()
+        //updateHue()
         updateSlot(currentPos, sensorColor)
     }
 
@@ -120,24 +139,35 @@ class Spindexer(
 
     fun findNextShoot(pos: TransferPos) = when (pos) {
         TransferPos.intake0 -> TransferPos.shoot2
-        TransferPos.intake1 -> TransferPos.shoot0
-        TransferPos.intake2 -> TransferPos.shoot1
+        TransferPos.intake1 -> TransferPos.shoot2
+        TransferPos.intake2 -> TransferPos.shoot0
+        TransferPos.shoot1 -> TransferPos.pseudo2
+        TransferPos.shoot2 -> TransferPos.shoot0
         TransferPos.shoot0 -> TransferPos.shoot1
-        TransferPos.shoot1 -> TransferPos.shoot2
-        TransferPos.shoot2 -> TransferPos.pseudo0
-        TransferPos.pseudo0 -> TransferPos.pseudo1
-        TransferPos.pseudo1 -> TransferPos.shoot0
+        TransferPos.pseudo2 -> TransferPos.pseudo0
+        TransferPos.pseudo0 -> TransferPos.shoot1
     }
 
-    fun findPreviousShoot(pos: TransferPos) = when (pos) {
-        TransferPos.intake0 -> TransferPos.shoot1
+    fun findNextShootIndex(pos: TransferPos) = when (pos) {
+        TransferPos.intake0 -> TransferPos.shoot2
+        TransferPos.intake1 -> TransferPos.shoot0
+        TransferPos.intake2 -> TransferPos.shoot1
+        TransferPos.shoot1 -> TransferPos.pseudo2
+        TransferPos.shoot2 -> TransferPos.shoot0
+        TransferPos.shoot0 -> TransferPos.shoot1
+        TransferPos.pseudo2 -> TransferPos.pseudo0
+        TransferPos.pseudo0 -> TransferPos.shoot1
+    }
+
+    fun findPreviousShootIndex(pos: TransferPos) = when (pos) {
+        TransferPos.intake0 -> TransferPos.shoot0
         TransferPos.intake1 -> TransferPos.shoot2
         TransferPos.intake2 -> TransferPos.shoot0
         TransferPos.shoot0 -> TransferPos.shoot2
-        TransferPos.shoot1 -> TransferPos.shoot0
         TransferPos.shoot2 -> TransferPos.shoot1
-        TransferPos.pseudo0 -> TransferPos.shoot2
-        TransferPos.pseudo1 -> TransferPos.pseudo0
+        TransferPos.shoot1 -> TransferPos.shoot0
+        TransferPos.pseudo2 -> TransferPos.shoot1
+        TransferPos.pseudo0 -> TransferPos.pseudo2
     }
 
     fun goToNextShoot() {
@@ -148,11 +178,11 @@ class Spindexer(
         TransferPos.intake0 -> TransferPos.intake1
         TransferPos.intake1 -> TransferPos.intake2
         TransferPos.intake2 -> TransferPos.intake0
-        TransferPos.shoot0 -> TransferPos.intake2
+        TransferPos.shoot0 -> TransferPos.intake0
         TransferPos.shoot1 -> TransferPos.intake0
-        TransferPos.shoot2 -> TransferPos.intake1
-        TransferPos.pseudo0 -> TransferPos.intake2
-        TransferPos.pseudo1 -> TransferPos.intake2
+        TransferPos.shoot2 -> TransferPos.intake0
+        TransferPos.pseudo2 -> TransferPos.intake0
+        TransferPos.pseudo0 -> TransferPos.intake0
     }
 
     fun goToNextIntake() {
@@ -170,12 +200,12 @@ class Spindexer(
     var hsv = floatArrayOf(0f, 0f, 0f)
 
     val sensorColor get() = when {
-        hsv[1] != 0f && sensorHue in 190f..250f -> BallColor.PURPLE
-        hsv[1] != 0f && sensorHue in 120f..180f -> BallColor.GREEN
+        hsv[1] != 0f && sensorHue in 180f..250f -> BallColor.PURPLE
+        hsv[1] != 0f && sensorHue in 120f..179f -> BallColor.GREEN
         else -> BallColor.EMPTY
     }
 
-    fun updateHue() {
+    fun  updateHue() {
         val normalizedColors = colorSensor.normalizedColors
         Color.RGBToHSV(
             (normalizedColors.red * 256).toInt(),
@@ -213,11 +243,20 @@ class Spindexer(
         SleepAction(maxTime)
     )
 
-    fun waitForColors(duration: Duration) = RaceAction(
+    fun waitForAnyColor(maxTime: Duration = 1.s) = RaceAction(
+        {
+            updateHue()
+            it.addLine("Waiting for any ball")
+            sensorColor == BallColor.EMPTY
+        },
+        SleepAction(maxTime)
+    )
+
+    fun waitForColors(duration: Duration) = waitForAnyColor(duration)/*RaceAction(
         waitForColorAction(BallColor.PURPLE, duration),
         waitForColorAction(BallColor.GREEN, duration),
         SleepAction(duration)
-    )
+    )*/
 
     fun addTelemetry(telemetry: Telemetry) {
         telemetry.addData("spindexer pos", currentPos)

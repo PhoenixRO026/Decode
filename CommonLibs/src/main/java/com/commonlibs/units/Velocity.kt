@@ -2,7 +2,7 @@
 
 package com.commonlibs.units
 
-data class Velocity(@JvmField var distance: Distance, @JvmField var duration: Duration) {
+data class Velocity(@JvmField var distance: Distance, @JvmField var duration: Duration): MeasuredUnit {
     val asMSec get() = this / (M / S)
     val asCmSec get() = this / (CM / S)
     val asMmSec get() = this / (MM / S)
@@ -19,6 +19,8 @@ data class Velocity(@JvmField var distance: Distance, @JvmField var duration: Du
     operator fun div(duration: Duration) = Acceleration(this, duration)
 
     override fun toString() = "$distance per " + if (duration.asS == 1.0) "second" else "$duration"
+    override val value by ::asMSec
+    override val unit = "meter per second"
 }
 
 val Number.msec get() = this.m / S

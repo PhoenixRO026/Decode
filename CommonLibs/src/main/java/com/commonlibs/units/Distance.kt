@@ -10,7 +10,7 @@ import kotlin.math.sin
 
 data class Distance(
     @JvmField var asInch: Double
-) {
+): MeasuredUnit {
     val asCm get() = asInch.inchToCm()
     val asMm get() = asInch.inchToMm()
     val asM get() = asInch.inchToM()
@@ -27,6 +27,8 @@ data class Distance(
     operator fun unaryMinus() = Distance(-asInch)
 
     override fun toString() = "$asInch " + if (asInch == 1.0) "inch" else "inches"
+    override val value by ::asCm
+    override val unit = "centimeter"
 }
 
 fun Number.cmToInch() = toDouble() / 2.54

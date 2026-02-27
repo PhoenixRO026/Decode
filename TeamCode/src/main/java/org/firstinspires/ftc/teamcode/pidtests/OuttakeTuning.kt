@@ -12,8 +12,11 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
+import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
+import org.firstinspires.ftc.teamcode.robot.Shooter
+import org.firstinspires.ftc.teamcode.robot.Spindexer
 
 @TeleOp
 class OuttakeTuning : LinearOpMode() {
@@ -29,9 +32,11 @@ class OuttakeTuning : LinearOpMode() {
         @JvmField
         var targetRpm = 0.0
         @JvmField
-        var kS = 0.8
+        var kS = 1.4
         @JvmField
-        var kV = 0.002146
+        var kV = 0.0029
+        @JvmField
+        var fingerUp = false
     }
 
     override fun runOpMode() {
@@ -54,14 +59,22 @@ class OuttakeTuning : LinearOpMode() {
 
         val voltageSensor = hardwareMap.voltageSensor.iterator().next()
 
+        val finger = hardwareMap.get(Servo::class.java, "finger")
+
         val timeKeep = TimeKeep()
-        fun rpm() = encoderOuttake.getPositionAndVelocity().velocity / 28.0 * 60
+        fun rpm() = encoderOuttake.getPositionAndVelocity().velocity / 28.0 * 60 * Shooter.ShooterConfig.gearRatio
         var shooterPower: Double
 
         waitForStart()
 
         while (opModeIsActive()) {
             timeKeep.resetDeltaTime()
+
+            if (OuttakeTuningConfig.fingerUp) {
+                finger.position = Spindexer.TransferConfig.fingerUpPosition
+            } else {
+                finger.position = Spindexer.TransferConfig.fingerDownPosition
+            }
 
             val voltage = voltageSensor.voltage
 

@@ -4,7 +4,7 @@ package com.commonlibs.units
 
 import com.acmerobotics.roadrunner.SleepAction
 
-class Duration(@JvmField var asS: Double) {
+class Duration(@JvmField var asS: Double): MeasuredUnit {
     val asMs get() = asS.sToMs()
     val asMin get() = asS.sToMin()
 
@@ -17,6 +17,8 @@ class Duration(@JvmField var asS: Double) {
     operator fun compareTo(other: Duration) = asS.compareTo(other.asS)
 
     override fun toString() = "$asS " + if (asS == 1.0) "second" else "seconds"
+    override val value by ::asS
+    override val unit = "second"
 }
 
 object Time {

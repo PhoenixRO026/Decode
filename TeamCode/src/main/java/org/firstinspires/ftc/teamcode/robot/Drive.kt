@@ -19,7 +19,7 @@ class Drive(
     @Config
     data object DriveConfig {
         @JvmField
-        var slowSpeed = 0.2
+        var slowSpeed = 0.4
     }
 
     private var headingOffset = 0.0
@@ -35,8 +35,8 @@ class Drive(
         headingOffset = mecanumDrive.localizer.pose.heading.toDouble()
     }
 
-    fun updatePoseEstimateOdo() {
-        mecanumDrive.updatePoseEstimate()
+    fun updatePoseEstimateOdo(): PoseVelocity2d {
+        return mecanumDrive.updatePoseEstimate()
     }
 
     fun driveFieldCentric(forward: Double, left: Double, rotate: Double) {

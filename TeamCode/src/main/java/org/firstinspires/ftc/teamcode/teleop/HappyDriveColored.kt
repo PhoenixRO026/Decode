@@ -3,11 +3,11 @@ package org.firstinspires.ftc.teamcode.teleop
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 
 @TeleOp
-class BlindDriveBlue : BlindDriveTurret() {
+class HappyDriveBlue : HappyDrive() {
     override val pipeline = 1
 }
 
 @TeleOp
-class BlindDriveRed : BlindDriveTurret() {
+class HappyDriveRed : HappyDrive() {
     override val pipeline = 2
 }

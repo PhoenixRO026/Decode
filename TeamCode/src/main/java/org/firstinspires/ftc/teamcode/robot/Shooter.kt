@@ -6,13 +6,20 @@ import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.ParallelAction
 import com.acmerobotics.roadrunner.ftc.Encoder
+import com.commonlibs.units.AngularVelocity
 import com.commonlibs.units.Duration
+import com.commonlibs.units.deg
+import com.commonlibs.units.radsec
+import com.commonlibs.units.rev
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.VoltageSensor
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
 import org.firstinspires.ftc.teamcode.robot.LimeLightCore.LimeLightConfig
+import org.psilynx.psikit.core.Logger
 import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 class Shooter(
     val motorTop: DcMotorEx,
@@ -27,15 +34,16 @@ class Shooter(
     data object ShooterConfig {
         @JvmField
         var controllerRpm = PIDController(
-            kP = 0.0015,
-            kD = 0.00015,
-            kI = 0.000001,
+            kP = 0.004,
+            kD = 0.00004,
+            kI = 0.018,
             stabilityThreshold = 50.0
         )
+        @JvmField var robotAngularVelkP = 0.15
         @JvmField var targetRpmTolerance = 50
 
-        @JvmField var kS = 0.06
-        @JvmField var kV = 0.00303
+        @JvmField var kS = 1.4
+        @JvmField var kV = 0.0029
 
         @JvmField
         var controllerTurret = PIDController(
@@ -50,17 +58,23 @@ class Shooter(
         @JvmField var minTurretPosition = -14000.0
         @JvmField var maxTurretPosition = 14000.0
         @JvmField var limitTolerence = 50
+        @JvmField var gearRatio = 23.0 / 30.0
+        @JvmField var rpmFar = 3200.0
+        @JvmField var rpmClose = 2975.0
+        @JvmField var rpmRest = 1000.0
+        @JvmField var shootClosePos = 5600.0
+        @JvmField var shootFarPos = 7200.0
+        // in dreapta creste pozitia
     }
 
-    val rpm get() = encoderOuttake.getPositionAndVelocity().velocity / 28.0 * 60
+    val rpm get() = encoderOuttake.getPositionAndVelocity().velocity / 28.0 * 60 * ShooterConfig.gearRatio
 
-    var rpmFar : Double = 3900.0
-    var rpmClose : Double = 2700.0
+    var rpmFar by ShooterConfig::rpmFar
+    var rpmClose by ShooterConfig::rpmClose
+    var rpmRest by ShooterConfig::rpmRest
 
-    var rpmRest : Double = 1000.0
-
-    var shootClosePos : Double = 5300.0
-    var shootFarPos : Double = 6769.0
+    var shootClosePos by ShooterConfig::shootClosePos
+    var shootFarPos by ShooterConfig::shootFarPos
 
     var targetRpm = 0.0
 
@@ -88,9 +102,11 @@ class Shooter(
             motorTurret.power = value
         }
 
-    private var offset = 0.0
+    private var offset = encoderTurret.getPositionAndVelocity().position
 
     val turretPosition get() = encoderTurret.getPositionAndVelocity().position - offset
+
+    val turretAngle = (turretPosition / ShooterConfig.ticksPerRev + 360.0).deg
 
     var targetPos = 0.0
 
@@ -151,23 +167,31 @@ class Shooter(
         powerTurret = ShooterConfig.controllerTurret.calculate(turretPosition, targetPos, deltaTime)
     }
 
-    private fun computeHeadingPower(dt: Duration, error: Double): Double {
-        if (turretPosition >= ShooterConfig.maxTurretPosition && error > 0 ) {
-            return 0.0
-        } else if (turretPosition <= ShooterConfig.minTurretPosition && error < 0 ){
-            return 0.0
-        }
-        var raw = LimeLightConfig.controller.calculate(0.0, error, dt)
+    private fun computeHeadingPower(dt: Duration, error: Double, robotAngularVelocity: AngularVelocity = 0.radsec): Double {
+        var raw = LimeLightConfig.controller.calculate(0.0, error, dt) +
+                robotAngularVelocity.asRadSec * ShooterConfig.robotAngularVelkP
+
         if(abs(raw) < 0.05)
             raw = 0.0
+
+        if (turretPosition >= ShooterConfig.maxTurretPosition /*&& error > 0*/ ) {
+            raw = min(raw, 0.0)
+        } else if (turretPosition <= ShooterConfig.minTurretPosition /*&& error < 0*/ ){
+            raw = max(raw, 0.0)
+        }
+
         return raw.coerceIn(-1.0, 1.0)
     }
 
-    fun updateTurret (deltaTime: Duration, error: Double) {
-        powerTurret = computeHeadingPower(deltaTime, error)
+    fun updateTurret (deltaTime: Duration, error: Double, robotAngularVelocity: AngularVelocity = 0.radsec) {
+        powerTurret = computeHeadingPower(deltaTime, error, robotAngularVelocity)
     }
 
     fun addTelemetry(telemetry: Telemetry) {
+        Logger.recordOutput("Shooter/Outtake power", powerShooter)
+        Logger.recordOutput("Shooter/Outtake rpm", rpm)
+        Logger.recordOutput("Shooter/Turret power", powerTurret)
+        Logger.recordOutput("Shooter/Turret pos", turretPosition)
         telemetry.addData("Outtake power", powerShooter)
         telemetry.addData("Outtake rpm", rpm)
         telemetry.addData("Turret power", powerTurret)

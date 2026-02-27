@@ -10,7 +10,6 @@ import com.acmerobotics.roadrunner.SequentialAction
 import com.commonlibs.units.Pose
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
-import com.commonlibs.units.radsec
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.library.TimeKeep
@@ -21,17 +20,14 @@ import org.firstinspires.ftc.teamcode.robot.Spindexer
 
 
 @TeleOp
-open class HappyDrive : LinearOpMode(){
+open class DebugTele : LinearOpMode(){
     open val pipeline: Int = 1
     @Config
-    data object HappyDrive {
-        @JvmField var rpmSmall = 3300.0
-        @JvmField var rpmBig = 2975.0
-
-        @JvmField var rpmRest = 1200.0
+    data object BlindDrive {
+        @JvmField var rpmSmall = 3300
+        @JvmField var rpmBig = 2800
     }
     private var driver1Action: Action? = null
-    private var driver1ActionIsIntake: Boolean = false
 
     override fun runOpMode() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
@@ -47,7 +43,6 @@ open class HappyDrive : LinearOpMode(){
         val highRpm = ButtonReader {gamepad2.right_bumper}
         val lowRpm = ButtonReader {gamepad2.left_bumper}
         val stopShooter = ButtonReader {gamepad2.dpad_left}
-        val restShooter = ButtonReader {gamepad2.dpad_right}
         val intakeBalls = ToggleButtonReader ({gamepad1.x})
         val buttons = listOf(shootGreen, shootPurple, shootAll, highRpm, lowRpm, stopShooter, intakeBalls)
 
@@ -60,7 +55,7 @@ open class HappyDrive : LinearOpMode(){
         while (opModeIsActive()) {
             timeKeep.resetDeltaTime()
             buttons.forEach { it.readValue() }
-            val robotVel = robot.drive.updatePoseEstimateOdo()
+            robot.drive.updatePoseEstimateOdo()
 
             /// Drive
 
@@ -79,60 +74,25 @@ open class HappyDrive : LinearOpMode(){
                 robot.drive.resetFieldCentric()
             }
 
-            /// Intake
-            if (intakeBalls.state) {
-                // If toggle turned on, and no current action, start a NEW intake action
-                if (driver1Action == null) {
-                    driver1Action = SequentialAction(
-                        robot.intakeTeleBalls(),
-                        InstantAction { intakeBalls.setState(false) }
-                    )
-                    driver1ActionIsIntake = true
-                }
-            } else {
-                if (driver1ActionIsIntake) {
-                    driver1Action = null
-                    driver1ActionIsIntake = false
-                    // stop intake motors immediately (safe fallback)
-                    robot.intake.power = 0.0
-                }
-
-                /// Intake
-                if (gamepad1.right_bumper) {
-                    robot.intake.power = 1.0
-                } else if (gamepad1.left_bumper) {
-                    robot.intake.power = -1.0
-                } else {
-                    robot.intake.power = 0.0
-                }
-
-                if (shootGreen.wasJustPressed() && driver1Action == null) {
-                    driver1Action = robot.shootGreen()
-                }
-                if (shootPurple.wasJustPressed() && driver1Action == null) {
-                    driver1Action = robot.shootPurple()
-                }
-                if (shootAll.wasJustPressed() && driver1Action == null) {
-                    driver1Action = robot.shootBallsTele()
-                }
+            if(gamepad1.dpad_left) {
+                driver1Action = robot.intakeBalls(Spindexer.TransferPos.shoot0)
             }
-
-            if (highRpm.wasJustPressed()) { /// shoot far
-                robot.shooter.goToRmp(HappyDrive.rpmSmall)
-            } else if (lowRpm.wasJustPressed()) { /// shoot close
-                robot.shooter.goToRmp(HappyDrive.rpmBig)
-            } else if (restShooter.wasJustPressed()) { /// stop shoot
-                robot.shooter.goToRmp(HappyDrive.rpmRest)
-            } else if (stopShooter.wasJustPressed()) { /// stop shoot
+            if(gamepad1.dpad_down) {
+                driver1Action = robot.intakeBalls(Spindexer.TransferPos.shoot1)
+            }
+            if(gamepad1.dpad_right) {
+                driver1Action = robot.intakeBalls(Spindexer.TransferPos.shoot2)
+            }
+            if (gamepad1.a) {
+                driver1Action = robot.shootBalls(robot.shooter.rpmFar)
+            }
+            if (gamepad1.x) {
+                robot.shooter.goToRmp(robot.shooter.rpmFar)
+            }
+            if (gamepad1.b) {
                 robot.shooter.goToRmp(0.0)
             }
-
-
             robot.shooter.updateRpm(timeKeep.deltaTime)
-            robot.limelight.updateHeadingError()
-            robot.shooter.updateTurret(timeKeep.deltaTime, robot.limelight.headingErrorDeg, robotVel.angVel.radsec)
-
-            robot.shooter.addTelemetry(telemetry)
 
             telemetry.addData("transfer pos", when (robot.transfer.currentPos) {
                 Spindexer.TransferPos.intake0 -> "intake0"

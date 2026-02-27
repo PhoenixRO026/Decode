@@ -5,7 +5,7 @@ package com.commonlibs.units
 import com.acmerobotics.roadrunner.Rotation2d
 import kotlin.math.PI
 
-data class Angle(@JvmField var asDeg: Double) {
+data class Angle(@JvmField var asDeg: Double): MeasuredUnit {
     val asRev get() = asDeg.degToRev()
     val asRad get() = asDeg.degToRad()
 
@@ -23,6 +23,8 @@ data class Angle(@JvmField var asDeg: Double) {
     override fun toString() = "$asDeg " + if (asDeg == 1.0) "degree" else "degrees"
 
     fun coerceIn(minAng: Angle, maxAng: Angle) = Angle(asDeg.coerceIn(minAng.asDeg, maxAng.asDeg))
+    override val value by ::asRad
+    override val unit = "radian"
 }
 
 fun Number.degToRev() = toDouble() / 360.0

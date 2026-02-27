@@ -22,15 +22,10 @@ import org.firstinspires.ftc.teamcode.robot.Spindexer
 @Autonomous
 class BigTriangleBLUEDuo : LinearOpMode() {
     val startPose = Pose(-61.5.inch, -38.inch, 90.0.deg)
-    val smallTrianglePose = Pose(55.inch, -10.inch, -90.deg)
-    val bigTrianglePose = Pose(-14.inch, -16.inch, -90.0.deg)
-
-    val rightIntakePose = Pose(36.inch, -30.inch, -90.0.deg)
-    val rightIntakePoseBack = Pose(36.inch, -47.inch, -90.0.deg)
-    val middleIntakePose = Pose(10.inch, -30.inch, -90.0.deg)
-    val middleIntakePoseBack = Pose(10.inch, -58.inch, -90.0.deg)
-    val leftIntakePose = Pose(-12.inch, -30.inch, -90.0.deg)
-    val leftIntakePoseBack = Pose(-12.inch, -47.inch, -90.0.deg)
+    val bigTrianglePose = Pose(-5.inch, -16.inch, -90.0.deg)
+    val middleIntakePose = Pose(12.inch, -28.inch, -90.0.deg)
+    val middleIntakePoseBack = Pose(6.inch, -52.inch, -90.0.deg)
+    val leftIntakePoseBack = Pose(-12.inch, -52.inch, -90.0.deg)
 
     val openGatePose = Pose(10.inch, -58.inch, -130.deg)
 
@@ -78,15 +73,14 @@ class BigTriangleBLUEDuo : LinearOpMode() {
 
                 robot.shootBalls(),
 
-                // bigTriangle -> middleIntake
                 ParallelAction(
                     robot.drive.actionBuilder(bigTrianglePose)
                         .setTangent(0.deg)
                         .splineToLinearHeading(middleIntakePose, -90.deg)
-                        .build()
+                        .build(),
+                    robot.intake.startIntakeAction(),
                 ),
 
-                // middleIntake -> Y -47
                 ParallelAction(
                     robot.drive.actionBuilder(middleIntakePose)
                         .setTangent(-90.deg)

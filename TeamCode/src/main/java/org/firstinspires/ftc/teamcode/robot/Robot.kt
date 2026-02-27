@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.robot
 
 import com.acmerobotics.roadrunner.InstantAction
+import com.acmerobotics.roadrunner.ParallelAction
 import com.acmerobotics.roadrunner.SequentialAction
 import com.acmerobotics.roadrunner.SleepAction
 import com.acmerobotics.roadrunner.ftc.Encoder
@@ -42,14 +43,14 @@ class Robot(
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
         SleepAction(0.65.s),
-        transfer.waitForColors(2.0.s),
+        transfer.waitForColors(1.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
         SleepAction(0.65.s),
-        transfer.waitForColors(2.0.s),
+        transfer.waitForColors(1.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToPosAction(nextShoot),
-        SleepAction(0.5.s),
+        SleepAction(0.15.s),
         intake.spew(),
     )
 
@@ -59,28 +60,46 @@ class Robot(
         transfer.waitForColors(7.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
-        SleepAction(0.65.s),
+        SleepAction(0.6.s),
         transfer.waitForColors(7.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
-        SleepAction(0.65.s),
+        SleepAction(0.6.s),
         transfer.waitForColors(7.0.s),
         InstantAction{transfer.updateBallSlot()},
+        intake.spew(),
         transfer.goToPosAction(Spindexer.TransferPos.shoot0),
-        SleepAction(0.5.s),
+        SleepAction(0.6.s),
     )
 
     fun shootBall() = SequentialAction(
         SleepAction(0.2.s),
         InstantAction{transfer.fingerUp()},
-        SleepAction(0.35.s),
+        SleepAction(0.2.s),
         InstantAction{transfer.fingerDown()},
-        SleepAction(0.175.s),
+        SleepAction(0.2.s),
         InstantAction{transfer.emptySlot(transfer.currentPos)}
     )
 
-    fun shootBalls(rpm: Double = shooter.rpmClose) = SequentialAction (
+    fun shootBalls(rpm: Double = shooter.rpmFar) = SequentialAction (
+        //SleepAction(0.5.s),
         shooter.goToRpmAction(rpm),
+        shootBall(),
+        transfer.goToNextShootAction(),
+        SleepAction(0.1.s),
+        shootBall(),
+        transfer.goToNextShootAction(),
+        SleepAction(0.1.s),
+        shootBall(),
+        ParallelAction(
+            transfer.goToPosAction(Spindexer.TransferPos.intake0),
+            shooter.goToRpmAction(shooter.rpmRest)
+        )
+    )
+
+    fun shootBallsTele() = SequentialAction (
+        transfer.goToPosAction(Spindexer.TransferPos.shoot0),
+        shooter.goToRpmAction(shooter.targetRpm),
         shootBall(),
         transfer.goToNextShootAction(),
         shootBall(),
