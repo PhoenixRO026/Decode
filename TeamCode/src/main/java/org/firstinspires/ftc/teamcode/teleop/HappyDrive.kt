@@ -83,6 +83,7 @@ open class HappyDrive : LinearOpMode(){
                     )
                 }
             } else {
+                driver1Action = null
                 /// Intake
                 if (gamepad1.right_bumper) {
                     robot.intake.power = 1.0
@@ -104,9 +105,9 @@ open class HappyDrive : LinearOpMode(){
             }
 
             if (highRpm.wasJustPressed()) { /// shoot far
-                robot.shooter.goToRmp(HappyDrive.rpmBig)
-            } else if (lowRpm.wasJustPressed()) { /// shoot close
                 robot.shooter.goToRmp(HappyDrive.rpmSmall)
+            } else if (lowRpm.wasJustPressed()) { /// shoot close
+                robot.shooter.goToRmp(HappyDrive.rpmBig)
             } else if (stopShooter.wasJustPressed()) { /// stop shoot
                 robot.shooter.goToRmp(0.0)
             }
