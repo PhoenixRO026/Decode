@@ -27,8 +27,8 @@ class BigTriangleRedSolo : LinearOpMode() {
 
     val rightIntakePose = Pose(36.inch, 24.inch, 90.0.deg)
     val rightIntakePoseBack = Pose(36.inch, 58.inch, 90.0.deg)
-    val middleIntakePose = Pose(13.inch, 24.inch, 90.0.deg)
-    val middleIntakePoseBack = Pose(11.inch, 51.inch, 90.0.deg)
+    val middleIntakePose = Pose(13.inch, 23.inch, 90.0.deg)
+    val middleIntakePoseBack = Pose(10.5.inch, 51.inch, 90.0.deg)
     val openGatePose = Pose(6.inch, 56.inch, 90.deg)
     val leftIntakePose = Pose(-12.inch, 24.inch, 90.0.deg)
     val leftIntakePoseBack = Pose(-12.inch, 53.inch, 90.0.deg)
@@ -143,7 +143,7 @@ class BigTriangleRedSolo : LinearOpMode() {
                 ParallelAction(
                     robot.drive.actionBuilder(rightIntakePoseBack)
                         .setTangent(-90.deg)
-                        .strafeToLinearHeading(smallTrianglePose)
+                        .splineToLinearHeading(smallTrianglePose, 0.0.deg)
                         .build(),
                     robot.shooter.turretToPosAction(-robot.shooter.shootFarPos),
                     robot.shooter.goToRpmAction(robot.shooter.rpmFar)

@@ -67,7 +67,7 @@ class SmallTriangleRedDuo : LoggedOpMode() {
                         .strafeToLinearHeading(smallTrianglePose)
                         .build(),
                     robot.shooter.goToRpmAction(robot.shooter.rpmFar),
-                    robot.transfer.goToPosAction(Spindexer.TransferPos.shoot0),
+                    robot.transfer.goToPosAction(shootPositions[0]),
                     robot.shooter.turretToPosAction(-robot.shooter.shootFarPos)
                 ),
 
@@ -86,7 +86,7 @@ class SmallTriangleRedDuo : LoggedOpMode() {
                         .setTangent(90.deg)
                         .lineToY(55.inch, slowSpeed)
                         .build(),
-                    robot.intakeBalls(shootPositions[0])
+                    robot.intakeBalls(shootPositions[1])
                 ),
 
                 ParallelAction(

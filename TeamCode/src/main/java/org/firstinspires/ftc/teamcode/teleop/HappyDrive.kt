@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.buttons.ButtonReader
 import org.firstinspires.ftc.teamcode.library.buttons.ToggleButtonReader
 import org.firstinspires.ftc.teamcode.robot.Robot
+import org.firstinspires.ftc.teamcode.robot.Shooter.MODE
 import org.firstinspires.ftc.teamcode.robot.Spindexer
 
 
@@ -125,6 +126,19 @@ open class HappyDrive : LinearOpMode(){
                 robot.shooter.goToRmp(HappyDrive.rpmRest)
             } else if (stopShooter.wasJustPressed()) { /// stop shoot
                 robot.shooter.goToRmp(0.0)
+            }
+
+            if (gamepad2.left_trigger_pressed) {
+                robot.shooter.currentMode = MODE.MANUAL
+                robot.shooter.powerTurret = -0.5
+            }
+            else if (gamepad2.right_trigger_pressed) {
+                robot.shooter.currentMode = MODE.MANUAL
+                robot.shooter.powerTurret = 0.5
+            }
+            else {
+                robot.shooter.currentMode = MODE.PID
+                robot.shooter.powerTurret = 0.0
             }
 
 

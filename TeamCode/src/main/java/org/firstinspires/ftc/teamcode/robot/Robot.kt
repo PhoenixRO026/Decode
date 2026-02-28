@@ -97,6 +97,22 @@ class Robot(
         )
     )
 
+    fun shootBallsRaw(rpm: Double = shooter.rpmFar) = SequentialAction (
+        SleepAction(0.55.s),
+        shooter.goToRpmAction(rpm),
+        shootBall(),
+        transfer.goToNextShootAction(),
+        SleepAction(0.1.s),
+        shootBall(),
+        transfer.goToNextShootAction(),
+        SleepAction(0.1.s),
+        shootBall(),
+        ParallelAction(
+            transfer.goToPosAction(Spindexer.TransferPos.intake0),
+            shooter.goToRpmAction(shooter.rpmRest)
+        )
+    )
+
     fun shootBallsTele() = SequentialAction (
         transfer.goToPosAction(Spindexer.TransferPos.shoot0),
         shooter.goToRpmAction(shooter.targetRpm),

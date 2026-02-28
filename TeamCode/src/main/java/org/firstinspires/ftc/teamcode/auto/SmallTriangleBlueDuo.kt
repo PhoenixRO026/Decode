@@ -8,10 +8,12 @@ import com.acmerobotics.roadrunner.MecanumKinematics
 import com.acmerobotics.roadrunner.MinVelConstraint
 import com.acmerobotics.roadrunner.ParallelAction
 import com.acmerobotics.roadrunner.SequentialAction
+import com.acmerobotics.roadrunner.SleepAction
 import com.acmerobotics.roadrunner.VelConstraint
 import com.commonlibs.units.Pose
 import com.commonlibs.units.deg
 import com.commonlibs.units.inch
+import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.LoggedOpMode
@@ -66,11 +68,11 @@ class SmallTriangleBlueDuo : LinearOpMode() {
                         .strafeToLinearHeading(smallTrianglePose)
                         .build(),
                     robot.shooter.goToRpmAction(robot.shooter.rpmFar),
-                    robot.transfer.goToPosAction(Spindexer.TransferPos.shoot0),
+                    robot.transfer.goToPosAction(shootPositions[0]),
                     robot.shooter.turretToPosAction(robot.shooter.shootFarPos)
                 ),
 
-                robot.shootBalls(robot.shooter.rpmFar),
+                robot.shootBallsRaw(robot.shooter.rpmFar),
 
                 ParallelAction(
                     robot.drive.actionBuilder(smallTrianglePose)
@@ -85,7 +87,7 @@ class SmallTriangleBlueDuo : LinearOpMode() {
                         .setTangent(-90.deg)
                         .lineToY(-55.inch, slowSpeed)
                         .build(),
-                    robot.intakeBalls(shootPositions[0])
+                    robot.intakeBalls(shootPositions[1])
                 ),
 
                 ParallelAction(
@@ -97,7 +99,9 @@ class SmallTriangleBlueDuo : LinearOpMode() {
                     robot.shooter.goToRpmAction(robot.shooter.rpmFar)
                 ),
 
-                robot.shootBalls(robot.shooter.rpmFar),
+                robot.shootBallsRaw(robot.shooter.rpmFar),
+
+                SleepAction(4.0),
 
                 ParallelAction(
                     robot.drive.actionBuilder(smallTrianglePose)
@@ -112,21 +116,25 @@ class SmallTriangleBlueDuo : LinearOpMode() {
                         .lineToYConstantHeading(-54.inch)
                         .setTangent(0.deg)
                         .splineToLinearHeading(humanIntakePoseBack, 0.0.deg,slowSpeed)
-                        .lineToXConstantHeading(59.inch)
+                        .turnTo(-30.deg)
+                        .turnTo(0.deg)
                         .build(),
                     robot.intakeBalls(shootPositions[2])
                 ),
 
                 ParallelAction(
                     robot.drive.actionBuilder(humanIntakePoseBack)
-                        .setTangent(110.deg)
-                        .splineToLinearHeading(smallTrianglePose, -135.deg)
+                        //.setTangent(110.deg)
+                        //.splineToLinearHeading(smallTrianglePose, -135.deg)
+                        .strafeToLinearHeading(smallTrianglePose)
                         .build(),
                     robot.shooter.turretToPosAction(robot.shooter.shootFarPos),
                     robot.shooter.goToRpmAction(robot.shooter.rpmFar)
                 ),
 
-                robot.shootBalls(robot.shooter.rpmFar),
+                robot.shootBallsRaw(robot.shooter.rpmFar),
+
+                //SleepAction(6.0),
 
                 robot.drive.actionBuilder(smallTrianglePose)
                     .setTangent(-90.deg)

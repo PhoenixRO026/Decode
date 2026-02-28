@@ -93,7 +93,7 @@ class BigTriangleBlueSolo : LinearOpMode() {
                         .build(),
                     robot.intakeBalls(shootPositions[2])
                 ),
-                SleepAction(0.6.s),
+                SleepAction(1.s),
 
                 ParallelAction(
                     robot.drive.actionBuilder(middleIntakePoseBack)
