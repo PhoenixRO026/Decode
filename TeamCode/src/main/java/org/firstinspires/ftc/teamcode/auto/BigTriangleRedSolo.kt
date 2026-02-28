@@ -25,12 +25,12 @@ class BigTriangleRedSolo : LinearOpMode() {
     val smallTrianglePose = Pose(50.inch, 11.inch, 90.deg)
     val bigTrianglePose = Pose(-6.inch, 11.inch, 90.0.deg)
 
-    val rightIntakePose = Pose(36.inch, 28.inch, 90.0.deg)
+    val rightIntakePose = Pose(36.inch, 24.inch, 90.0.deg)
     val rightIntakePoseBack = Pose(36.inch, 58.inch, 90.0.deg)
-    val middleIntakePose = Pose(13.inch, 26.inch, 90.0.deg)
+    val middleIntakePose = Pose(13.inch, 24.inch, 90.0.deg)
     val middleIntakePoseBack = Pose(11.inch, 51.inch, 90.0.deg)
     val openGatePose = Pose(6.inch, 56.inch, 90.deg)
-    val leftIntakePose = Pose(-12.inch, 28.inch, 90.0.deg)
+    val leftIntakePose = Pose(-12.inch, 24.inch, 90.0.deg)
     val leftIntakePoseBack = Pose(-12.inch, 53.inch, 90.0.deg)
 
 
@@ -55,7 +55,7 @@ class BigTriangleRedSolo : LinearOpMode() {
 
         val slowSpeed: VelConstraint = MinVelConstraint(
             listOf(
-                kinematics.WheelVelConstraint(25.0),
+                kinematics.WheelVelConstraint(20.0),
                 AngularVelConstraint(Math.toRadians(180.0))
             )
         )
@@ -100,11 +100,7 @@ class BigTriangleRedSolo : LinearOpMode() {
                     robot.shooter.turretToPosAction(-robot.shooter.shootClosePos),
                     robot.shooter.goToRpmAction(robot.shooter.rpmClose)
                 ),
-
-                ParallelAction(
-                    robot.shootBalls(robot.shooter.rpmClose),
-                    robot.intake.startIntakeAction()
-                ),
+                robot.shootBalls(robot.shooter.rpmClose),
 
 
                 ParallelAction(
@@ -126,11 +122,7 @@ class BigTriangleRedSolo : LinearOpMode() {
                     robot.shooter.goToRpmAction(robot.shooter.rpmClose)
                 ),
 
-                ParallelAction(
-                    robot.shootBalls(robot.shooter.rpmClose),
-                    robot.intake.startIntakeAction()
-                ),
-
+                robot.shootBalls(robot.shooter.rpmClose),
 
                 ParallelAction(
                     robot.drive.actionBuilder(bigTrianglePose)

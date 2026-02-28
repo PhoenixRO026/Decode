@@ -46,7 +46,7 @@ class Robot(
         transfer.waitForColors(1.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToNextIntakeAction(),
-        SleepAction(0.65.s),
+        SleepAction(0.35.s),
         transfer.waitForColors(1.0.s),
         InstantAction{transfer.updateBallSlot()},
         transfer.goToPosAction(nextShoot),
@@ -82,7 +82,7 @@ class Robot(
     )
 
     fun shootBalls(rpm: Double = shooter.rpmFar) = SequentialAction (
-        //SleepAction(0.5.s),
+        SleepAction(0.55.s),
         shooter.goToRpmAction(rpm),
         shootBall(),
         transfer.goToNextShootAction(),

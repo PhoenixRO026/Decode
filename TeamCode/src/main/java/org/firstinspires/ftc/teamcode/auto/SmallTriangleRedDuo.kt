@@ -28,6 +28,7 @@ class SmallTriangleRedDuo : LoggedOpMode() {
     val rightIntakePoseBack = Pose(36.inch, 55.inch, 90.0.deg)
     val humanIntakePose = Pose(53.inch, 54.inch, 60.0.deg)
     val humanIntakePoseBack = Pose(59.inch, 59.inch, 0.0.deg)
+    val firstCycle = Pose(36.inch, 58.inch, 150.0.deg)
 
     val endPose = Pose(58.inch, 30.inch, 90.0.deg)
 
@@ -74,8 +75,8 @@ class SmallTriangleRedDuo : LoggedOpMode() {
 
                 ParallelAction(
                     robot.drive.actionBuilder(smallTrianglePose)
-                        .setTangent(135.deg)
-                        .splineToLinearHeading(rightIntakePose, 90.deg)
+                        .setTangent(0.deg)
+                        .strafeToLinearHeading(rightIntakePose)
                         .build(),
                     robot.intake.startIntakeAction()
                 ),
@@ -91,7 +92,7 @@ class SmallTriangleRedDuo : LoggedOpMode() {
                 ParallelAction(
                     robot.drive.actionBuilder(rightIntakePoseBack)
                         .setTangent(-60.deg)
-                        .splineToLinearHeading(smallTrianglePose, 135.deg)
+                        .strafeToLinearHeading(smallTrianglePose)
                         .build(),
                     robot.shooter.turretToPosAction(-robot.shooter.shootFarPos),
                     robot.shooter.goToRpmAction(robot.shooter.rpmFar)
@@ -101,8 +102,8 @@ class SmallTriangleRedDuo : LoggedOpMode() {
 
                 ParallelAction(
                     robot.drive.actionBuilder(smallTrianglePose)
-                        .setTangent(135.deg)
-                        .splineToLinearHeading(humanIntakePose, 45.deg)
+                        .setTangent(0.deg)
+                        .strafeToLinearHeading(humanIntakePose)
                         .build(),
                     robot.intake.startIntakeAction()
                 ),
@@ -112,6 +113,7 @@ class SmallTriangleRedDuo : LoggedOpMode() {
                         .lineToYConstantHeading(54.inch)
                         .setTangent(0.deg)
                         .splineToLinearHeading(humanIntakePoseBack, 0.0.deg,slowSpeed)
+                        .lineToXConstantHeading(59.inch)
                         .build(),
                     robot.intakeBalls(shootPositions[2])
                 ),

@@ -49,7 +49,7 @@ class TurretTunning : LinearOpMode() {
             robot.limelight.updateHeadingError()
 
             if (robot.limelight.tagVisible) {
-                robot.shooter.updateTurretPos(timeKeep.deltaTime, robot.limelight.headingErrorDeg)
+                robot.shooter.updateTurretPosition(timeKeep.deltaTime)
             }
             telemetry.addData("current pos", robot.shooter.turretPosition)
             telemetry.addData("target pos", robot.shooter.targetPos)
