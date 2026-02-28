@@ -36,11 +36,11 @@ data object blueGoalFarDuo{
     val bigTrianglePose = Pose(-16.inch, -16.inch, -90.0.deg)
 
     val rightIntakePose = Pose(36.inch, -30.inch, -90.0.deg)
-    val middleIntakePose = Pose(14.inch, -30.inch, -90.0.deg)
-    val leftIntakePose = Pose(-12.inch, -30.inch, -90.0.deg)
+    val firstCycle = Pose(36.inch, -58.inch, -150.0.deg)
 
-    val humanIntakePose = Pose(53.inch, -54.inch, -60.0.deg)
-    val humanIntakePoseBack = Pose(59.inch, -59.inch, 0.0.deg)
+    val humanIntakePose = Pose(56.inch, -55.inch, -70.0.deg)
+    val humanGetReady = Pose(54.inch, -57.inch, -40.0.deg)
+    val humanIntakePoseBack = Pose(56.inch, -60.inch, 0.0.deg)
 
     val endPose = Pose(58.inch, -30.inch, -90.0.deg)
 }
@@ -209,7 +209,7 @@ fun main() {
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     blueBotFarSolo.runAction(blueBotFarSolo.drive.actionBuilder(blueGoalFarSolo.startPoseFar.pose2d).ex()
-        /*.strafeToLinearHeading(blueGoalFarSolo.smallTrianglePose)
+        .strafeToLinearHeading(blueGoalFarSolo.smallTrianglePose)
 
         .setTangent(0.deg)
         .strafeToLinearHeading(blueGoalFarSolo.rightIntakePose)
@@ -228,13 +228,7 @@ fun main() {
         .strafeToLinearHeading(blueGoalFarSolo.humanIntakePoseBack)
         .strafeToLinearHeading(blueGoalFarSolo.endPose)
         .splineToLinearHeading(blueGoalFarSolo.smallTrianglePose, 70.deg)
-        .splineToLinearHeading(blueGoalFarSolo.endPose, 70.deg)*/
-
-        .setTangent(-135.deg)
-        .splineToLinearHeading(blueGoalFarDuo.humanIntakePose, -45.deg)
-        .lineToYConstantHeading(-54.inch)
-        .setTangent(0.deg)
-        .splineToLinearHeading(blueGoalFarDuo.humanIntakePoseBack, 0.0.deg,slowSpeed)
+        .splineToLinearHeading(blueGoalFarSolo.endPose, 70.deg)
         .build()
     )
 
@@ -252,19 +246,25 @@ fun main() {
         .setTangent(90.deg)
         .strafeToLinearHeading(blueGoalFarDuo.smallTrianglePose)
 
-        .setTangent(-90.deg)
-        .strafeToLinearHeading(blueGoalFarDuo.humanIntakePose)
-        .strafeToLinearHeading(blueGoalFarDuo.humanIntakePoseBack)
+        .setTangent(0.deg)
+        .strafeToLinearHeading(blueGoalFarDuo.firstCycle)
 
         .setTangent(90.deg)
         .strafeToLinearHeading(blueGoalFarDuo.smallTrianglePose)
 
         .setTangent(-90.deg)
         .strafeToLinearHeading(blueGoalFarDuo.humanIntakePose)
+
+        .setTangent(90.deg)
+        .strafeToLinearHeading(blueGoalFarDuo.humanGetReady)
+
+        .setTangent(180.deg)
         .strafeToLinearHeading(blueGoalFarDuo.humanIntakePoseBack)
 
-        .strafeToLinearHeading(blueGoalFarDuo.endPose)
+        .setTangent(30.deg)
         .strafeToLinearHeading(blueGoalFarDuo.smallTrianglePose)
+
+
         .strafeToLinearHeading(blueGoalFarDuo.endPose)
 
         .build()
@@ -273,7 +273,7 @@ fun main() {
     meepMeep.setBackground(Background.FIELD_DECODE_JUICE_DARK)
         .setDarkMode(true)
         .setBackgroundAlpha(0.95f)
-        .addEntity(blueBotFarSolo)
+        .addEntity(blueBotFarDuo)
         //.addEntity(blueBotFar)
         .start()
 }
