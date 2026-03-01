@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.ParallelAction
 import com.acmerobotics.roadrunner.ftc.Encoder
+import com.commonlibs.units.Angle
 import com.commonlibs.units.AngularVelocity
 import com.commonlibs.units.Duration
 import com.commonlibs.units.M
@@ -53,6 +54,13 @@ class Shooter(
             kI = 0.00125,
             stabilityThreshold = 0.2
         )
+        @JvmField
+        var controllerAngleHold = PIDController(
+            kP = 0.03,
+            kD = 0.0008,
+            kI = 0.001,
+            stabilityThreshold = 0.2,
+        )
         @JvmField var ticksPerRev = 8192.0 * (108.0/22.0)
 
         @JvmField var targetPosTolerance = 50
@@ -61,7 +69,7 @@ class Shooter(
         @JvmField var limitTolerence = 50
         @JvmField var gearRatio = 23.0 / 30.0
         @JvmField var rpmFar = 3200.0
-        @JvmField var rpmClose = 2975.0
+        @JvmField var rpmClose = 3000.0
         @JvmField var rpmRest = 1000.0
         @JvmField var shootClosePos = 5700.0
         @JvmField var shootFarPos = 7200.0
@@ -190,11 +198,35 @@ class Shooter(
         return raw.coerceIn(-1.0, 1.0)
     }
 
-    fun updateTurret (deltaTime: Duration, error: Double, robotAngularVelocity: AngularVelocity = 0.radsec) {
+    private var targetAngle = 0.0
+
+    fun resetTargetAngle(robotAngle: Angle) {
+        targetAngle = tickToDeg(turretPosition) - robotAngle.asDeg
+    }
+
+    fun updateTurret (deltaTime: Duration, error: Double, robotAngularVelocity: AngularVelocity = 0.radsec, robotAngle: Angle = 0.deg) {
         if (currentMode != MODE.PID) {
             return
         }
-        powerTurret = computeHeadingPower(deltaTime, error, robotAngularVelocity)
+      powerTurret = computeHeadingPower(deltaTime, error, robotAngularVelocity)
+//        powerTurret = turretAngleHold(deltaTime, error, robotAngle.asDeg)
+    }
+
+//    var errorCache = 0.0
+
+    fun turretAngleHold(dt: Duration, errorDeg: Double, robotAngleDeg: Double): Double {
+        val turretAngle = tickToDeg(turretPosition) - robotAngleDeg
+        if (errorDeg != 0.0) {
+            targetAngle = turretAngle + errorDeg
+        }
+//        val errorDegGood = if (errorDeg != 0.0) {
+//            errorCache = errorDeg
+//            errorDeg
+//        } else {
+//            errorCache
+//        }
+//        val turretError = if (errorDeg != 0.0) turretAngle - targetAngle else 0.0
+        return ShooterConfig.controllerAngleHold.calculate(turretAngle , targetAngle, dt)
     }
 
     fun addTelemetry(telemetry: Telemetry) {

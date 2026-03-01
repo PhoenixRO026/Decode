@@ -90,7 +90,8 @@ class LimeLightCore(
         return rpm.coerceIn(0.0, 4000.0)
     }
 
-    fun updateHeadingError() {
+    fun
+            updateHeadingError() {
         val fid = camera.latestResult
             ?.fiducialResults
             ?.firstOrNull()
@@ -108,7 +109,8 @@ class LimeLightCore(
 
     fun computeHeadingPower(dt: Duration): Double {
         if (!tagVisible) {
-            return 0.05 * kotlin.math.sign(headingErrorDeg)
+//            return 0.05 * kotlin.math.sign(headingErrorDeg)
+            return 0.0
         }
 
         var raw = LimeLightConfig.controller.calculate(0.0, headingErrorDeg, dt)

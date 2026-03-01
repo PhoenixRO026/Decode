@@ -25,7 +25,7 @@ class BigTriangleRedSolo : LinearOpMode() {
     val smallTrianglePose = Pose(50.inch, 11.inch, 90.deg)
     val bigTrianglePose = Pose(-6.inch, 11.inch, 90.0.deg)
 
-    val rightIntakePose = Pose(36.inch, 24.inch, 90.0.deg)
+    val rightIntakePose = Pose(36.inch, 28.inch, 90.0.deg)
     val rightIntakePoseBack = Pose(36.inch, 58.inch, 90.0.deg)
     val middleIntakePose = Pose(13.inch, 23.inch, 90.0.deg)
     val middleIntakePoseBack = Pose(10.5.inch, 51.inch, 90.0.deg)

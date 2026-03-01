@@ -161,7 +161,7 @@ class Robot(
         val encoderOuttake : Encoder = RawEncoder(motorShooterBottom)
         val encoderTurret : Encoder = RawEncoder(motorTurret)
 
-        encoderOuttake.direction =DcMotorSimple.Direction.REVERSE
+        encoderOuttake.direction =DcMotorSimple.Direction.FORWARD
         encoderTurret.direction = DcMotorSimple.Direction.REVERSE
 
 
