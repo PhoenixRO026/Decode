@@ -5,12 +5,18 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.ParallelAction
+import com.acmerobotics.roadrunner.Pose2d
+import com.acmerobotics.roadrunner.Vector2d
 import com.acmerobotics.roadrunner.ftc.Encoder
 import com.commonlibs.units.Angle
 import com.commonlibs.units.AngularVelocity
+import com.commonlibs.units.Distance2d
 import com.commonlibs.units.Duration
 import com.commonlibs.units.M
+import com.commonlibs.units.Vector2d
+import com.commonlibs.units.angle
 import com.commonlibs.units.deg
+import com.commonlibs.units.pose
 import com.commonlibs.units.radsec
 import com.commonlibs.units.rev
 import com.qualcomm.robotcore.hardware.DcMotorEx
@@ -22,6 +28,7 @@ import org.psilynx.psikit.core.Logger
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.sign
 
 class Shooter(
     val motorTop: DcMotorEx,
@@ -227,6 +234,24 @@ class Shooter(
 //        }
 //        val turretError = if (errorDeg != 0.0) turretAngle - targetAngle else 0.0
         return ShooterConfig.controllerAngleHold.calculate(turretAngle , targetAngle, dt)
+    }
+
+    private fun normalizeDegrees(a: Angle): Angle {
+        var d = a.asDeg % 360.0
+
+        if (abs(d) > 180.0){
+            d= -(d - 180 * d.sign)
+        }
+
+        return d.deg
+    }
+
+    fun aimTowardsTargetPose(robotPose: Pose2d, target: Distance2d) { // robot pose should be (robot.position, turretHeading)
+        val desiredFieldPose = Vector2d(robotPose.pose.position.x, robotPose.pose.position.y).headingTowards(target)
+
+        val targetAngle = normalizeDegrees(desiredFieldPose.heading)
+
+        targetPos = degToTick(targetAngle.asDeg).coerceIn(ShooterConfig.minTurretPosition, ShooterConfig.maxTurretPosition)
     }
 
     fun addTelemetry(telemetry: Telemetry) {
