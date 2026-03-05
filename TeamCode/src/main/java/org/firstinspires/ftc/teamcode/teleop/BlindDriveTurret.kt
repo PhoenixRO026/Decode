@@ -82,7 +82,7 @@ abstract class BlindDriveTurret : LinearOpMode(){
             if (snipe.state) {
                 if (driver1Action == null) {
                     driver1Action = SequentialAction(
-                        robot.intakeTeleBalls(),
+                        robot.intakeTeleBallsSort(),
                         InstantAction { snipe.setState(false) }
                     )
                 }

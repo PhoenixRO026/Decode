@@ -2,10 +2,14 @@ package org.firstinspires.ftc.teamcode.prepPositions
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
+import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.DistanceSensor
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor
 import com.qualcomm.robotcore.hardware.Servo
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
+import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.robot.Spindexer
 
 @TeleOp
@@ -17,7 +21,7 @@ class ColorSersorTest : LinearOpMode() {
 
         val colorSensor = hardwareMap.get(NormalizedColorSensor::class.java, "colorSensor")
 
-        var gain = 15f
+        var gain = 1f
 
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
         val transfer = Spindexer(
@@ -26,6 +30,7 @@ class ColorSersorTest : LinearOpMode() {
             finger = finger,
             colorSensor = colorSensor
         )
+        val timeKeep = TimeKeep()
 
         waitForStart()
 
@@ -44,10 +49,15 @@ class ColorSersorTest : LinearOpMode() {
 
             transfer.updateHue()
 
+
+            telemetry.addData("distance",
+                (transfer.colorSensor as DistanceSensor).getDistance(DistanceUnit.MM))
             telemetry.addData("Gain", gain)
             telemetry.addData("color", transfer.sensorColor)
             telemetry.addData("hue", transfer.sensorHue)
             telemetry.addData("hsv", transfer.hsv)
+            telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
+            telemetry.addData("fps", 1.s / timeKeep.deltaTime)
             telemetry.update()
 
         }

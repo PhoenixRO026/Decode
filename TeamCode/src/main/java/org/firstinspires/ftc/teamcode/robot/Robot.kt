@@ -19,7 +19,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
-import kotlin.jvm.java
+
 
 class Robot(
     hardwareMap: HardwareMap,
@@ -54,7 +54,7 @@ class Robot(
         intake.spew(),
     )
 
-    fun intakeTeleBalls() = SequentialAction (
+    fun intakeTeleBallsSort() = SequentialAction (
         transfer.goToPosAction(Spindexer.TransferPos.intake0),
         intake.startIntakeAction(),
         transfer.waitForColors(7.0.s),
@@ -70,6 +70,21 @@ class Robot(
         intake.spew(),
         transfer.goToPosAction(Spindexer.TransferPos.shoot0),
         SleepAction(0.6.s),
+    )
+    fun intakeTeleBallsRaw() = SequentialAction (
+        transfer.goToPosAction(Spindexer.TransferPos.intake0),
+        intake.startIntakeAction(),
+        transfer.waitForDistance(7.0.s),
+        SleepAction(0.75.s),
+        transfer.goToNextIntakeAction(),
+        transfer.waitForDistance(7.0.s),
+        SleepAction(0.75.s),
+        transfer.goToNextIntakeAction(),
+        transfer.waitForDistance(7.0.s),
+        SleepAction(0.75.s),
+        intake.spew(),
+        transfer.goToPosAction(Spindexer.TransferPos.shoot0),
+        SleepAction(0.2.s),
     )
 
     fun shootBall() = SequentialAction(
@@ -145,7 +160,7 @@ class Robot(
         val encoderOuttake : Encoder = RawEncoder(motorShooterBottom)
         val encoderTurret : Encoder = RawEncoder(motorTurret)
 
-        encoderOuttake.direction =DcMotorSimple.Direction.REVERSE
+        encoderOuttake.direction =DcMotorSimple.Direction.FORWARD
         encoderTurret.direction = DcMotorSimple.Direction.REVERSE
 
 
@@ -166,7 +181,7 @@ class Robot(
         val finger = hardwareMap.get(Servo::class.java, "finger")
 
         val colorSensor = hardwareMap.get(NormalizedColorSensor::class.java, "colorSensor")
-        colorSensor.gain = 1.5f
+        colorSensor.gain = 1f
 
         val limlit = hardwareMap.get(Limelight3A::class.java, "limelight")
         limlit.setPollRateHz(100)

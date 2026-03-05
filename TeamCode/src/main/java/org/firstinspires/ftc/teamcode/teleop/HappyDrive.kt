@@ -48,8 +48,9 @@ open class HappyDrive : LinearOpMode(){
         val lowRpm = ButtonReader {gamepad2.left_bumper}
         val stopShooter = ButtonReader {gamepad2.dpad_left}
         val restShooter = ButtonReader {gamepad2.dpad_right}
-        val intakeBalls = ToggleButtonReader ({gamepad1.x})
-        val buttons = listOf(shootGreen, shootPurple, shootAll, highRpm, lowRpm, stopShooter, intakeBalls)
+        val intakeBallsSort = ToggleButtonReader ({gamepad1.x})
+        val intakeBallsRaw = ToggleButtonReader ({gamepad1.b})
+        val buttons = listOf(shootGreen, shootPurple, shootAll, highRpm, lowRpm, stopShooter, intakeBallsSort, intakeBallsRaw)
 
         waitForStart()
 
@@ -80,12 +81,20 @@ open class HappyDrive : LinearOpMode(){
             }
 
             /// Intake
-            if (intakeBalls.state) {
+            if (intakeBallsSort.state) {
                 // If toggle turned on, and no current action, start a NEW intake action
                 if (driver1Action == null) {
                     driver1Action = SequentialAction(
-                        robot.intakeTeleBalls(),
-                        InstantAction { intakeBalls.setState(false) }
+                        robot.intakeTeleBallsSort(),
+                        InstantAction { intakeBallsSort.setState(false) }
+                    )
+                    driver1ActionIsIntake = true
+                }
+            } else if(intakeBallsRaw.state) {
+                if (driver1Action == null) {
+                    driver1Action = SequentialAction(
+                        robot.intakeTeleBallsRaw(),
+                        InstantAction { intakeBallsRaw.setState(false) }
                     )
                     driver1ActionIsIntake = true
                 }
@@ -134,6 +143,7 @@ open class HappyDrive : LinearOpMode(){
 
             robot.shooter.addTelemetry(telemetry)
 
+            telemetry.addData("sensor distance", robot.transfer.distance)
             telemetry.addData("transfer pos", when (robot.transfer.currentPos) {
                 Spindexer.TransferPos.intake0 -> "intake0"
                 Spindexer.TransferPos.intake1 -> "intake1"

@@ -7,10 +7,13 @@ import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.RaceAction
 import com.commonlibs.units.Duration
 import com.commonlibs.units.SleepAction
+import com.commonlibs.units.dist
 import com.commonlibs.units.s
+import com.qualcomm.robotcore.hardware.DistanceSensor
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.robotcore.external.Telemetry
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 
 class Spindexer(
     val servoTransfer1: Servo,
@@ -56,8 +59,7 @@ class Spindexer(
             field = value
         }
 
-    var activeIntakeSlot: Int? = null
-
+    var distance = (colorSensor as DistanceSensor).getDistance(DistanceUnit.MM)
 
     fun closestSlotToShoot(pos: TransferPos,target: BallColor): TransferPos? {
         when (pos) {
@@ -216,6 +218,9 @@ class Spindexer(
         sensorHue = hsv[0]
     }
 
+    fun updateDistance() {
+        distance = (colorSensor as DistanceSensor).getDistance(DistanceUnit.MM)
+    }
 
     var fingerPosition : Double = 0.5
         get() = finger.position
@@ -233,12 +238,11 @@ class Spindexer(
         finger.position = TransferConfig.fingerDownPosition
     }
 
-    // waits for specific color
-    fun waitForColorAction(waitColor: BallColor, maxTime: Duration = 1.s) = RaceAction(
-        Action {
-            updateHue()
-            it.addLine("Waiting for $waitColor")
-            sensorColor != waitColor
+    fun waitForDistance(maxTime: Duration = 1.s) = RaceAction(
+        {
+            updateDistance()
+            it.addLine("Waiting for distance")
+            distance >= 27.0
         },
         SleepAction(maxTime)
     )
@@ -252,11 +256,7 @@ class Spindexer(
         SleepAction(maxTime)
     )
 
-    fun waitForColors(duration: Duration) = waitForAnyColor(duration)/*RaceAction(
-        waitForColorAction(BallColor.PURPLE, duration),
-        waitForColorAction(BallColor.GREEN, duration),
-        SleepAction(duration)
-    )*/
+    fun waitForColors(duration: Duration) = waitForAnyColor(duration)
 
     fun addTelemetry(telemetry: Telemetry) {
         telemetry.addData("spindexer pos", currentPos)
