@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.SequentialAction
 import com.commonlibs.units.Pose
+import com.commonlibs.units.angle
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
 import com.commonlibs.units.radsec
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.buttons.ButtonReader
 import org.firstinspires.ftc.teamcode.library.buttons.ToggleButtonReader
 import org.firstinspires.ftc.teamcode.robot.Robot
+import org.firstinspires.ftc.teamcode.robot.Shooter.MODE
 import org.firstinspires.ftc.teamcode.robot.Spindexer
 
 
@@ -136,14 +138,31 @@ open class HappyDrive : LinearOpMode(){
                 robot.shooter.goToRmp(0.0)
             }
 
+            if (gamepad2.left_trigger > 0) {
+                robot.shooter.currentMode = MODE.MANUAL
+                robot.shooter.powerTurret = -0.5
+            }
+            else if (gamepad2.right_trigger > 0) {
+                robot.shooter.currentMode = MODE.MANUAL
+                robot.shooter.powerTurret = 0.5
+            }
+            else if (robot.shooter.currentMode != MODE.PID) {
+                robot.shooter.currentMode = MODE.PID
+                robot.shooter.powerTurret = 0.0
+                robot.shooter.resetTargetAngle(robot.drive.mecanumDrive.localizer.pose.heading.angle)
+            }
+
 
             robot.shooter.updateRpm(timeKeep.deltaTime)
             robot.limelight.updateHeadingError()
-            robot.shooter.updateTurret(timeKeep.deltaTime, robot.limelight.headingErrorDeg, robotVel.angVel.radsec)
+            robot.shooter.updateTurret(timeKeep.deltaTime, robot.limelight.headingErrorDeg, robotVel.angVel.radsec,
+                robot.drive.mecanumDrive.localizer.pose.heading.angle)
 
             robot.shooter.addTelemetry(telemetry)
 
             telemetry.addData("sensor distance", robot.transfer.distance)
+            telemetry.addData("results", robot.limelight.camera.latestResult.fiducialResults)
+            telemetry.addData("robotangle", robot.drive.mecanumDrive.localizer.pose.heading.angle)
             telemetry.addData("transfer pos", when (robot.transfer.currentPos) {
                 Spindexer.TransferPos.intake0 -> "intake0"
                 Spindexer.TransferPos.intake1 -> "intake1"

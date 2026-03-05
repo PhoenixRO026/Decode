@@ -22,8 +22,8 @@ import org.firstinspires.ftc.teamcode.robot.Spindexer
 @Autonomous
 class BigTriangleBLUEDuo : LinearOpMode() {
     val startPose = Pose(-61.5.inch, -38.inch, 90.0.deg)
-    val bigTrianglePose = Pose(-5.inch, -16.inch, -90.0.deg)
-    val middleIntakePose = Pose(12.inch, -28.inch, -90.0.deg)
+    val bigTrianglePose = Pose(-6.inch, -11.inch, -90.0.deg)
+    val middleIntakePose = Pose(12.inch, -24.inch, -90.0.deg)
     val middleIntakePoseBack = Pose(6.inch, -52.inch, -90.0.deg)
     val leftIntakePoseBack = Pose(-12.inch, -52.inch, -90.0.deg)
 
@@ -71,7 +71,7 @@ class BigTriangleBLUEDuo : LinearOpMode() {
                     robot.shooter.turretToPosAction(robot.shooter.shootClosePos)
                 ),
 
-                robot.shootBalls(),
+                robot.shootBalls(robot.shooter.rpmClose),
 
                 ParallelAction(
                     robot.drive.actionBuilder(bigTrianglePose)
@@ -99,7 +99,7 @@ class BigTriangleBLUEDuo : LinearOpMode() {
                     robot.shooter.goToRpmAction(robot.shooter.rpmClose)
                 ),
 
-                robot.shootBalls(),
+                robot.shootBalls(robot.shooter.rpmClose),
 
                 // bigTriangle -> openGate
                 ParallelAction(
@@ -121,7 +121,7 @@ class BigTriangleBLUEDuo : LinearOpMode() {
                     robot.shooter.goToRpmAction(robot.shooter.rpmClose)
                 ),
 
-                robot.shootBalls(),
+                robot.shootBalls(robot.shooter.rpmClose),
 
                 // bigTriangle -> openGate (again)
                 ParallelAction(
@@ -143,7 +143,7 @@ class BigTriangleBLUEDuo : LinearOpMode() {
                     robot.shooter.goToRpmAction(robot.shooter.rpmClose)
                 ),
 
-                robot.shootBalls(),
+                robot.shootBalls(robot.shooter.rpmClose),
 
                 // bigTriangle -> Y -30 -> Y -47
                 ParallelAction(
@@ -164,7 +164,7 @@ class BigTriangleBLUEDuo : LinearOpMode() {
                     robot.shooter.goToRpmAction(robot.shooter.rpmClose)
                 ),
 
-                robot.shootBalls()
+                robot.shootBalls(robot.shooter.rpmClose)
             )
         }
 
