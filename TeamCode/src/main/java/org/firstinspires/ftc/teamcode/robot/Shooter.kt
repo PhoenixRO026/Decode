@@ -240,7 +240,7 @@ class Shooter(
         var d = a.asDeg % 360.0
 
         if (abs(d) > 180.0){
-            d= -(d - 180 * d.sign)
+            d = -(d - 180 * d.sign)
         }
 
         return d.deg
