@@ -28,17 +28,17 @@ class ServoTest: LinearOpMode() {
 
         servo.position = 0.015
 
-        while (opModeIsActive()){
+        while (opModeIsActive()) {
             now = now()
             deltaTime = now - previousTime
             previousTime = now
 
             if(gamepad1.y)
-                servo.position+= 0.1 * deltaTime
+                servo.position += 0.1 * deltaTime
             else if(gamepad1.a)
-                servo.position-= 0.1 * deltaTime
+                servo.position -= 0.1 * deltaTime
             else if(gamepad1.b)
-                servo.position= servoConfig.servoPos
+                servo.position = servoConfig.servoPos
 
             telemetry.addData("a Pressed", gamepad1.a)
             telemetry.addData("y Pressed", gamepad1.y)

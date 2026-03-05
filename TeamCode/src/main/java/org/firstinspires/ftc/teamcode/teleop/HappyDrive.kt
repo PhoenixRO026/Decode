@@ -57,8 +57,7 @@ open class HappyDrive : LinearOpMode(){
         waitForStart()
 
         robot.transfer.fingerDown()
-        robot.transfer.servoTransfer1.position = 0.0400
-        robot.transfer.servoTransfer2.position = 0.0400
+        robot.transfer.goToPos(Spindexer.TransferPos.intake0)
 
         while (opModeIsActive()) {
             timeKeep.resetDeltaTime()

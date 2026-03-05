@@ -186,7 +186,7 @@ class Robot(
         val motorIntake = hardwareMap.get(DcMotorEx::class.java, "motorIntake")
 
         motorIntake.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        motorIntake.direction = DcMotorSimple.Direction.REVERSE
+        motorIntake.direction = DcMotorSimple.Direction.FORWARD
         motorIntake.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         ///  Transfer  ///
