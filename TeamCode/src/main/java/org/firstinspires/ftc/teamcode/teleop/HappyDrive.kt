@@ -159,6 +159,8 @@ open class HappyDrive : LinearOpMode(){
 
             robot.shooter.addTelemetry(telemetry)
 
+            telemetry.addData("color", robot.transfer.sensorColor)
+            telemetry.addData("hue", robot.transfer.sensorHue)
             telemetry.addData("sensor distance", robot.transfer.distance)
             telemetry.addData("results", robot.limelight.camera.latestResult.fiducialResults)
             telemetry.addData("robotangle", robot.drive.mecanumDrive.localizer.pose.heading.angle)

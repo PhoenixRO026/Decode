@@ -101,14 +101,14 @@ fun main() {
     val blueBot =
         DefaultBotBuilder(meepMeep)
             .setConstraints(60.0, 60.0, Math.toRadians(180.0), Math.toRadians(180.0), 15.0)
-            .setDimensions(16.5, 16.5)
+            .setDimensions(16.9, 16.9)
             .setStartPose(blueGoalFarSolo.startPoseClose.pose2d)
             .build()
 
     val blueBotCloseSolo =
         DefaultBotBuilder(meepMeep)
             .setConstraints(60.0, 60.0, Math.toRadians(180.0), Math.toRadians(180.0), 15.0)
-            .setDimensions(16.5, 16.5)
+            .setDimensions(16.9, 16.9)
             .setStartPose(blueGoalFarSolo.startPoseClose.pose2d)
             .build()
 
@@ -117,7 +117,7 @@ fun main() {
     val blueBotCloseDuo =
         DefaultBotBuilder(meepMeep)
             .setConstraints(60.0, 60.0, Math.toRadians(180.0), Math.toRadians(180.0), 15.0)
-            .setDimensions(16.5, 16.5)
+            .setDimensions(16.9, 16.9)
             .setStartPose(blueGoalFarSolo.startPoseClose.pose2d)
             .build()
 
@@ -126,7 +126,7 @@ fun main() {
     val blueBotFarSolo =
         DefaultBotBuilder(meepMeep)
             .setConstraints(60.0, 60.0, Math.toRadians(180.0), Math.toRadians(180.0), 15.0)
-            .setDimensions(16.5, 16.5)
+            .setDimensions(16.9, 16.9)
             .setStartPose(blueGoalFarSolo.startPoseFar.pose2d)
             .build()
 
@@ -135,7 +135,7 @@ fun main() {
     val blueBotFarDuo =
         DefaultBotBuilder(meepMeep)
             .setConstraints(60.0, 60.0, Math.toRadians(180.0), Math.toRadians(180.0), 15.0)
-            .setDimensions(16.5, 16.5)
+            .setDimensions(16.9, 16.9)
             .setStartPose(blueGoalFarSolo.startPoseFar.pose2d)
             .build()
 

@@ -37,14 +37,14 @@ class Spindexer(
 
 
     enum class TransferPos (val pos : Double, val index: Int) {
-        intake0(0.0600, 0),
-        intake1(0.1900, 1),
-        intake2(0.3250, 2),
-        shoot2(0.3850, 2),
-        shoot0(0.1300, 0),
-        shoot1(0.2550, 1),
-        pseudo2(0.0550, 2),
-        pseudo0(0.6390, 0)
+        intake0(0.0768, 0),
+        intake1(0.2172, 1),
+        intake2(0.3522, 2),
+        shoot2(0.1522, 2),
+        shoot0(0.2794, 0),
+        shoot1(0.4172, 1),
+        pseudo2(0.5456, 2),
+        pseudo0(0.6733, 0)
     }
     val slots: MutableList<BallColor> = mutableListOf(
         BallColor.EMPTY,
@@ -202,8 +202,8 @@ class Spindexer(
     var hsv = floatArrayOf(0f, 0f, 0f)
 
     val sensorColor get() = when {
-        hsv[1] != 0f && sensorHue in 180f..250f -> BallColor.PURPLE
-        hsv[1] != 0f && sensorHue in 120f..179f -> BallColor.GREEN
+        hsv[1] != 0f && sensorHue in 162f..190f -> BallColor.PURPLE
+        hsv[1] != 0f && sensorHue in 151f..161f -> BallColor.GREEN
         else -> BallColor.EMPTY
     }
 
