@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.controller.PIDController
+import org.firstinspires.ftc.teamcode.robot.Robot
 import org.firstinspires.ftc.teamcode.robot.Shooter.ShooterConfig
 import org.firstinspires.ftc.teamcode.teleop.tests.TurretPosTunning.PositionTunningConfic.ticksPerRev
 
@@ -37,19 +38,9 @@ class TurretPosTunning : LinearOpMode() {
     override fun runOpMode() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
-        val motorTurret = hardwareMap.get(DcMotorEx::class.java, "motorTurret")
-
-        motorTurret.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-        motorTurret.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
-        motorTurret.direction = DcMotorSimple.Direction.REVERSE
-        motorTurret.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
-
-        val encoderTransfer : Encoder = RawEncoder(motorTurret)
+        val robot = Robot(hardwareMap)
 
         val timeKeep = TimeKeep()
-        var transferPower = 0.0
-        var targetPos = 0.0
-        var position = 0.0
 
         fun tickToDeg(ticks : Double) : Double {
             return (360 / ticksPerRev) * ticks
@@ -64,15 +55,14 @@ class TurretPosTunning : LinearOpMode() {
         while (opModeIsActive()) {
             timeKeep.resetDeltaTime()
 
-            position = encoderTransfer.getPositionAndVelocity().position
-            targetPos = degToTick(PositionTunningConfic.targetPos)
-            motorTurret.power = -PositionTunningConfic.controller.calculate(position, targetPos, timeKeep.deltaTime)
+            robot.shooter.goToPos(PositionTunningConfic.targetPos)
+            robot.shooter.updateTurretPosition(timeKeep.deltaTime)
 
             telemetry.addData("transfer target pos", PositionTunningConfic.targetPos)
-            telemetry.addData("transfer pos", position)
-            telemetry.addData("pos in deg", tickToDeg(position))/// 22 -> 15 -> 108 15/22
-            telemetry.addData("target in deg", targetPos * (108.0/22.0)/ 360.0)
-            telemetry.addData("transfer power", motorTurret.power)
+            telemetry.addData("transfer pos", robot.shooter.turretPosition)
+            telemetry.addData("pos in deg", tickToDeg(robot.shooter.turretPosition))/// 22 -> 15 -> 108 15/22
+            telemetry.addData("target in deg", tickToDeg(robot.shooter.targetPos))
+            telemetry.addData("transfer power", robot.shooter.powerTurret)
 
             telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
             telemetry.addData("fps", 1.s / timeKeep.deltaTime)

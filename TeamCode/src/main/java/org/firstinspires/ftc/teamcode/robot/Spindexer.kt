@@ -24,8 +24,8 @@ class Spindexer(
 {
     @Config
     data object TransferConfig {
-        @JvmField val fingerUpPosition = 0.1672
-        @JvmField val  fingerDownPosition = 0.0067
+        @JvmField val fingerUpPosition = 0.5989
+        @JvmField val  fingerDownPosition = 0.4972
         @JvmField val shootOffset = 0.07
     }
 
@@ -37,14 +37,14 @@ class Spindexer(
 
 
     enum class TransferPos (val pos : Double, val index: Int) {
-        intake0(0.0768, 0),
-        intake1(0.2172, 1),
-        intake2(0.3522, 2),
-        shoot2(0.1522, 2),
-        shoot0(0.2794, 0),
-        shoot1(0.4172, 1),
-        pseudo2(0.5456, 2),
-        pseudo0(0.6733, 0)
+        intake0(0.1194, 0),
+        intake1(0.2794, 1),
+        intake2(0.4339, 2),
+        shoot2(0.1933, 2),
+        shoot0(0.3422, 0),
+        shoot1(0.5044, 1),
+        pseudo2(0.6672, 2),
+        pseudo0(0.8172, 0)
     }
     val slots: MutableList<BallColor> = mutableListOf(
         BallColor.EMPTY,
