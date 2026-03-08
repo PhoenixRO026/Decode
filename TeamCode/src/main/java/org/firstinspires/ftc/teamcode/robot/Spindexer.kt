@@ -37,14 +37,14 @@ class Spindexer(
 
 
     enum class TransferPos (val pos : Double, val index: Int) {
-        intake0(0.1194, 0),
-        intake1(0.2794, 1),
-        intake2(0.4339, 2),
-        shoot2(0.1933, 2),
-        shoot0(0.3422, 0),
-        shoot1(0.5044, 1),
-        pseudo2(0.6672, 2),
-        pseudo0(0.8172, 0)
+        intake0(0.0, 0),
+        intake1(0.1589, 1),
+        intake2(0.3144, 2),
+        shoot2(0.0822, 2),
+        shoot0(0.2367, 0),
+        shoot1(0.3861, 1),
+        pseudo2(0.545, 2),
+        pseudo0(0.7, 0)
     }
     val slots: MutableList<BallColor> = mutableListOf(
         BallColor.EMPTY,
@@ -242,7 +242,7 @@ class Spindexer(
         {
             updateDistance()
             it.addLine("Waiting for distance")
-            distance >= 27.0
+            distance >= 57.0
         },
         SleepAction(maxTime)
     )

@@ -63,6 +63,7 @@ open class HappyDrive : LinearOpMode(){
             timeKeep.resetDeltaTime()
             buttons.forEach { it.readValue() }
             val robotVel = robot.drive.updatePoseEstimateOdo()
+            robot.drive.updatePoseEstimate()
 
             /// Drive
 

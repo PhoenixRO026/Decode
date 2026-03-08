@@ -39,6 +39,10 @@ class Drive(
         return mecanumDrive.updatePoseEstimate()
     }
 
+    fun updatePoseEstimate() {
+        mecanumDrive.updatePoseEstimate()
+    }
+
     fun driveFieldCentric(forward: Double, left: Double, rotate: Double) {
         val driveVec = PoseVelocity2d(
             Vector2d(

@@ -90,8 +90,7 @@ class LimeLightCore(
         return rpm.coerceIn(0.0, 4000.0)
     }
 
-    fun
-            updateHeadingError() {
+    fun updateHeadingError() {
         val fid = camera.latestResult
             ?.fiducialResults
             ?.firstOrNull()
@@ -115,7 +114,7 @@ class LimeLightCore(
 
         var raw = LimeLightConfig.controller.calculate(0.0, headingErrorDeg, dt)
         if(abs(raw) < 0.05)
-            raw = 0.0
+            raw = 0.01
         return raw.coerceIn(-LimeLightConfig.maxOutput, LimeLightConfig.maxOutput)
     }
 
