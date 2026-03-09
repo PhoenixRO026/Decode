@@ -21,7 +21,7 @@ class ServoSync: LinearOpMode() {
         waitForStart()
         previousTime = now()
 
-        servoFront.position = 0.0
+        servoFront.position = 0.0056
         servoBack.position = 0.0
 
         while (opModeIsActive()){
@@ -30,16 +30,16 @@ class ServoSync: LinearOpMode() {
             previousTime = now
 
             if(gamepad1.a) {
-                servoFront.position += 0.1 * deltaTime
+                servoFront.position += 0.01 * deltaTime
             }
             else if(gamepad1.y) {
-                servoFront.position -= 0.1 * deltaTime
+                servoFront.position -= 0.01 * deltaTime
             }
             if (gamepad1.x){
-                servoBack.position += 0.1 * deltaTime
+                servoBack.position += 0.01 * deltaTime
             }
             else if(gamepad1.b){
-                servoBack.position -= 0.1 * deltaTime
+                servoBack.position -= 0.01 * deltaTime
             }
 
             telemetry.addData("a Pressed", gamepad1.a)

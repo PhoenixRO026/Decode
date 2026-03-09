@@ -27,15 +27,16 @@ class ServoTunning: LinearOpMode() {
             now = now()
             deltaTime = now - previousTime
             previousTime = now
+            val increment = (deltaTime * 0.1)
             if(gamepad1.dpad_up) {
-                servoFront.position += deltaTime * 0.1
-                servoBack.position += deltaTime * 0.1
+                servoBack.position = (servoBack.position + increment).coerceIn(0.0, 1.0 - 0.0056)
             }
             if(gamepad1.dpad_down) {
-                servoFront.position -= deltaTime * 0.1
-                servoBack.position -= deltaTime * 0.1
+                servoBack.position = (servoBack.position - increment).coerceIn(0.0, 1.0 - 0.0056)
             }
-            telemetry.addData("pos ", servoFront.position)
+            servoFront.position = servoBack.position + 0.0056
+
+            telemetry.addData("pos ", servoBack.position)
             telemetry.update()
         }
 

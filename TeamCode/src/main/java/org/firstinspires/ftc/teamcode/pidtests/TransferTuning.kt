@@ -58,9 +58,6 @@ class  TransferTuning : LinearOpMode() {
         val buttons = listOf(move1, move2, move0, move5, move4, move3)
 
         val timeKeep = TimeKeep()
-        var transferPower = 0.0
-        var targetPos = 0.0
-        var position = 0.0
 
         robot.transfer.goToPos(Spindexer.TransferPos.intake0)
 
@@ -70,13 +67,13 @@ class  TransferTuning : LinearOpMode() {
             timeKeep.resetDeltaTime()
             buttons.forEach { it.readValue() }
 
-            if (move0.wasJustPressed())
+            if (move3.wasJustPressed())
                 robot.transfer.goToPos(Spindexer.TransferPos.shoot0)
 
-            if (move1.wasJustPressed())
+            if (move4.wasJustPressed())
                 robot.transfer.goToPos(Spindexer.TransferPos.shoot1)
 
-            if (move2.wasJustPressed())
+            if (move5.wasJustPressed())
                 robot.transfer.goToPos(Spindexer.TransferPos.shoot2)
             if (move0.wasJustPressed())
                 robot.transfer.goToPos(Spindexer.TransferPos.intake0)
@@ -88,7 +85,8 @@ class  TransferTuning : LinearOpMode() {
                 robot.transfer.goToPos(Spindexer.TransferPos.intake2)
             telemetry.addData("transfer target pos", TransferTuningConfig.targetPos)
             telemetry.addData("transfer slot", robot.transfer.currentPos)
-            telemetry.addData("transfer pos", robot.transfer.servoTransfer1.position)
+            telemetry.addData("servo front pos", robot.transfer.servoTransfer1.position)
+            telemetry.addData("servo back pos", robot.transfer.servoTransfer2.position)
 
             telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
             telemetry.addData("fps", 1.s / timeKeep.deltaTime)
