@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.robot
 import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.ParallelAction
 import com.acmerobotics.roadrunner.SequentialAction
-import com.acmerobotics.roadrunner.SleepAction
 import com.acmerobotics.roadrunner.ftc.Encoder
 import com.acmerobotics.roadrunner.ftc.RawEncoder
 import com.commonlibs.units.Pose
@@ -18,6 +17,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor
 import com.qualcomm.robotcore.hardware.Servo
+import org.firstinspires.ftc.teamcode.roadrunner.FusedLocalizer
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
 
 
@@ -31,6 +31,7 @@ class Robot(
     val transfer: Spindexer
     val intake: Intake
     val limelight: LimeLightCore
+    val fusedLocalizer: FusedLocalizer
 
     fun init(deg: Double){
         transfer.goToPos(Spindexer.TransferPos.intake0)
@@ -150,7 +151,18 @@ class Robot(
     )
 
     init {
-        val mecanumDrive = MecanumDrive(hardwareMap, pose.pose2d)
+        val limlit = hardwareMap.get(Limelight3A::class.java, "limelight")
+        limlit.setPollRateHz(60)
+        limlit.start()
+
+        fusedLocalizer = FusedLocalizer(
+            hardwareMap,
+            pose.pose2d,
+            limlit,
+            { shooter.turretAngle.asRad }
+        )
+
+        val mecanumDrive = MecanumDrive(hardwareMap, pose.pose2d/*, fusedLocalizer*/)
 
         ///  Shooter  ///
 
@@ -176,7 +188,7 @@ class Robot(
         val encoderOuttake : Encoder = RawEncoder(motorShooterBottom)
         val encoderTurret : Encoder = RawEncoder(mecanumDrive.rightBack)
 
-        encoderOuttake.direction =DcMotorSimple.Direction.FORWARD
+        encoderOuttake.direction = DcMotorSimple.Direction.FORWARD
         encoderTurret.direction = DcMotorSimple.Direction.REVERSE
 
 
@@ -198,10 +210,6 @@ class Robot(
 
         val colorSensor = hardwareMap.get(NormalizedColorSensor::class.java, "colorSensor")
         colorSensor.gain = 15f
-
-        val limlit = hardwareMap.get(Limelight3A::class.java, "limelight")
-        limlit.setPollRateHz(100)
-        limlit.start()
 
         val voltageSensor = hardwareMap.voltageSensor.iterator().next()
 

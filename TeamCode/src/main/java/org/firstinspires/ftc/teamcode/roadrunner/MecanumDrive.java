@@ -225,6 +225,10 @@ public final class MecanumDrive {
     }
 
     public MecanumDrive(HardwareMap hardwareMap, Pose2d pose) {
+        this(hardwareMap, pose, new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose));
+    }
+
+    public MecanumDrive(HardwareMap hardwareMap, Pose2d pose, Localizer localizer) {
         LynxFirmware.throwIfModulesAreOutdated(hardwareMap);
 
         for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
@@ -256,7 +260,7 @@ public final class MecanumDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
+        this.localizer = localizer;
 
         FlightRecorder.write("MECANUM_PARAMS", PARAMS);
     }

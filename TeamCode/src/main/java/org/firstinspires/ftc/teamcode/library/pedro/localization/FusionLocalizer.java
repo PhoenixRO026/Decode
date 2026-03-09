@@ -25,6 +25,19 @@ public class FusionLocalizer implements Localizer {
     private final NavigableMap<Long, PoseVelocity2d> twistHistory = new TreeMap<>();
     private final NavigableMap<Long, Matrix> covarianceHistory = new TreeMap<>();
     private final int bufferSize;
+    private double previousVisionTimestamp = 0.0;
+
+    public FusionLocalizer(
+            PinpointLocalizer deadReckoning,
+            Covariance initialCovariance,
+            Covariance processVariance,
+            Covariance measurementVariance,
+            int bufferSize,
+            Pose2d initialPose
+    ) {
+        this(deadReckoning, initialCovariance, processVariance, measurementVariance, bufferSize);
+        setStartPose(initialPose);
+    }
 
     public FusionLocalizer(
             PinpointLocalizer deadReckoning,
@@ -105,8 +118,8 @@ public class FusionLocalizer implements Localizer {
      * @param measuredPose the measured position by the camera, enter NaN to a specific axis if the camera couldn't measure that axis
      * @param timestamp the timestamp of the measurement
      */
-    public void addMeasurement(Pose2d measuredPose, long timestamp) {
-        addMeasurement(measuredPose, timestamp, null);
+    public void addMeasurement(Pose2d measuredPose, long timestamp, double llts) {
+        addMeasurement(measuredPose, timestamp, llts, null);
     }
 
     /**
@@ -115,7 +128,12 @@ public class FusionLocalizer implements Localizer {
      * @param timestamp the timestamp of the measurement
      * @param measurementVariance the variance for this specific measurement (x, y, heading), or null to use the default
      */
-    public void addMeasurement(Pose2d measuredPose, long timestamp, Covariance measurementVariance) {
+    public void addMeasurement(Pose2d measuredPose, long timestamp, double llts, Covariance measurementVariance) {
+        if (llts == previousVisionTimestamp) {
+            return;
+        }
+        previousVisionTimestamp = llts;
+
         Matrix measurementR = measurementVariance == null
                 ? R
                 : Matrix.diag(measurementVariance.getX(), measurementVariance.getY(), measurementVariance.getHeading());
