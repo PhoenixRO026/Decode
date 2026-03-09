@@ -75,7 +75,6 @@ class SmallTriangleRedSolo9 : LinearOpMode() {
                     robot.transfer.goToPosAction(shootPositions[0]),
                     robot.shooter.turretToPosAction(-robot.shooter.shootFarPos)
                 ),
-                robot.drive.correctionAction(smallTrianglePose, 2.s),
                 robot.shootBalls(robot.shooter.rpmFar),
 
                 ParallelAction(
@@ -130,7 +129,6 @@ class SmallTriangleRedSolo9 : LinearOpMode() {
                     robot.shooter.turretToPosAction(-robot.shooter.shootClosePos),
                     robot.shooter.goToRpmAction(robot.shooter.rpmClose)
                 ),
-                robot.drive.correctionAction(bigTrianglePose, 2.s),
 
                 robot.shootBalls(robot.shooter.rpmClose),
 
@@ -159,7 +157,6 @@ class SmallTriangleRedSolo9 : LinearOpMode() {
                     robot.shooter.goToRpmAction(robot.shooter.rpmClose)
                 ),
 
-                robot.drive.correctionAction(bigTrianglePose, 2.s),
                 robot.shootBalls(robot.shooter.rpmClose),
 
                 robot.drive.actionBuilder(smallTrianglePose)

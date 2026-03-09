@@ -55,7 +55,7 @@ class OuttakeTuning : LinearOpMode() {
 
         val encoderOuttake : Encoder = OverflowEncoder(RawEncoder(motorShooterBottom))
 
-        encoderOuttake.direction = DcMotorSimple.Direction.REVERSE
+        encoderOuttake.direction = DcMotorSimple.Direction.FORWARD
 
         val voltageSensor = hardwareMap.voltageSensor.iterator().next()
 
