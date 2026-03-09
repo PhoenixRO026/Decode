@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.roadrunner.Pose2d
 import com.acmerobotics.roadrunner.PoseVelocity2d
 import com.acmerobotics.roadrunner.Vector2d
+import com.commonlibs.units.inchToM
 import com.commonlibs.units.rotate
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.robotcore.hardware.HardwareMap
@@ -12,6 +13,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D
 import org.firstinspires.ftc.teamcode.library.pedro.localization.Covariance
 import org.firstinspires.ftc.teamcode.library.pedro.localization.FusionLocalizer
+import org.psilynx.psikit.core.Logger
+import org.psilynx.psikit.ftc.StructPoseInputs
+import kotlin.math.log
 
 class FusedLocalizer(
     hardwareMap: HardwareMap,
@@ -19,6 +23,7 @@ class FusedLocalizer(
     val limelight3A: Limelight3A,
     val turretAngleRad: () -> Double
 ): Localizer {
+    private val cameraPosStruct = StructPoseInputs("Pose2d", "Pose3d")
     @Config
     data object FusionConfig {
         @JvmField var pinpointCovarianceX = 0.0
@@ -59,6 +64,15 @@ class FusedLocalizer(
         val cameraPos = flattenPose3Dto2D(result.botpose_MT2)
         val robotPos = cameraPosToRobotPos(cameraPos)
         fusedLocalizer.addMeasurement(robotPos, result.controlHubTimeStampNanos, result.timestamp)
+        logPos(robotPos, "LimelightMT2")
+    }
+
+    fun logPos(pos: Pose2d, name: String) {
+        val xMeters = pos.position.x.inchToM()
+        val yMeters = pos.position.y.inchToM()
+        val headingRad = pos.heading.toDouble()
+        cameraPosStruct.set(xMeters, yMeters, headingRad)
+        Logger.processInputs(name, cameraPosStruct)
     }
 
     fun flattenPose3Dto2D(pose3D: Pose3D): Pose2d {
@@ -94,6 +108,8 @@ class FusedLocalizer(
     override fun update(): PoseVelocity2d {
         val vel = fusedLocalizer.update()
         updateLimelight()
+        logPos(fusedLocalizer.pose, "FusedPose")
+        logPos(pinpointLocalizer.pose, "PinpointPose")
         return vel
     }
 }
