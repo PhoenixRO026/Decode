@@ -77,7 +77,7 @@ class Shooter(
         @JvmField var limitTolerence = 50
         @JvmField var gearRatio = 23.0 / 30.0
         @JvmField var rpmFar = 3200.0
-        @JvmField var rpmClose = 3000.0
+        @JvmField var rpmClose = 2900.0
         @JvmField var rpmRest = 1000.0
         @JvmField var shootClosePos = 5700.0
         @JvmField var shootFarPos = 7200.0
