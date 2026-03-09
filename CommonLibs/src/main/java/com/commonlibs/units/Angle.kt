@@ -3,6 +3,7 @@
 package com.commonlibs.units
 
 import com.acmerobotics.roadrunner.Rotation2d
+import org.psilynx.psikit.core.MeasuredUnit
 import kotlin.math.PI
 
 data class Angle(@JvmField var asDeg: Double): MeasuredUnit {
@@ -23,8 +24,8 @@ data class Angle(@JvmField var asDeg: Double): MeasuredUnit {
     override fun toString() = "$asDeg " + if (asDeg == 1.0) "degree" else "degrees"
 
     fun coerceIn(minAng: Angle, maxAng: Angle) = Angle(asDeg.coerceIn(minAng.asDeg, maxAng.asDeg))
-    override val value by ::asRad
-    override val unit = "radian"
+    override fun getValue() = asRad
+    override fun getUnit() = "radian"
 }
 
 fun Number.degToRev() = toDouble() / 360.0
