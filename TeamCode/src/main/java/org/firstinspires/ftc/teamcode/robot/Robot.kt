@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor
 import com.qualcomm.robotcore.hardware.Servo
+import com.qualcomm.robotcore.hardware.VoltageSensor
 import org.firstinspires.ftc.teamcode.roadrunner.FusedLocalizer
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
 
@@ -159,7 +160,7 @@ class Robot(
             { shooter.turretAngle.asRad }
         )
 
-        val mecanumDrive = MecanumDrive(hardwareMap, pose.pose2d/*, fusedLocalizer*/)
+        val mecanumDrive = MecanumDrive(hardwareMap, pose.pose2d, fusedLocalizer.pinpointLocalizer)
 
         ///  Shooter  ///
 
@@ -208,7 +209,7 @@ class Robot(
         val colorSensor = hardwareMap.get(NormalizedColorSensor::class.java, "colorSensor")
         colorSensor.gain = 15f
 
-        val voltageSensor = hardwareMap.voltageSensor.iterator().next()
+        val voltageSensor = hardwareMap.get(VoltageSensor::class.java, "Control Hub")
 
         drive = Drive(mecanumDrive)
         shooter = Shooter(

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.roadrunner.tuning;
 
+import static org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive.PARAMS;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.reflection.ReflectionConfig;
 import com.acmerobotics.roadrunner.MotorFeedforward;
@@ -16,6 +18,7 @@ import com.acmerobotics.roadrunner.ftc.ForwardPushTest;
 import com.acmerobotics.roadrunner.ftc.ForwardRampLogger;
 import com.acmerobotics.roadrunner.ftc.LateralPushTest;
 import com.acmerobotics.roadrunner.ftc.LateralRampLogger;
+import com.acmerobotics.roadrunner.ftc.LazyHardwareMapImu;
 import com.acmerobotics.roadrunner.ftc.LazyImu;
 import com.acmerobotics.roadrunner.ftc.LynxQuadratureEncoderGroup;
 import com.acmerobotics.roadrunner.ftc.ManualFeedforwardTuner;
@@ -27,6 +30,7 @@ import com.acmerobotics.roadrunner.ftc.OTOSIMU;
 import com.acmerobotics.roadrunner.ftc.OTOSLinearScalarTuner;
 import com.acmerobotics.roadrunner.ftc.OTOSPositionOffsetTuner;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeRegistrar;
@@ -69,12 +73,13 @@ public final class TuningOpModes {
         if (DRIVE_CLASS.equals(MecanumDrive.class)) {
             dvf = hardwareMap -> {
                 MecanumDrive md = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-                LazyImu lazyImu = md.lazyImu;
+                LazyImu lazyImu = new LazyHardwareMapImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
+                        PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));;
 
                 List<EncoderGroup> encoderGroups = new ArrayList<>();
                 List<EncoderRef> leftEncs = new ArrayList<>(), rightEncs = new ArrayList<>();
                 List<EncoderRef> parEncs = new ArrayList<>(), perpEncs = new ArrayList<>();
-                if (md.localizer instanceof MecanumDrive.DriveLocalizer) {
+                /*if (md.localizer instanceof MecanumDrive.DriveLocalizer) {
                     MecanumDrive.DriveLocalizer dl = (MecanumDrive.DriveLocalizer) md.localizer;
                     encoderGroups.add(new LynxQuadratureEncoderGroup(
                             hardwareMap.getAll(LynxModule.class),
@@ -84,7 +89,7 @@ public final class TuningOpModes {
                     leftEncs.add(new EncoderRef(0, 1));
                     rightEncs.add(new EncoderRef(0, 2));
                     rightEncs.add(new EncoderRef(0, 3));
-                } else if (md.localizer instanceof ThreeDeadWheelLocalizer) {
+                } else*/ if (md.localizer instanceof ThreeDeadWheelLocalizer) {
                     ThreeDeadWheelLocalizer dl = (ThreeDeadWheelLocalizer) md.localizer;
                     encoderGroups.add(new LynxQuadratureEncoderGroup(
                             hardwareMap.getAll(LynxModule.class),
@@ -128,10 +133,10 @@ public final class TuningOpModes {
 
                 return new DriveView(
                     DriveType.MECANUM,
-                        MecanumDrive.PARAMS.inPerTick,
-                        MecanumDrive.PARAMS.maxWheelVel,
-                        MecanumDrive.PARAMS.minProfileAccel,
-                        MecanumDrive.PARAMS.maxProfileAccel,
+                        PARAMS.inPerTick,
+                        PARAMS.maxWheelVel,
+                        PARAMS.minProfileAccel,
+                        PARAMS.maxProfileAccel,
                         encoderGroups,
                         Arrays.asList(
                                 md.leftFront,
@@ -147,9 +152,9 @@ public final class TuningOpModes {
                         perpEncs,
                         lazyImu,
                         md.voltageSensor,
-                        () -> new MotorFeedforward(MecanumDrive.PARAMS.kS,
-                                MecanumDrive.PARAMS.kV / MecanumDrive.PARAMS.inPerTick,
-                                MecanumDrive.PARAMS.kA / MecanumDrive.PARAMS.inPerTick),
+                        () -> new MotorFeedforward(PARAMS.kS,
+                                PARAMS.kV / PARAMS.inPerTick,
+                                PARAMS.kA / PARAMS.inPerTick),
                         0
                 );
             };

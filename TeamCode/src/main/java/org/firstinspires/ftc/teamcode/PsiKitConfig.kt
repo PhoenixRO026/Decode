@@ -28,6 +28,7 @@ object PsiKitConfig {
             pinpointUseMinimalBulkReadScope = false
             pinpointWrapperPublishesOdometry = true
             pedroFollowerPublishesNamedOdometry = false
+            prefetchOnlyControlHub = true
         }
     }
 }

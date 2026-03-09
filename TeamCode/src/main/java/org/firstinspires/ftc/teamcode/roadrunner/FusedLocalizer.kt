@@ -34,7 +34,7 @@ class FusedLocalizer(
         @JvmField var limelightCovarianceH = 0.0
         @JvmField var bufferSize = 100
     }
-    private val pinpointLocalizer = PinpointLocalizer(hardwareMap, 0.0, initialPose)
+    val pinpointLocalizer = PinpointLocalizer(hardwareMap, 0.0, initialPose)
     private val fusedLocalizer = FusionLocalizer(
         pinpointLocalizer,
         Covariance(

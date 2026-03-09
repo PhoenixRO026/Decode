@@ -210,7 +210,7 @@ class SmallTriangleRedSolo9 : LoggedOpMode() {
 
         telemetry.addData("True case: ", robot.limelight.updateCase())
 
-        while (running && opModeIsActive()) {
+        while (opModeIsActive() && running) {
             timeKeep.resetDeltaTime()
             robot.shooter.updateRpm(timeKeep.deltaTime)
             robot.shooter.updateTurretPosition(timeKeep.deltaTime)
