@@ -16,10 +16,12 @@ kotlin {
 
 repositories {
     maven { url = 'https://maven.brott.dev/' }
+    maven { url 'https://www.jitpack.io' }
 }
 
 dependencies {
     implementation project(":CommonLibs")
 
     implementation 'com.acmerobotics.roadrunner:MeepMeep:0.1.7'
+    implementation 'com.github.ProNoob1029.PsiKit:core:0.2.0-beta1-ex2'
 }
