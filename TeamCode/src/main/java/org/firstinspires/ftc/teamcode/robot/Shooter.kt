@@ -56,9 +56,9 @@ class Shooter(
 
         @JvmField
         var controllerTurret = PIDController(
-            kP = 0.000000001,
-            kD = 0.000000004,
-            kI = 0.0000000125,
+            kP = 0.00026,
+            kD = 0.000005,
+            kI = 0.0005,
             stabilityThreshold = 0.2
         )
         @JvmField
