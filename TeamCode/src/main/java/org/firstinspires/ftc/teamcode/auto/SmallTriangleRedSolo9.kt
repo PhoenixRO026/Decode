@@ -15,13 +15,14 @@ import com.commonlibs.units.inch
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import com.qualcomm.robotcore.eventloop.opmode.LoggedOpMode
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.robot.Robot
 import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
 import org.firstinspires.ftc.teamcode.robot.Spindexer
 
 @Autonomous
-class SmallTriangleRedSolo9 : LinearOpMode() {
+class SmallTriangleRedSolo9 : LoggedOpMode() {
     val startPose = Pose(63.inch, 11.inch, 180.0.deg)
     val smallTrianglePose = Pose(50.inch, 11.inch, 90.0.deg)
     val bigTrianglePose = Pose(-6.inch, 11.inch, 90.0.deg)

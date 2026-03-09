@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
+import org.psilynx.psikit.core.Logger
 
 class Spindexer(
     val servoTransfer1: Servo,
@@ -197,7 +198,10 @@ class Spindexer(
 
     fun goToNextShootAction() = InstantAction{ goToNextShoot() }
 
-    fun goToNextIntakeAction() = InstantAction{ goToNextIntake() }
+    fun goToNextIntakeAction() = InstantAction{
+        goToNextIntake()
+        Logger.recordOutput("Spindexer/nextIntakeAction", currentPos)
+    }
 
     var sensorHue: Float = 0f
 
@@ -218,6 +222,8 @@ class Spindexer(
             hsv
         )
         sensorHue = hsv[0]
+        Logger.recordOutput("Spindexer/sensorHue", sensorHue)
+        Logger.recordOutput("Spindexer/sensorColor", sensorColor)
     }
 
     fun updateDistance() {
@@ -253,6 +259,7 @@ class Spindexer(
         {
             updateHue()
             it.addLine("Waiting for any ball")
+            Logger.recordOutput("Spindexer/waitForColorResult", sensorColor)
             sensorColor == BallColor.EMPTY
         },
         SleepAction(maxTime)
