@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
+import org.firstinspires.ftc.teamcode.library.pedro.geometry.Pose;
 
 import java.util.Objects;
 
@@ -27,6 +28,7 @@ public final class PinpointLocalizer implements Localizer {
 
     private Pose2d txWorldPinpoint;
     private Pose2d txPinpointRobot = new Pose2d(0, 0, 0);
+    private PoseVelocity2d worldVelocity = new PoseVelocity2d(new Vector2d(0.0, 0.0), 0.0);
 
     public PinpointLocalizer(HardwareMap hardwareMap, double inPerTick, Pose2d initialPose) {
         // TODO: make sure your config has a Pinpoint device with this name
@@ -64,11 +66,22 @@ public final class PinpointLocalizer implements Localizer {
         driver.update();
         if (Objects.requireNonNull(driver.getDeviceStatus()) == GoBildaPinpointDriver.DeviceStatus.READY) {
             txPinpointRobot = new Pose2d(driver.getPosX(DistanceUnit.INCH), driver.getPosY(DistanceUnit.INCH), driver.getHeading(UnnormalizedAngleUnit.RADIANS));
-            Vector2d worldVelocity = new Vector2d(driver.getVelX(DistanceUnit.INCH), driver.getVelY(DistanceUnit.INCH));
-            Vector2d robotVelocity = Rotation2d.fromDouble(-txPinpointRobot.heading.log()).times(worldVelocity);
+            worldVelocity = new PoseVelocity2d(
+                    new Vector2d(driver.getVelX(DistanceUnit.INCH), driver.getVelY(DistanceUnit.INCH)),
+                    driver.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS)
+            );
+            Vector2d robotVelocity = Rotation2d.fromDouble(-txPinpointRobot.heading.log()).times(worldVelocity.linearVel);
 
-            return new PoseVelocity2d(robotVelocity, driver.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS));
+            return new PoseVelocity2d(robotVelocity, worldVelocity.angVel);
         }
         return new PoseVelocity2d(new Vector2d(0, 0), 0);
+    }
+
+    public Pose getWorldVelocity() {
+        return new Pose(
+            worldVelocity.linearVel.x,
+            worldVelocity.linearVel.y,
+            worldVelocity.angVel
+        );
     }
 }
