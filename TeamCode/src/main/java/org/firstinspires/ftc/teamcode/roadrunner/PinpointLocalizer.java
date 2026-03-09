@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
-import org.firstinspires.ftc.teamcode.library.pedro.geometry.Pose;
 
 import java.util.Objects;
 
@@ -77,11 +76,7 @@ public final class PinpointLocalizer implements Localizer {
         return new PoseVelocity2d(new Vector2d(0, 0), 0);
     }
 
-    public Pose getWorldVelocity() {
-        return new Pose(
-            worldVelocity.linearVel.x,
-            worldVelocity.linearVel.y,
-            worldVelocity.angVel
-        );
+    public PoseVelocity2d getWorldVelocity() {
+        return worldVelocity;
     }
 }

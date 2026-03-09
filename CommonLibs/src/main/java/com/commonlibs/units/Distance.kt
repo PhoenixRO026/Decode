@@ -3,6 +3,7 @@
 package com.commonlibs.units
 
 import com.acmerobotics.roadrunner.Pose2d
+import com.acmerobotics.roadrunner.PoseVelocity2d
 import com.acmerobotics.roadrunner.Vector2d
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -141,3 +142,6 @@ fun Vector2d.rotate(angle: Angle) = Vector2d(
     x * cos(angle) - y * sin(angle),
     x * sin(angle) + y * cos(angle)
 )
+
+fun Pose2d.copy() = Pose2d(position.x, position.y, heading.toDouble())
+fun PoseVelocity2d.copy() = PoseVelocity2d(Vector2d(linearVel.x, linearVel.y), angVel)

@@ -1,10 +1,11 @@
 package org.firstinspires.ftc.teamcode.library.pedro.localization;
 
+import static com.commonlibs.units.DistanceKt.copy;
+
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
+import com.acmerobotics.roadrunner.Vector2d;
 
-import org.firstinspires.ftc.teamcode.library.pedro.geometry.Pose;
-import org.firstinspires.ftc.teamcode.library.pedro.math.MathFunctions;
 import org.firstinspires.ftc.teamcode.library.pedro.math.Matrix;
 import org.firstinspires.ftc.teamcode.roadrunner.Localizer;
 import org.firstinspires.ftc.teamcode.roadrunner.PinpointLocalizer;
@@ -14,33 +15,33 @@ import java.util.TreeMap;
 
 public class FusionLocalizer implements Localizer {
     private final PinpointLocalizer deadReckoning;
-    private Pose currentPosition;
-    private Pose currentVelocity;
+    private Pose2d currentPosition;
+    private PoseVelocity2d currentVelocity;
     private Matrix P; //State Covariance
     private final Matrix Q; //Process Noise Covariance
     private final Matrix R; //Measurement Noise Covariance
     private long lastUpdateTime = -1;
-    private final NavigableMap<Long, Pose> poseHistory = new TreeMap<>();
-    private final NavigableMap<Long, Pose> twistHistory = new TreeMap<>();
+    private final NavigableMap<Long, Pose2d> poseHistory = new TreeMap<>();
+    private final NavigableMap<Long, PoseVelocity2d> twistHistory = new TreeMap<>();
     private final NavigableMap<Long, Matrix> covarianceHistory = new TreeMap<>();
     private final int bufferSize;
 
     public FusionLocalizer(
             PinpointLocalizer deadReckoning,
-            Pose initialCovariance,
-            Pose processVariance,
-            Pose measurementVariance,
+            Covariance initialCovariance,
+            Covariance processVariance,
+            Covariance measurementVariance,
             int bufferSize
     ) {
         this.deadReckoning = deadReckoning;
-        this.currentPosition = new Pose();
+        this.currentPosition = new Pose2d(0.0, 0.0, 0.0);
 
         //Standard Deviations for Kalman Filter
         this.P = Matrix.diag(initialCovariance.getX(), initialCovariance.getY(), initialCovariance.getHeading());
         this.Q = Matrix.diag(processVariance.getX(), processVariance.getY(), processVariance.getHeading());
         this.R = Matrix.diag(measurementVariance.getX(), measurementVariance.getY(), measurementVariance.getHeading());
         this.bufferSize = bufferSize;
-        twistHistory.put(0L, new Pose());
+        twistHistory.put(0L, new PoseVelocity2d(new Vector2d(0.0, 0.0), 0.0));
     }
 
     @Override
@@ -52,9 +53,9 @@ public class FusionLocalizer implements Localizer {
         lastUpdateTime = now;
 
         //Updates twist, note that the dead reckoning localizer returns world-frame twist
-        Pose twist = deadReckoning.getWorldVelocity();
-        twistHistory.put(now, twist.copy());
-        currentVelocity = twist.copy();
+        PoseVelocity2d twist = deadReckoning.getWorldVelocity();
+        twistHistory.put(now, copy(twist));
+        currentVelocity = copy(twist);
 
         //Perform twist integration to propagate the fused position estimate based on how the odometry thinks the robot has moved
         currentPosition = integrate(currentPosition, twist, dt);
@@ -62,7 +63,7 @@ public class FusionLocalizer implements Localizer {
         //Update Kalman Filter
         updateCovariance(dt);
 
-        poseHistory.put(now, currentPosition.copy());
+        poseHistory.put(now, copy(currentPosition));
         covarianceHistory.put(now, P.copy());
         if (poseHistory.size() > bufferSize) poseHistory.pollFirstEntry();
         if (twistHistory.size() > bufferSize) twistHistory.pollFirstEntry();
@@ -104,7 +105,7 @@ public class FusionLocalizer implements Localizer {
      * @param measuredPose the measured position by the camera, enter NaN to a specific axis if the camera couldn't measure that axis
      * @param timestamp the timestamp of the measurement
      */
-    public void addMeasurement(Pose measuredPose, long timestamp) {
+    public void addMeasurement(Pose2d measuredPose, long timestamp) {
         addMeasurement(measuredPose, timestamp, null);
     }
 
@@ -114,7 +115,7 @@ public class FusionLocalizer implements Localizer {
      * @param timestamp the timestamp of the measurement
      * @param measurementVariance the variance for this specific measurement (x, y, heading), or null to use the default
      */
-    public void addMeasurement(Pose measuredPose, long timestamp, Pose measurementVariance) {
+    public void addMeasurement(Pose2d measuredPose, long timestamp, Covariance measurementVariance) {
         Matrix measurementR = measurementVariance == null
                 ? R
                 : Matrix.diag(measurementVariance.getX(), measurementVariance.getY(), measurementVariance.getHeading());
@@ -122,19 +123,19 @@ public class FusionLocalizer implements Localizer {
         if (poseHistory.isEmpty() || timestamp < poseHistory.firstKey() || timestamp > poseHistory.lastKey())
             return;
 
-        Pose pastPose = interpolate(timestamp, poseHistory);
+        Pose2d pastPose = interpolate(timestamp, poseHistory);
         if (pastPose == null)
             pastPose = currentPosition;
 
         // Measurement residual y = z - x
-        boolean measX = !Double.isNaN(measuredPose.getX());
-        boolean measY = !Double.isNaN(measuredPose.getY());
-        boolean measH = !Double.isNaN(measuredPose.getHeading());
+        boolean measX = !Double.isNaN(measuredPose.position.x);
+        boolean measY = !Double.isNaN(measuredPose.position.y);
+        boolean measH = !Double.isNaN(measuredPose.heading.log());
 
         Matrix y = new Matrix(new double[][]{
-                {measX ? measuredPose.getX() - pastPose.getX() : 0},
-                {measY ? measuredPose.getY() - pastPose.getY() : 0},
-                {measH ? MathFunctions.normalizeAngleSigned(measuredPose.getHeading() - pastPose.getHeading()) : 0}
+                {measX ? measuredPose.position.x - pastPose.position.x : 0},
+                {measY ? measuredPose.position.y - pastPose.position.y : 0},
+                {measH ? normalizeAngleSigned(measuredPose.heading.log() - pastPose.heading.log()) : 0}
         });
 
         // Measurement mask M
@@ -159,10 +160,10 @@ public class FusionLocalizer implements Localizer {
 
         // State update
         Matrix Ky = K.multiply(y);
-        Pose updatedPast = new Pose(
-                pastPose.getX() + Ky.get(0, 0),
-                pastPose.getY() + Ky.get(1, 0),
-                MathFunctions.normalizeAngle(pastPose.getHeading() + Ky.get(2, 0))
+        Pose2d updatedPast = new Pose2d(
+                pastPose.position.x + Ky.get(0, 0),
+                pastPose.position.y + Ky.get(1, 0),
+                pastPose.heading.log() + Ky.get(2, 0)
         );
         poseHistory.put(timestamp, updatedPast);
 
@@ -177,24 +178,24 @@ public class FusionLocalizer implements Localizer {
 
         // Forward propagate pose + covariance
         long prevTime = timestamp;
-        Pose prevPose = updatedPast;
+        Pose2d prevPose = updatedPast;
         Matrix prevCov = updatedCovariance;
 
-        for (NavigableMap.Entry<Long, Pose> entry :
+        for (NavigableMap.Entry<Long, Pose2d> entry :
                 poseHistory.tailMap(timestamp, false).entrySet()) {
 
             long t = entry.getKey();
-            Pose twist = interpolate(t, twistHistory);
+            PoseVelocity2d twist = interpolateVel(t, twistHistory);
             if (twist == null)
                 twist = currentVelocity;
 
             double dt = (t - prevTime) / 1e9;
 
-            Pose nextPose = integrate(prevPose, twist, dt);
+            Pose2d nextPose = integrate(prevPose, twist, dt);
             poseHistory.put(t, nextPose);
 
             // Covariance propagation: P ← P + Q dt²
-            Matrix G = Matrix.createRotation(prevPose.getHeading()).multiply(dt);
+            Matrix G = Matrix.createRotation(prevPose.heading.log()).multiply(dt);
             prevCov = prevCov.plus(G.multiply(Q.multiply(G.transposed())));
             covarianceHistory.put(t, prevCov);
 
@@ -202,76 +203,105 @@ public class FusionLocalizer implements Localizer {
             prevTime = t;
         }
 
-        currentPosition = poseHistory.lastEntry().getValue().copy();
+        currentPosition = copy(poseHistory.lastEntry().getValue());
         P = covarianceHistory.lastEntry().getValue().copy();
     }
 
+
     //Performs linear interpolation inside the history map for the value at a given timestamp
-    private static Pose interpolate(long timestamp, NavigableMap<Long, Pose> history) {
+    private static PoseVelocity2d interpolateVel(long timestamp, NavigableMap<Long, PoseVelocity2d> history) {
         Long lowerKey = history.floorKey(timestamp);
         Long upperKey = history.ceilingKey(timestamp);
 
         if (lowerKey == null || upperKey == null) return null;
-        if (lowerKey.equals(upperKey)) return history.get(lowerKey).copy();
+        if (lowerKey.equals(upperKey)) return copy(history.get(lowerKey));
 
-        Pose lowerPose = history.get(lowerKey);
-        Pose upperPose = history.get(upperKey);
+        PoseVelocity2d lowerPose = history.get(lowerKey);
+        PoseVelocity2d upperPose = history.get(upperKey);
 
         double ratio = (double) (timestamp - lowerKey) / (upperKey - lowerKey);
 
-        double x = lowerPose.getX() + ratio * (upperPose.getX() - lowerPose.getX());
-        double y = lowerPose.getY() + ratio * (upperPose.getY() - lowerPose.getY());
-        double headingDiff = MathFunctions.getSmallestAngleDifference(upperPose.getHeading(), lowerPose.getHeading());
-        double heading = MathFunctions.normalizeAngle(lowerPose.getHeading() + ratio * headingDiff);
+        double x = lowerPose.linearVel.x + ratio * (upperPose.linearVel.x - lowerPose.linearVel.x);
+        double y = lowerPose.linearVel.y + ratio * (upperPose.linearVel.y - lowerPose.linearVel.y);
+        double headingDiff = getSmallestAngleDifference(upperPose.angVel, lowerPose.angVel);
+        double heading = lowerPose.angVel + ratio * headingDiff;
 
-        return new Pose(x, y, heading);
+        return new PoseVelocity2d(new Vector2d(x, y), heading);
+    }
+    //Performs linear interpolation inside the history map for the value at a given timestamp
+    private static Pose2d interpolate(long timestamp, NavigableMap<Long, Pose2d> history) {
+        Long lowerKey = history.floorKey(timestamp);
+        Long upperKey = history.ceilingKey(timestamp);
+
+        if (lowerKey == null || upperKey == null) return null;
+        if (lowerKey.equals(upperKey)) return copy(history.get(lowerKey));
+
+        Pose2d lowerPose = history.get(lowerKey);
+        Pose2d upperPose = history.get(upperKey);
+
+        double ratio = (double) (timestamp - lowerKey) / (upperKey - lowerKey);
+
+        double x = lowerPose.position.x + ratio * (upperPose.position.x - lowerPose.position.x);
+        double y = lowerPose.position.y + ratio * (upperPose.position.y - lowerPose.position.y);
+        double headingDiff = getSmallestAngleDifference(upperPose.heading.log(), lowerPose.heading.log());
+        double heading = lowerPose.heading.log() + ratio * headingDiff;
+
+        return new Pose2d(x, y, heading);
     }
 
-    private Pose integrate(Pose previousPose, Pose twist, double dt) {
+    private Pose2d integrate(Pose2d previousPose, PoseVelocity2d twist, double dt) {
         //Standard forward-Euler first-order approximation for twist integration
-        double dx = twist.getX() * dt;
-        double dy = twist.getY() * dt;
-        double dTheta = twist.getHeading() * dt;
+        double dx = twist.linearVel.x * dt;
+        double dy = twist.linearVel.y * dt;
+        double dTheta = twist.angVel * dt;
 
-        return new Pose(
-                previousPose.getX() + dx,
-                previousPose.getY() + dy,
-                MathFunctions.normalizeAngle(previousPose.getHeading() + dTheta)
+        return new Pose2d(
+                previousPose.position.x + dx,
+                previousPose.position.y + dy,
+                previousPose.heading.log() + dTheta
         );
     }
 
     @Override
     public Pose2d getPose() {
-        return new Pose2d(
-            currentPosition.getX(),
-            currentPosition.getY(),
-            currentPosition.getHeading()
-        );
+        return currentPosition;
     }
 
-    public void setStartPose(Pose setStart) {
-        deadReckoning.setPose(new Pose2d(
-            setStart.getX(),
-            setStart.getY(),
-            setStart.getHeading()
-        ));
-        poseHistory.put(0L, setStart.copy());
+    public void setStartPose(Pose2d setStart) {
+        deadReckoning.setPose(setStart);
+        poseHistory.put(0L, copy(setStart));
         covarianceHistory.put(0L, P.copy());
-        currentPosition = setStart.copy();
+        currentPosition = copy(setStart);
     }
 
     @Override
     public void setPose(Pose2d setPose) {
-        currentPosition = new Pose(
-            setPose.position.x,
-            setPose.position.y,
-            setPose.heading.toDouble()
-        );
+        currentPosition = copy(setPose);
         deadReckoning.setPose(setPose);
 
         if (poseHistory.lastEntry() != null)
-            poseHistory.lastEntry().setValue(currentPosition.copy());
+            poseHistory.lastEntry().setValue(copy(setPose));
         else
-            setStartPose(currentPosition.copy());
+            setStartPose(setPose);
+    }
+
+    public static double normalizeAngleSigned(double angleRadians) {
+        double angle = normalizeAngle(angleRadians);
+        if (angle >= Math.PI) {
+            return angle - 2*Math.PI;
+        }
+        return angle;
+    }
+
+    public static double getSmallestAngleDifference(double one, double two) {
+        return Math.min(normalizeAngle(one - two), normalizeAngle(two - one));
+    }
+
+    public static double normalizeAngle(double angleRadians) {
+        double angle = angleRadians % (2*Math.PI);
+        if (angle < 0) {
+            return angle + 2*Math.PI;
+        }
+        return angle;
     }
 }
