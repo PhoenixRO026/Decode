@@ -21,8 +21,8 @@ class ServoSync: LinearOpMode() {
         waitForStart()
         previousTime = now()
 
-        servoFront.position = 0.0106
-        servoBack.position = 0.015
+        servoFront.position = 0.0056
+        servoBack.position = 0.0
 
         while (opModeIsActive()){
             now = now()

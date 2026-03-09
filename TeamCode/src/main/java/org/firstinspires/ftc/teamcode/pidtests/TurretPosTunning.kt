@@ -58,10 +58,12 @@ class TurretPosTunning : LinearOpMode() {
             robot.shooter.goToPos(PositionTunningConfic.targetPos)
             robot.shooter.updateTurretPosition(timeKeep.deltaTime)
 
-            telemetry.addData("transfer target pos", PositionTunningConfic.targetPos)
+            telemetry.addData("transfer target pos", robot.shooter.targetPos)
             telemetry.addData("transfer pos", robot.shooter.turretPosition)
+
             telemetry.addData("pos in deg", tickToDeg(robot.shooter.turretPosition))/// 22 -> 15 -> 108 15/22
             telemetry.addData("target in deg", tickToDeg(robot.shooter.targetPos))
+
             telemetry.addData("transfer power", robot.shooter.powerTurret)
 
             telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
