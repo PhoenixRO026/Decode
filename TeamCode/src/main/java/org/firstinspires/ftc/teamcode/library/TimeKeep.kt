@@ -21,6 +21,8 @@ class TimeKeep {
 
         previousTime = currentTime
         currentTime = timeNow()
+
+        Logger.recordOutput("TimeKeep/deltaTime", deltaTime)
     }
 
     private fun timeNow() = Logger.getTimestamp().s
