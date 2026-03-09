@@ -79,6 +79,21 @@ data object blueGoalCloseDuo{
     val endPose = Pose(58.inch, -30.inch, 180.0.deg)
 }
 
+data object redGoalCloseDuo{
+    val startPose = Pose(-61.5.inch, 38.inch, -90.0.deg)
+    val smallTrianglePose = Pose(50.inch, 11.inch, 90.deg)
+    val bigTrianglePose = Pose(-6.inch, 11.inch, 90.0.deg)
+    val middleIntakePose = Pose(13.inch, 28.inch, 90.0.deg)
+    val middleIntakePoseBack = Pose(13.inch, 58.inch, 90.0.deg)
+    val leftIntakePose = Pose(-12.inch, 28.inch, 90.0.deg)
+    val leftIntakePoseBack = Pose(-12.inch, 52.inch, 90.0.deg)
+
+    val GateIntakePose = Pose(10.inch, 55.inch, 90.0.deg)
+    val GateIntakePoseBack = Pose(18.inch, 58.inch, 105.0.deg)
+
+    val endPose = Pose(58.inch, 30.inch, 180.0.deg)
+}
+
 fun main() {
     System.setProperty("sun.java2d.opengl", "true")
 
@@ -93,21 +108,15 @@ fun main() {
 
     val slowSpeed: VelConstraint = MinVelConstraint(
         listOf(
-            kinematics.WheelVelConstraint(10.0),
+            kinematics.WheelVelConstraint(30.0),
             AngularVelConstraint(Math.toRadians(180.0))
         )
     )
 
-    val blueBot =
-        DefaultBotBuilder(meepMeep)
-            .setConstraints(60.0, 60.0, Math.toRadians(180.0), Math.toRadians(180.0), 15.0)
-            .setDimensions(16.9, 16.9)
-            .setStartPose(blueGoalFarSolo.startPoseClose.pose2d)
-            .build()
 
     val blueBotCloseSolo =
         DefaultBotBuilder(meepMeep)
-            .setConstraints(60.0, 60.0, Math.toRadians(180.0), Math.toRadians(180.0), 15.0)
+            .setConstraints(80.0, 60.0, Math.toRadians(180.0), Math.toRadians(180.0), 15.0)
             .setDimensions(16.9, 16.9)
             .setStartPose(blueGoalFarSolo.startPoseClose.pose2d)
             .build()
@@ -116,7 +125,7 @@ fun main() {
 
     val blueBotCloseDuo =
         DefaultBotBuilder(meepMeep)
-            .setConstraints(60.0, 60.0, Math.toRadians(180.0), Math.toRadians(180.0), 15.0)
+            .setConstraints(80.0, 60.0, Math.toRadians(180.0), Math.toRadians(180.0), 15.0)
             .setDimensions(16.9, 16.9)
             .setStartPose(blueGoalFarSolo.startPoseClose.pose2d)
             .build()
@@ -125,7 +134,7 @@ fun main() {
 
     val blueBotFarSolo =
         DefaultBotBuilder(meepMeep)
-            .setConstraints(60.0, 60.0, Math.toRadians(180.0), Math.toRadians(180.0), 15.0)
+            .setConstraints(80.0, 60.0, Math.toRadians(180.0), Math.toRadians(180.0), 15.0)
             .setDimensions(16.9, 16.9)
             .setStartPose(blueGoalFarSolo.startPoseFar.pose2d)
             .build()
@@ -134,12 +143,48 @@ fun main() {
 
     val blueBotFarDuo =
         DefaultBotBuilder(meepMeep)
-            .setConstraints(60.0, 60.0, Math.toRadians(180.0), Math.toRadians(180.0), 15.0)
+            .setConstraints(80.0, 60.0, Math.toRadians(180.0), Math.toRadians(180.0), 15.0)
             .setDimensions(16.9, 16.9)
             .setStartPose(blueGoalFarSolo.startPoseFar.pose2d)
             .build()
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    val redBotCloseDuo =
+        DefaultBotBuilder(meepMeep)
+            .setConstraints(80.0, 60.0, Math.toRadians(180.0), Math.toRadians(180.0), 15.0)
+            .setDimensions(16.9, 16.9)
+            .setStartPose(blueGoalFarSolo.startPoseFar.pose2d)
+            .build()
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    redBotCloseDuo.runAction(redBotCloseDuo.drive.actionBuilder(redGoalCloseDuo.startPose.pose2d).ex()
+        .setTangent(-45.deg)
+        .strafeToLinearHeading(redGoalCloseDuo.bigTrianglePose)
+        .setTangent(0.deg)
+        .splineToLinearHeading(redGoalCloseDuo.middleIntakePose, 90.deg)
+        .lineToY(58.inch, slowSpeed)
+        .setTangent(-90.deg)
+        .splineToLinearHeading(redGoalCloseDuo.bigTrianglePose, 180.deg)
+
+        .setTangent(0.0.deg)
+        .splineToLinearHeading(redGoalCloseDuo.GateIntakePose, 90.deg)
+        .setTangent(-30.deg)
+        .splineToLinearHeading(redGoalCloseDuo.GateIntakePoseBack, 180.deg)
+        .setTangent(-90.deg)
+        .splineToLinearHeading(redGoalCloseDuo.bigTrianglePose, 180.deg)
+
+        .setTangent(180.deg)
+        .strafeToLinearHeading(redGoalCloseDuo.leftIntakePose)
+        .setTangent(90.deg)
+        .lineToY(52.inch, slowSpeed)
+        .setTangent(-45.deg)
+        .strafeToLinearHeading(redGoalCloseDuo.bigTrianglePose)
+        .setTangent(-90.deg)
+        .lineToY(20.inch)
+        .build()
+    )
 
     blueBotCloseSolo.runAction(blueBotCloseSolo.drive.actionBuilder(blueGoalCloseSolo.startPose.pose2d).ex()
         .strafeToLinearHeading(blueGoalCloseDuo.bigTrianglePose)
@@ -273,7 +318,7 @@ fun main() {
     meepMeep.setBackground(Background.FIELD_DECODE_JUICE_DARK)
         .setDarkMode(true)
         .setBackgroundAlpha(0.95f)
-        .addEntity(blueBotFarDuo)
+        .addEntity(redBotCloseDuo)
         //.addEntity(blueBotFar)
         .start()
 }

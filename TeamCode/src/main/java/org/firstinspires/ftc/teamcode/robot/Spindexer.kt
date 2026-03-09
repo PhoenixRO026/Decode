@@ -28,6 +28,10 @@ class Spindexer(
         @JvmField val fingerUpPosition = 0.5989
         @JvmField val  fingerDownPosition = 0.4972
         @JvmField val shootOffset = 0.07
+
+        @JvmField val intake0Pos = 0.0
+        @JvmField val wholePosDist = 0.0
+        @JvmField val toShootPosDist = 0.0
     }
 
     enum class BallColor {
@@ -36,9 +40,19 @@ class Spindexer(
         EMPTY
     }
 
-
     enum class TransferPos (val pos : Double, val index: Int) {
-        intake0(0.0883, 0),
+        intake0(TransferConfig.intake0Pos, 0),
+        intake1(TransferConfig.intake0Pos + TransferConfig.wholePosDist, 1),
+        intake2(TransferConfig.intake0Pos + 2 * TransferConfig.wholePosDist, 2),
+        shoot2(TransferConfig.toShootPosDist + TransferConfig.intake0Pos, 2),
+        shoot0(TransferConfig.toShootPosDist + TransferConfig.intake0Pos + TransferConfig.wholePosDist, 0),
+        shoot1(TransferConfig.toShootPosDist + TransferConfig.intake0Pos + 2 * TransferConfig.wholePosDist, 1),
+        pseudo2(TransferConfig.toShootPosDist + TransferConfig.intake0Pos + 3 * TransferConfig.wholePosDist, 2),
+        pseudo0(TransferConfig.toShootPosDist + TransferConfig.intake0Pos + 4 * TransferConfig.wholePosDist, 0)
+    }
+
+    /*
+    * intake0(0.0883, 0),
         intake1(0.2344, 1),
         intake2(0.3661, 2),
         shoot2(0.1661, 2),
@@ -46,7 +60,7 @@ class Spindexer(
         shoot1(0.4339, 1),
         pseudo2(0.5733, 2),
         pseudo0(0.7089, 0)
-    }
+    * */
     val slots: MutableList<BallColor> = mutableListOf(
         BallColor.EMPTY,
         BallColor.EMPTY,
