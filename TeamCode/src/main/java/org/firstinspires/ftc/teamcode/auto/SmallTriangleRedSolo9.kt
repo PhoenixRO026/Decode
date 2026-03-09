@@ -61,7 +61,7 @@ class SmallTriangleRedSolo9 : LoggedOpMode() {
 
         val slowSpeed: VelConstraint = MinVelConstraint(
             listOf(
-                kinematics.WheelVelConstraint(20.0),
+                kinematics.WheelVelConstraint(35.0),
                 AngularVelConstraint(Math.toRadians(180.0))
             )
         )
