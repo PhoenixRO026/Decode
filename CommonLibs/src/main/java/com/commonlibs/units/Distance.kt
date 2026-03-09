@@ -5,6 +5,7 @@ package com.commonlibs.units
 import com.acmerobotics.roadrunner.Pose2d
 import com.acmerobotics.roadrunner.PoseVelocity2d
 import com.acmerobotics.roadrunner.Vector2d
+import org.psilynx.psikit.core.MeasuredUnit
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -28,8 +29,8 @@ data class Distance(
     operator fun unaryMinus() = Distance(-asInch)
 
     override fun toString() = "$asInch " + if (asInch == 1.0) "inch" else "inches"
-    override val value by ::asCm
-    override val unit = "centimeter"
+    override fun getValue() = asCm
+    override fun getUnit() = "centimeter"
 }
 
 fun Number.cmToInch() = toDouble() / 2.54

@@ -29,10 +29,5 @@ object PsiKitConfig {
             pinpointWrapperPublishesOdometry = true
             pedroFollowerPublishesNamedOdometry = false
         }
-        MotorWrapper.apply {
-            logProfile = MotorWrapper.LOG_PROFILE_BULK_ONLY
-            logVelocity = true
-            logBusy = false
-        }
     }
 }
