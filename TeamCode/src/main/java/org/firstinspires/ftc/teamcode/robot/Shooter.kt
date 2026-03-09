@@ -43,9 +43,9 @@ class Shooter(
     data object ShooterConfig {
         @JvmField
         var controllerRpm = PIDController(
-            kP = 0.004,
-            kD = 0.00004,
-            kI = 0.018,
+            kP = 0.001,
+            kD = 0.000027,
+            kI = 0.00125,
             stabilityThreshold = 50.0
         )
         @JvmField var robotAngularVelkP = 0.15
