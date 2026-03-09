@@ -2,6 +2,8 @@
 
 package com.commonlibs.units
 
+import org.psilynx.psikit.core.MeasuredUnit
+
 data class Velocity(@JvmField var distance: Distance, @JvmField var duration: Duration): MeasuredUnit {
     val asMSec get() = this / (M / S)
     val asCmSec get() = this / (CM / S)
@@ -19,8 +21,8 @@ data class Velocity(@JvmField var distance: Distance, @JvmField var duration: Du
     operator fun div(duration: Duration) = Acceleration(this, duration)
 
     override fun toString() = "$distance per " + if (duration.asS == 1.0) "second" else "$duration"
-    override val value by ::asMSec
-    override val unit = "meter per second"
+    override fun getValue() = asMSec
+    override fun getUnit() = "meter per second"
 }
 
 val Number.msec get() = this.m / S

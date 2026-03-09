@@ -3,6 +3,7 @@
 package com.commonlibs.units
 
 import com.acmerobotics.roadrunner.SleepAction
+import org.psilynx.psikit.core.MeasuredUnit
 
 class Duration(@JvmField var asS: Double): MeasuredUnit {
     val asMs get() = asS.sToMs()
@@ -17,8 +18,8 @@ class Duration(@JvmField var asS: Double): MeasuredUnit {
     operator fun compareTo(other: Duration) = asS.compareTo(other.asS)
 
     override fun toString() = "$asS " + if (asS == 1.0) "second" else "seconds"
-    override val value by ::asS
-    override val unit = "second"
+    override fun getValue() = asS
+    override fun getUnit() = "second"
 }
 
 object Time {

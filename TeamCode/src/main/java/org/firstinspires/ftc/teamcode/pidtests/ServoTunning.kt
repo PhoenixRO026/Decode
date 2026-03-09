@@ -27,7 +27,7 @@ class ServoTunning: LinearOpMode() {
             now = now()
             deltaTime = now - previousTime
             previousTime = now
-            val increment = (deltaTime * 0.01)
+            val increment = (deltaTime * 0.1)
             if(gamepad1.dpad_up) {
                 servoFront.position = (servoFront.position + increment).coerceIn(0.0, 1.0 - 0.0044)
             }

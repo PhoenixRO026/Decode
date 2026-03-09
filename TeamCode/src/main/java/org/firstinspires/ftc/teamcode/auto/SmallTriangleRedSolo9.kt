@@ -15,13 +15,14 @@ import com.commonlibs.units.inch
 import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import com.qualcomm.robotcore.eventloop.opmode.LoggedOpMode
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.robot.Robot
 import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
 import org.firstinspires.ftc.teamcode.robot.Spindexer
 
 @Autonomous
-class SmallTriangleRedSolo9 : LinearOpMode() {
+class SmallTriangleRedSolo9 : LoggedOpMode() {
     val startPose = Pose(63.inch, 11.inch, 180.0.deg)
     val smallTrianglePose = Pose(50.inch, 11.inch, 90.0.deg)
     val bigTrianglePose = Pose(-6.inch, 11.inch, 90.0.deg)
@@ -60,7 +61,7 @@ class SmallTriangleRedSolo9 : LinearOpMode() {
 
         val slowSpeed: VelConstraint = MinVelConstraint(
             listOf(
-                kinematics.WheelVelConstraint(20.0),
+                kinematics.WheelVelConstraint(35.0),
                 AngularVelConstraint(Math.toRadians(180.0))
             )
         )
@@ -75,7 +76,6 @@ class SmallTriangleRedSolo9 : LinearOpMode() {
                     robot.transfer.goToPosAction(shootPositions[0]),
                     robot.shooter.turretToPosAction(-robot.shooter.shootFarPos)
                 ),
-                robot.drive.correctionAction(smallTrianglePose, 2.s),
                 robot.shootBalls(robot.shooter.rpmFar),
 
                 ParallelAction(
@@ -130,7 +130,6 @@ class SmallTriangleRedSolo9 : LinearOpMode() {
                     robot.shooter.turretToPosAction(-robot.shooter.shootClosePos),
                     robot.shooter.goToRpmAction(robot.shooter.rpmClose)
                 ),
-                robot.drive.correctionAction(bigTrianglePose, 2.s),
 
                 robot.shootBalls(robot.shooter.rpmClose),
 
@@ -159,7 +158,6 @@ class SmallTriangleRedSolo9 : LinearOpMode() {
                     robot.shooter.goToRpmAction(robot.shooter.rpmClose)
                 ),
 
-                robot.drive.correctionAction(bigTrianglePose, 2.s),
                 robot.shootBalls(robot.shooter.rpmClose),
 
                 robot.drive.actionBuilder(smallTrianglePose)

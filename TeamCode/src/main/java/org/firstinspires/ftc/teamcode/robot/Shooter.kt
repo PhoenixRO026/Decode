@@ -19,6 +19,7 @@ import com.commonlibs.units.deg
 import com.commonlibs.units.pose
 import com.commonlibs.units.radsec
 import com.commonlibs.units.rev
+import com.commonlibs.units.rpm
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.VoltageSensor
 import org.firstinspires.ftc.robotcore.external.Telemetry
@@ -56,9 +57,9 @@ class Shooter(
 
         @JvmField
         var controllerTurret = PIDController(
-            kP = 0.000000001,
-            kD = 0.000000004,
-            kI = 0.0000000125,
+            kP = 0.001,
+            kD = 0.000025,
+            kI = 0.001,
             stabilityThreshold = 0.2
         )
         @JvmField
@@ -70,13 +71,13 @@ class Shooter(
         )
         @JvmField var ticksPerRev = 8192.0 * (108.0/22.0)
 
-        @JvmField var targetPosTolerance = 50
+        @JvmField var targetPosTolerance = 75
         @JvmField var minTurretPosition = -14000.0
         @JvmField var maxTurretPosition = 14000.0
         @JvmField var limitTolerence = 50
         @JvmField var gearRatio = 23.0 / 30.0
         @JvmField var rpmFar = 3200.0
-        @JvmField var rpmClose = 3000.0
+        @JvmField var rpmClose = 2900.0
         @JvmField var rpmRest = 1000.0
         @JvmField var shootClosePos = 5700.0
         @JvmField var shootFarPos = 7200.0
@@ -128,9 +129,10 @@ class Shooter(
 
     val turretPosition get() = encoderTurret.getPositionAndVelocity().position - offset
 
-    val turretAngle = (turretPosition / ShooterConfig.ticksPerRev + 360.0).deg
+    val turretAngle = (turretPosition / ShooterConfig.ticksPerRev * 360.0).deg
 
     var targetPos = 0.0
+    var turretTargetAngle = (targetPos / ShooterConfig.ticksPerRev * 360.0).deg
 
     fun tickToDeg(ticks : Double) : Double {
         return (360 / ShooterConfig.ticksPerRev) * ticks
@@ -144,6 +146,12 @@ class Shooter(
         targetRpm = rpm
     }
 
+    fun shooterBusy(): Boolean {
+        val busy = abs(targetRpm - rpm) > ShooterConfig.targetRpmTolerance
+        Logger.recordOutput("Shooter/shooterBusy", busy)
+        return busy
+    }
+
     fun goToRpmAction(rpm: Double) = object : Action {
         var init = true
         override fun run(p: TelemetryPacket): Boolean {
@@ -151,7 +159,7 @@ class Shooter(
                 init = false
                 goToRmp(rpm)
             }
-            return abs(targetRpm - rpm) > ShooterConfig.targetRpmTolerance
+            return shooterBusy()
         }
     }
 
@@ -163,10 +171,19 @@ class Shooter(
         val feedforwardPower = ShooterConfig.kS + ShooterConfig.kV * targetRpm
 
         powerShooter = pidPower + feedforwardPower / voltage
+
+        Logger.recordOutput("Shooter/currentRPM", rpm.rpm)
+        Logger.recordOutput("Shooter/targetRPM", targetRpm.rpm)
     }
 
     fun goToPos(pos: Double) {
         targetPos = pos
+    }
+
+    fun turretBusy(): Boolean {
+        val busy = abs(targetPos - turretPosition) > ShooterConfig.targetPosTolerance
+        Logger.recordOutput("Shooter/turretBusy", busy)
+        return busy
     }
 
     fun turretToPosAction(pos: Double) = object : Action {
@@ -177,7 +194,7 @@ class Shooter(
                 targetPos = pos
             }
             p.addLine("waiting for turret")
-            return abs(targetPos - turretPosition) > ShooterConfig.targetPosTolerance
+            return turretBusy()
         }
     }
 
@@ -187,6 +204,8 @@ class Shooter(
     
     fun updateTurretPosition(deltaTime: Duration) {
         powerTurret = ShooterConfig.controllerTurret.calculate(turretPosition, targetPos, deltaTime)
+        Logger.recordOutput("Shooter/currentAngle", turretAngle)
+        Logger.recordOutput("Shooter/targetAngle", turretTargetAngle)
     }
 
     private fun computeHeadingPower(dt: Duration, error: Double, robotAngularVelocity: AngularVelocity = 0.radsec): Double {
@@ -256,9 +275,9 @@ class Shooter(
 
     fun addTelemetry(telemetry: Telemetry) {
         Logger.recordOutput("Shooter/Outtake power", powerShooter)
-        Logger.recordOutput("Shooter/Outtake rpm", rpm)
+//        Logger.recordOutput("Shooter/Outtake rpm", rpm)
         Logger.recordOutput("Shooter/Turret power", powerTurret)
-        Logger.recordOutput("Shooter/Turret pos", turretPosition)
+//        Logger.recordOutput("Shooter/Turret pos", turretPosition)
         telemetry.addData("Outtake power", powerShooter)
         telemetry.addData("Outtake rpm", rpm)
         telemetry.addData("Turret power", powerTurret)
