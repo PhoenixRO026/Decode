@@ -25,15 +25,18 @@ import org.firstinspires.ftc.teamcode.robot.Spindexer
 @Autonomous
 class SmallTriangleBlueDuo : LinearOpMode() {
     val startPose = Pose(63.inch, -11.inch, 180.0.deg)
-    val smallTrianglePose = Pose(50.inch, -11.inch, -90.0.deg)
-    val rightIntakePose = Pose(36.inch, -28.inch, -90.0.deg)
+    val smallTrianglePose = Pose(55.inch, -14.inch, -90.0.deg)
+
+    val rightIntakePose = Pose(36.inch, -30.inch, -90.0.deg)
     val rightIntakePoseBack = Pose(36.inch, -56.inch, -90.0.deg)
-    val humanIntakePose = Pose(53.inch, -55.inch, -60.0.deg)
-    val humanIntakePoseBack = Pose(59.inch, -59.inch, 0.0.deg)
-    val firstCycle = Pose(36.inch, -58.inch, -150.0.deg)
+    val firstCycle = Pose(37.inch, -58.inch, -160.0.deg)
+    val firstCycleBack = Pose(23.inch, -58.inch, 180.0.deg)
+
+    val humanIntakePose = Pose(56.inch, -55.inch, -70.0.deg)
+    val humanGetReady = Pose(54.inch, -57.inch, -40.0.deg)
+    val humanIntakePoseBack = Pose(56.inch, -60.inch, 0.0.deg)
 
     val endPose = Pose(58.inch, -30.inch, -90.0.deg)
-
     val shooterOffset = 94.0
 
     var ticksPerRev = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0)
@@ -101,8 +104,6 @@ class SmallTriangleBlueDuo : LinearOpMode() {
 
                 robot.shootBallsRaw(robot.shooter.rpmFar),
 
-                SleepAction(4.0),
-
                 ParallelAction(
                     robot.drive.actionBuilder(smallTrianglePose)
                         .setTangent(0.deg)
@@ -113,19 +114,18 @@ class SmallTriangleBlueDuo : LinearOpMode() {
 
                 ParallelAction(
                     robot.drive.actionBuilder(humanIntakePose)
-                        .lineToYConstantHeading(-54.inch)
-                        .setTangent(0.deg)
-                        .splineToLinearHeading(humanIntakePoseBack, 0.0.deg,slowSpeed)
-                        .turnTo(-30.deg)
-                        .turnTo(0.deg)
+                        .setTangent(90.deg)
+                        .strafeToLinearHeading(humanGetReady)
+                        .setTangent(180.deg)
+                        .strafeToLinearHeading(humanIntakePoseBack)
+                        //.turnTo(-30.deg)
+                        //.turnTo(0.deg)
                         .build(),
                     robot.intakeBalls(shootPositions[2])
                 ),
 
                 ParallelAction(
                     robot.drive.actionBuilder(humanIntakePoseBack)
-                        //.setTangent(110.deg)
-                        //.splineToLinearHeading(smallTrianglePose, -135.deg)
                         .strafeToLinearHeading(smallTrianglePose)
                         .build(),
                     robot.shooter.turretToPosAction(robot.shooter.shootFarPos),
@@ -134,7 +134,32 @@ class SmallTriangleBlueDuo : LinearOpMode() {
 
                 robot.shootBallsRaw(robot.shooter.rpmFar),
 
-                //SleepAction(6.0),
+                ParallelAction(
+                    robot.drive.actionBuilder(smallTrianglePose)
+                        .setTangent(-90.deg)
+                        .splineToLinearHeading(firstCycle, -135.0.deg)
+                        .build(),
+                    robot.intake.startIntakeAction()
+                ),
+
+                ParallelAction(
+                    robot.drive.actionBuilder(firstCycle)
+                        .setTangent(180.0.deg)
+                        .splineToLinearHeading(firstCycleBack, 0.0.deg)
+                        .build(),
+                    robot.intakeBalls(shootPositions[1])
+                ),
+
+                ParallelAction(
+                    robot.drive.actionBuilder(firstCycleBack)
+                        .setTangent(60.deg)
+                        .strafeToLinearHeading(smallTrianglePose)
+                        .build(),
+                    robot.shooter.turretToPosAction(robot.shooter.shootFarPos),
+                    robot.shooter.goToRpmAction(robot.shooter.rpmFar)
+                ),
+
+                robot.shootBallsRaw(robot.shooter.rpmFar),
 
                 robot.drive.actionBuilder(smallTrianglePose)
                     .setTangent(-90.deg)

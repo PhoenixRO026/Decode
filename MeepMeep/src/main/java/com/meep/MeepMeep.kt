@@ -36,7 +36,8 @@ data object blueGoalFarDuo{
     val bigTrianglePose = Pose(-16.inch, -16.inch, -90.0.deg)
 
     val rightIntakePose = Pose(36.inch, -30.inch, -90.0.deg)
-    val firstCycle = Pose(36.inch, -58.inch, -150.0.deg)
+    val firstCycle = Pose(37.inch, -58.inch, -160.0.deg)
+    val firstCycleBack = Pose(23.inch, -58.inch, 180.0.deg)
 
     val humanIntakePose = Pose(56.inch, -55.inch, -70.0.deg)
     val humanGetReady = Pose(54.inch, -57.inch, -40.0.deg)
@@ -291,12 +292,6 @@ fun main() {
         .setTangent(90.deg)
         .strafeToLinearHeading(blueGoalFarDuo.smallTrianglePose)
 
-        .setTangent(0.deg)
-        .strafeToLinearHeading(blueGoalFarDuo.firstCycle)
-
-        .setTangent(90.deg)
-        .strafeToLinearHeading(blueGoalFarDuo.smallTrianglePose)
-
         .setTangent(-90.deg)
         .strafeToLinearHeading(blueGoalFarDuo.humanIntakePose)
 
@@ -309,6 +304,13 @@ fun main() {
         .setTangent(30.deg)
         .strafeToLinearHeading(blueGoalFarDuo.smallTrianglePose)
 
+        .setTangent(-90.deg)
+        .splineToLinearHeading(blueGoalFarDuo.firstCycle, -135.0.deg)
+        .setTangent(180.0.deg)
+        .splineToLinearHeading(blueGoalFarDuo.firstCycleBack, 0.0.deg)
+
+        .setTangent(90.deg)
+        .strafeToLinearHeading(blueGoalFarDuo.smallTrianglePose)
 
         .strafeToLinearHeading(blueGoalFarDuo.endPose)
 
@@ -318,7 +320,7 @@ fun main() {
     meepMeep.setBackground(Background.FIELD_DECODE_JUICE_DARK)
         .setDarkMode(true)
         .setBackgroundAlpha(0.95f)
-        .addEntity(redBotCloseDuo)
+        .addEntity(blueBotFarDuo)
         //.addEntity(blueBotFar)
         .start()
 }
