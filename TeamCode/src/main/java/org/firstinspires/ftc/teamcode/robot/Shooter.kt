@@ -129,10 +129,10 @@ class Shooter(
 
     val turretPosition get() = encoderTurret.getPositionAndVelocity().position - offset
 
-    val turretAngle = (turretPosition / ShooterConfig.ticksPerRev * 360.0).deg
+    val turretAngle get() = (turretPosition / ShooterConfig.ticksPerRev * 360.0).deg
 
     var targetPos = 0.0
-    var turretTargetAngle = (targetPos / ShooterConfig.ticksPerRev * 360.0).deg
+    val turretTargetAngle get() = (targetPos / ShooterConfig.ticksPerRev * 360.0).deg
 
     fun tickToDeg(ticks : Double) : Double {
         return (360 / ShooterConfig.ticksPerRev) * ticks

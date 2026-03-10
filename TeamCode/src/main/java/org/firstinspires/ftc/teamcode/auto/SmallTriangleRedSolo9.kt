@@ -16,6 +16,7 @@ import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.LoggedOpMode
+import com.qualcomm.robotcore.util.RollingAverage
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.robot.Robot
 import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
@@ -47,6 +48,7 @@ class SmallTriangleRedSolo9 : LoggedOpMode() {
 
     override fun runOpMode() {
         val robot = Robot(hardwareMap, startPose)
+        val fpsAverage = RollingAverage()
         val timeKeep = TimeKeep()
 
         robot.limelight.setPipeline(0)
@@ -222,6 +224,10 @@ class SmallTriangleRedSolo9 : LoggedOpMode() {
             running = action.run(packet)
 
             dash.sendTelemetryPacket(packet)
+
+            val fps = 1.s / timeKeep.deltaTime
+            fpsAverage.addNumber((fps * 10.0).toInt())
+            telemetry.addData("fps avg", fpsAverage.average / 10.0)
             telemetry.addData("rpm", robot.shooter.rpm)
             telemetry.update()
         }
