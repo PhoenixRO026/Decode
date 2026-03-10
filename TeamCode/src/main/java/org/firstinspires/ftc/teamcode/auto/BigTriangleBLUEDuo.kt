@@ -80,6 +80,7 @@ class BigTriangleBLUEDuo : LinearOpMode() {
                         .setTangent(0.deg)
                         .splineToLinearHeading(middleIntakePose, 90.deg)
                         .build(),
+                    robot.shooter.goToRpmAction(robot.shooter.rpmRest),
                     robot.intake.startIntakeAction(),
                 ),
 

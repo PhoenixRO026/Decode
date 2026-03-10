@@ -29,6 +29,7 @@ class BigTriangleRedDuo : LinearOpMode() {
     val leftIntakePose = Pose(-12.inch, 28.inch, 90.0.deg)
     val leftIntakePoseBack = Pose(-12.inch, 52.inch, 90.0.deg)
 
+    val openGatePose = Pose(10.inch, 58.inch, 130.deg)
 
     val endPose = Pose(58.inch, 30.inch, 180.0.deg)
 
@@ -82,9 +83,10 @@ class BigTriangleRedDuo : LinearOpMode() {
 
                 ParallelAction(
                     robot.drive.actionBuilder(middleIntakePose)
-                        .lineToY(58.inch, slowSpeed)
+                        .setTangent(90.deg)
+                        .lineToY(47.inch, slowSpeed)
                         .build(),
-                    robot.intakeBalls(shootPositions[2])
+                    robot.intakeBalls(shootPositions[0])
                 ),
 
                 ParallelAction(
@@ -98,42 +100,71 @@ class BigTriangleRedDuo : LinearOpMode() {
 
                 robot.shootBalls(robot.shooter.rpmClose),
 
-///////////////////////////////////////////////////////////////////////////////////////////insert cycle
-                robot.shootBalls(robot.shooter.rpmClose),
 
+                // bigTriangle -> openGate
                 ParallelAction(
                     robot.drive.actionBuilder(bigTrianglePose)
-                        .setTangent(180.deg)
-                        .strafeToLinearHeading(leftIntakePose)
+                        .setTangent(0.deg)
+                        .splineToLinearHeading(openGatePose, -90.deg)
                         .build(),
                     robot.intake.startIntakeAction()
                 ),
 
+                // openGate -> bigTriangle
                 ParallelAction(
-                    robot.drive.actionBuilder(leftIntakePose)
+                    robot.drive.actionBuilder(openGatePose)
                         .setTangent(90.deg)
-                        .lineToY(52.inch, slowSpeed)
+                        .splineToLinearHeading(bigTrianglePose, 180.deg)
                         .build(),
-                    robot.intakeBalls(shootPositions[3])
-                ),
-
-                ParallelAction(
-                    robot.drive.actionBuilder(leftIntakePoseBack)
-                        .setTangent(-45.deg)
-                        .strafeToLinearHeading(bigTrianglePose)
-                        .build(),
+                    robot.intakeBalls(shootPositions[1]),
                     robot.shooter.turretToPosAction(-robot.shooter.shootClosePos),
                     robot.shooter.goToRpmAction(robot.shooter.rpmClose)
                 ),
 
                 robot.shootBalls(robot.shooter.rpmClose),
 
+                // bigTriangle -> openGate (again)
+                ParallelAction(
+                    robot.drive.actionBuilder(bigTrianglePose)
+                        .setTangent(0.deg)
+                        .splineToLinearHeading(openGatePose, 90.deg)
+                        .build(),
+                    robot.intake.startIntakeAction()
+                ),
 
-                robot.shootBalls(robot.shooter.rpmFar),
-                robot.drive.actionBuilder(smallTrianglePose)
-                    .setTangent(-90.deg)
-                    .lineToY(20.inch)
-                    .build()
+                // openGate -> bigTriangle (again)
+                ParallelAction(
+                    robot.drive.actionBuilder(openGatePose)
+                        .setTangent(-90.deg)
+                        .splineToLinearHeading(bigTrianglePose, 180.deg)
+                        .build(),
+                    robot.intakeBalls(shootPositions[2]),
+                    robot.shooter.turretToPosAction(-robot.shooter.shootClosePos),
+                    robot.shooter.goToRpmAction(robot.shooter.rpmClose)
+                ),
+
+                robot.shootBalls(robot.shooter.rpmClose),
+
+                // bigTriangle -> Y -30 -> Y -47
+                ParallelAction(
+                    robot.drive.actionBuilder(bigTrianglePose)
+                        .setTangent(90.deg)
+                        .lineToY(30.inch)
+                        .lineToY(47.inch, slowSpeed)
+                        .build()
+                ),
+
+                // Y -47 -> Y -16
+                ParallelAction(
+                    robot.drive.actionBuilder(leftIntakePoseBack)
+                        .setTangent(-90.deg)
+                        .lineToY(16.inch)
+                        .build(),
+                    robot.shooter.turretToPosAction(-robot.shooter.shootClosePos),
+                    robot.shooter.goToRpmAction(robot.shooter.rpmClose)
+                ),
+
+                robot.shootBalls(robot.shooter.rpmClose)
             )
         }
 
