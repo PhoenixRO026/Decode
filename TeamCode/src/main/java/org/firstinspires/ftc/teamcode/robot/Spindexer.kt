@@ -29,9 +29,9 @@ class Spindexer(
         @JvmField val  fingerDownPosition = 0.4972
         @JvmField val shootOffset = 0.07
 
-        @JvmField val intake0Pos = 0.0
-        @JvmField val wholePosDist = 0.0
-        @JvmField val toShootPosDist = 0.0
+        @JvmField val intake0Pos = 0.1105
+        @JvmField val wholePosDist = 0.1351
+        @JvmField val toShootPosDist = 0.0751
     }
 
     enum class BallColor {

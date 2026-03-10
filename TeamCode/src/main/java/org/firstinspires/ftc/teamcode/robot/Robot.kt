@@ -100,10 +100,10 @@ class Robot(
         shooter.goToRpmAction(rpm),
         shootBall(),
         transfer.goToNextShootAction(),
-        SleepAction(0.1.s),
+        SleepAction(0.2.s),
         shootBall(),
         transfer.goToNextShootAction(),
-        SleepAction(0.1.s),
+        SleepAction(0.2.s),
         shootBall(),
         ParallelAction(
             transfer.goToPosAction(Spindexer.TransferPos.intake0),
