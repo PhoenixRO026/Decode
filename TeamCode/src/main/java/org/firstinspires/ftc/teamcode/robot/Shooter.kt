@@ -80,7 +80,7 @@ class Shooter(
         @JvmField var rpmClose = 2900.0
         @JvmField var rpmRest = 1500.0
         @JvmField var shootClosePos = 5800.0
-        @JvmField var shootFarPos = 7200.0
+        @JvmField var shootFarPos = 7500.0
         // in dreapta creste pozitia
     }
 

@@ -23,14 +23,14 @@ import org.firstinspires.ftc.teamcode.robot.Spindexer
 class BigTriangleRedDuo : LinearOpMode() {
     val startPose = Pose(-61.5.inch, 38.inch, -90.0.deg)
     val smallTrianglePose = Pose(50.inch, 11.inch, 90.deg)
-    val bigTrianglePose = Pose(-6.inch, 11.inch, 90.0.deg)
+    val bigTrianglePose = Pose(-3.inch, 11.inch, 90.0.deg)
     val middleIntakePose = Pose(13.inch, 28.inch, 90.0.deg)
     val middleIntakePoseBack = Pose(13.inch, 58.inch, 90.0.deg)
     val leftIntakePose = Pose(-12.inch, 28.inch, 90.0.deg)
-    val leftIntakePoseBack = Pose(-12.inch, 52.inch, 90.0.deg)
+    val leftIntakePoseBack = Pose(-12.inch, 50.inch, 90.0.deg)
 
     val gateIntakePose = Pose(8.inch, 53.inch, 90.0.deg)
-    val gateIntakePoseBack = Pose(16.inch, 57.inch, 105.0.deg)
+    val gateIntakePoseBack = Pose(17.inch, 56.inch, 120.0.deg)
 
     val endPose = Pose(58.inch, 30.inch, 180.0.deg)
 
@@ -64,17 +64,12 @@ class BigTriangleRedDuo : LinearOpMode() {
                     robot.drive.actionBuilder(bigTrianglePose)
                         .setTangent(0.deg)
                         .splineToLinearHeading(middleIntakePose, 90.deg)
-                        .build(),
-                    robot.shooter.goToRpmAction(robot.shooter.rpmRest),
-                    robot.intake.startIntakeAction(),
-                ),
-
-                ParallelAction(
-                    robot.drive.actionBuilder(middleIntakePose)
                         .lineToY(58.inch)
                         .build(),
+                    robot.shooter.goToRpmAction(robot.shooter.rpmRest),
                     robot.intakeBalls(shootPositions[0])
                 ),
+
 
                 ParallelAction(
                     robot.drive.actionBuilder(middleIntakePoseBack)
@@ -92,18 +87,11 @@ class BigTriangleRedDuo : LinearOpMode() {
                     robot.drive.actionBuilder(bigTrianglePose)
                         .setTangent(0.0.deg)
                         .splineToLinearHeading(gateIntakePose, 90.deg)
-                        .build(),
-                    robot.intake.startIntakeAction()
-                ),
-
-                ParallelAction(
-                    robot.drive.actionBuilder(gateIntakePose)
                         .setTangent(-15.deg)
                         .splineToLinearHeading(gateIntakePoseBack, 180.deg)
                         .build(),
                     robot.intakeBalls(shootPositions[1]),
-                    robot.shooter.turretToPosAction(-robot.shooter.shootClosePos),
-                    robot.shooter.goToRpmAction(robot.shooter.rpmClose)
+                    robot.shooter.goToRpmAction(robot.shooter.rpmRest)
                 ),
 
                 ParallelAction(
@@ -120,19 +108,12 @@ class BigTriangleRedDuo : LinearOpMode() {
                 ParallelAction(
                     robot.drive.actionBuilder(bigTrianglePose)
                         .setTangent(180.0.deg)
-                        .strafeToLinearHeading(leftIntakePose)
-                        .build(),
-                    robot.intake.startIntakeAction()
-                ),
+                        .splineToLinearHeading(leftIntakePoseBack, 90.deg)
 
-                ParallelAction(
-                    robot.drive.actionBuilder(leftIntakePose)
-                        .setTangent(90.deg)
-                        .lineToY(52.inch)
+                        //.lineToY(52.inch)
                         .build(),
                     robot.intakeBalls(shootPositions[1]),
-                    robot.shooter.turretToPosAction(-robot.shooter.shootClosePos),
-                    robot.shooter.goToRpmAction(robot.shooter.rpmClose)
+                    robot.shooter.goToRpmAction(robot.shooter.rpmRest)
                 ),
 
                 ParallelAction(
