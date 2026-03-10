@@ -59,9 +59,8 @@ class BigTriangleBLUEDuo : LinearOpMode() {
                 AngularVelConstraint(Math.toRadians(180.0))
             )
         )
-
+        ///////POSITIONS FOR RED CUZ ME DUMB
         fun buildBigTriangleAction(vararg shootPositions: Spindexer.TransferPos): SequentialAction {
-
             return SequentialAction(
                 ParallelAction(
                     robot.drive.actionBuilder(startPose)

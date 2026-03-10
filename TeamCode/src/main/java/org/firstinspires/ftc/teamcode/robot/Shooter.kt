@@ -57,9 +57,9 @@ class Shooter(
 
         @JvmField
         var controllerTurret = PIDController(
-            kP = 0.001,
-            kD = 0.000025,
-            kI = 0.001,
+            kP = 0.0004,
+            kD = 0.00001,
+            kI = 0.0001,
             stabilityThreshold = 0.2
         )
         @JvmField
@@ -78,8 +78,8 @@ class Shooter(
         @JvmField var gearRatio = 23.0 / 30.0
         @JvmField var rpmFar = 3200.0
         @JvmField var rpmClose = 2900.0
-        @JvmField var rpmRest = 1000.0
-        @JvmField var shootClosePos = 5700.0
+        @JvmField var rpmRest = 1500.0
+        @JvmField var shootClosePos = 5800.0
         @JvmField var shootFarPos = 7200.0
         // in dreapta creste pozitia
     }
