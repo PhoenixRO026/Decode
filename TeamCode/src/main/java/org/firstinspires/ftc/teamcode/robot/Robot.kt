@@ -143,7 +143,6 @@ class Robot(
 
     fun shootBallsTele() = SequentialAction (
         transfer.goToPosAction(Spindexer.TransferPos.shoot0),
-        shooter.goToRpmAction(shooter.targetRpm),
         shootBall(),
         transfer.goToNextShootAction(),
         shootBall(),
@@ -197,10 +196,10 @@ class Robot(
         motorTurret.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
 
         // encoders //
-        val encoderOuttake : Encoder = RawEncoder(motorShooterBottom)
+        val encoderOuttake : Encoder = RawEncoder(mecanumDrive.leftFront)
         val encoderTurret : Encoder = RawEncoder(mecanumDrive.rightBack)
 
-        encoderOuttake.direction = DcMotorSimple.Direction.FORWARD
+        encoderOuttake.direction = DcMotorSimple.Direction.REVERSE
         encoderTurret.direction = DcMotorSimple.Direction.REVERSE
 
 

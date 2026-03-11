@@ -186,6 +186,8 @@ open class HappyDrive : LinearOpMode(){
             telemetry.addData("turret power", robot.shooter.powerTurret)
             telemetry.addData("target pos", robot.shooter.targetPos)
 
+            telemetry.addData("distance", robot.limelight.aprilTagDistance)
+
 
             runActions()
 
