@@ -21,7 +21,8 @@ class FusedLocalizer(
     hardwareMap: HardwareMap,
     initialPose: Pose2d,
     val limelight3A: Limelight3A,
-    val turretAngleRad: () -> Double
+    val turretAngleRad: () -> Double,
+    resetPos: Boolean
 ): Localizer {
     private val cameraPosStruct = StructPoseInputs("Pose2d", "Pose3d")
     @Config
@@ -34,7 +35,7 @@ class FusedLocalizer(
         @JvmField var limelightCovarianceH = 0.0
         @JvmField var bufferSize = 100
     }
-    val pinpointLocalizer = PinpointLocalizer(hardwareMap, 0.0, initialPose)
+    val pinpointLocalizer = PinpointLocalizer(hardwareMap, 0.0, initialPose, resetPos)
     private val fusedLocalizer = FusionLocalizer(
         pinpointLocalizer,
         Covariance(
@@ -53,7 +54,6 @@ class FusedLocalizer(
             FusionConfig.limelightCovarianceH
         ),
         FusionConfig.bufferSize,
-        initialPose
     )
 
     fun updateLimelight() {

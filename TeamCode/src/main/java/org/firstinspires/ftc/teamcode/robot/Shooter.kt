@@ -132,7 +132,10 @@ class Shooter(
     val turretAngle get() = (turretPosition / ShooterConfig.ticksPerRev * 360.0).deg
 
     var targetPos = 0.0
-    val turretTargetAngle get() = (targetPos / ShooterConfig.ticksPerRev * 360.0).deg
+    var turretTargetAngle get() = (targetPos / ShooterConfig.ticksPerRev * 360.0).deg
+        set(value) {
+            targetPos = value.asRev * ShooterConfig.ticksPerRev
+        }
 
     fun tickToDeg(ticks : Double) : Double {
         return (360 / ShooterConfig.ticksPerRev) * ticks
@@ -228,6 +231,12 @@ class Shooter(
 
     fun resetTargetAngle(robotAngle: Angle) {
         targetAngle = tickToDeg(turretPosition) - robotAngle.asDeg
+    }
+
+    fun updateTurretAngle(deltaTime: Duration, targetAngleRad: Double) {
+        if (currentMode != MODE.PID) return
+
+
     }
 
     fun updateTurret (deltaTime: Duration, error: Double, robotAngularVelocity: AngularVelocity = 0.radsec, robotAngle: Angle = 0.deg) {

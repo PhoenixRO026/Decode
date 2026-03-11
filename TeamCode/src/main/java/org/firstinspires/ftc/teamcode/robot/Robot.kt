@@ -4,12 +4,15 @@ import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.ParallelAction
 import com.acmerobotics.roadrunner.SequentialAction
 import com.acmerobotics.roadrunner.SleepAction
+import com.acmerobotics.roadrunner.Vector2d
 import com.acmerobotics.roadrunner.ftc.Encoder
 import com.acmerobotics.roadrunner.ftc.RawEncoder
+import com.commonlibs.units.Duration
 import com.commonlibs.units.Pose
 import com.commonlibs.units.SleepAction
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
+import com.commonlibs.units.rad
 import com.commonlibs.units.s
 import com.qualcomm.hardware.limelightvision.Limelight3A
 import com.qualcomm.robotcore.hardware.DcMotor
@@ -26,7 +29,8 @@ import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
 class Robot(
     hardwareMap: HardwareMap,
     pose: Pose = Pose(0.0.cm, 0.0.cm, 0.0.deg),
-    resetEncoders: Boolean = true
+    resetEncoders: Boolean = true,
+    resetPos: Boolean = true
 ) {
     val drive: Drive
     val shooter: Shooter
@@ -34,6 +38,7 @@ class Robot(
     val intake: Intake
     val limelight: LimeLightCore
     val fusedLocalizer: FusedLocalizer
+    val shootWhileMoving = ShootWhileMoving()
 
     fun init(deg: Double){
         transfer.goToPos(Spindexer.TransferPos.intake0)
@@ -150,6 +155,18 @@ class Robot(
         shootBall()
     )
 
+    fun turretShootingWhileMoving(deltaTime: Duration) {
+        val robotPos = fusedLocalizer.pinpointLocalizer.pose
+        val robotVel = fusedLocalizer.pinpointLocalizer.worldVelocity
+        val goal = Vector2d(-71.0, 71.0)
+        val shooterCommand = shootWhileMoving.calculate(robotPos, robotVel, goal)
+        shooter.targetRpm = shooterCommand.targetRpm
+        val targetAngle = shooterCommand.targetAngle - robotPos.heading
+        shooter.turretTargetAngle = targetAngle.rad
+        shooter.updateRpm(deltaTime)
+        shooter.updateTurretPosition(deltaTime)
+    }
+
     init {
         val limlit = hardwareMap.get(Limelight3A::class.java, "limelight")
         limlit.setPollRateHz(60)
@@ -159,7 +176,8 @@ class Robot(
             hardwareMap,
             pose.pose2d,
             limlit,
-            { shooter.turretAngle.asRad }
+            { shooter.turretAngle.asRad },
+            resetPos
         )
 
         val mecanumDrive = MecanumDrive(hardwareMap, pose.pose2d, fusedLocalizer.pinpointLocalizer)
