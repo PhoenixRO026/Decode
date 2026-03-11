@@ -38,7 +38,7 @@ open class HappyDrive : LinearOpMode(){
     override fun runOpMode() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
-        val robot = Robot(hardwareMap,Pose(0.0.cm, 0.0.cm, 0.0.deg))
+        val robot = Robot(hardwareMap,Pose(0.0.cm, 0.0.cm, 0.0.deg), resetPos = false)
         val timeKeep = TimeKeep()
 
         robot.limelight.setPipeline(pipeline)
@@ -153,10 +153,11 @@ open class HappyDrive : LinearOpMode(){
             }
 
 
-            robot.shooter.updateRpm(timeKeep.deltaTime)
+//            robot.shooter.updateRpm(timeKeep.deltaTime)
             robot.limelight.updateHeadingError()
-            robot.shooter.updateTurret(timeKeep.deltaTime, robot.limelight.headingErrorDeg, robotVel.angVel.radsec,
-                robot.drive.mecanumDrive.localizer.pose.heading.angle)
+//            robot.shooter.updateTurret(timeKeep.deltaTime, robot.limelight.headingErrorDeg, robotVel.angVel.radsec,
+//                robot.drive.mecanumDrive.localizer.pose.heading.angle)
+            robot.turretShootingWhileMoving(timeKeep.deltaTime)
 
             robot.shooter.addTelemetry(telemetry)
 

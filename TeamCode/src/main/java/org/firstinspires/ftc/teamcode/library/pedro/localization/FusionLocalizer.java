@@ -27,17 +27,17 @@ public class FusionLocalizer implements Localizer {
     private final int bufferSize;
     private double previousVisionTimestamp = 0.0;
 
-    public FusionLocalizer(
-            PinpointLocalizer deadReckoning,
-            Covariance initialCovariance,
-            Covariance processVariance,
-            Covariance measurementVariance,
-            int bufferSize,
-            Pose2d initialPose
-    ) {
-        this(deadReckoning, initialCovariance, processVariance, measurementVariance, bufferSize);
-        setStartPose(initialPose);
-    }
+//    public FusionLocalizer(
+//            PinpointLocalizer deadReckoning,
+//            Covariance initialCovariance,
+//            Covariance processVariance,
+//            Covariance measurementVariance,
+//            int bufferSize,
+//            Pose2d initialPose
+//    ) {
+//        this(deadReckoning, initialCovariance, processVariance, measurementVariance, bufferSize);
+//        setStartPose(initialPose);
+//    }
 
     public FusionLocalizer(
             PinpointLocalizer deadReckoning,

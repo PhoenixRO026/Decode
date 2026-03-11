@@ -25,11 +25,25 @@ public final class PinpointLocalizer implements Localizer {
     public final GoBildaPinpointDriver driver;
     public final GoBildaPinpointDriver.EncoderDirection initialParDirection, initialPerpDirection;
 
-    private Pose2d txWorldPinpoint;
+    static private Pose2d txWorldPinpoint = new Pose2d(0, 0, 0);
     private Pose2d txPinpointRobot = new Pose2d(0, 0, 0);
     private PoseVelocity2d worldVelocity = new PoseVelocity2d(new Vector2d(0.0, 0.0), 0.0);
 
     public PinpointLocalizer(HardwareMap hardwareMap, double inPerTick, Pose2d initialPose) {
+        this (hardwareMap, inPerTick, initialPose, true);
+    }
+
+    public PinpointLocalizer(HardwareMap hardwareMap, double inPerTick, Pose2d initialPose, boolean resetPos) {
+        this (hardwareMap, inPerTick);
+
+        if (resetPos) {
+            driver.resetPosAndIMU();
+
+            txWorldPinpoint = initialPose;
+        }
+    }
+
+    public PinpointLocalizer(HardwareMap hardwareMap, double inPerTick) {
         // TODO: make sure your config has a Pinpoint device with this name
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         driver = hardwareMap.get(GoBildaPinpointDriver.class, "odo");
@@ -44,10 +58,6 @@ public final class PinpointLocalizer implements Localizer {
         initialPerpDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
 
         driver.setEncoderDirections(initialParDirection, initialPerpDirection);
-
-        driver.resetPosAndIMU();
-
-        txWorldPinpoint = initialPose;
     }
 
     @Override
