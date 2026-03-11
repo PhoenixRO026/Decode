@@ -215,7 +215,15 @@ class Shooter(
     )
     
     fun updateTurretPosition(deltaTime: Duration) {
-        powerTurret = ShooterConfig.controllerTurret.calculate(turretPosition, targetPos, deltaTime)
+        var raw = ShooterConfig.controllerTurret.calculate(turretPosition, targetPos, deltaTime)
+
+        if (turretPosition >= ShooterConfig.maxTurretPosition /*&& error > 0*/ ) {
+            raw = min(raw, 0.0)
+        } else if (turretPosition <= ShooterConfig.minTurretPosition /*&& error < 0*/ ){
+            raw = max(raw, 0.0)
+        }
+
+        powerTurret = raw
         Logger.recordOutput("Shooter/currentAngle", turretAngle)
         Logger.recordOutput("Shooter/targetAngle", turretTargetAngle)
     }
