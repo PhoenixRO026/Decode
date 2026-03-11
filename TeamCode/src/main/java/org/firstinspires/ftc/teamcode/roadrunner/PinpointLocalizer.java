@@ -25,7 +25,7 @@ public final class PinpointLocalizer implements Localizer {
     public final GoBildaPinpointDriver driver;
     public final GoBildaPinpointDriver.EncoderDirection initialParDirection, initialPerpDirection;
 
-    static private Pose2d txWorldPinpoint;
+    static private Pose2d txWorldPinpoint = new Pose2d(0, 0, 0);
     private Pose2d txPinpointRobot = new Pose2d(0, 0, 0);
     private PoseVelocity2d worldVelocity = new PoseVelocity2d(new Vector2d(0.0, 0.0), 0.0);
 
@@ -39,7 +39,7 @@ public final class PinpointLocalizer implements Localizer {
         if (resetPos) {
             driver.resetPosAndIMU();
 
-            txPinpointRobot = initialPose;
+            txWorldPinpoint = initialPose;
         }
     }
 
