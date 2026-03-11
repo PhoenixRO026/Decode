@@ -27,7 +27,7 @@ class BigTriangleRedDuo : LinearOpMode() {
     val middleIntakePose = Pose(13.inch, 28.inch, 90.0.deg)
     val middleIntakePoseBack = Pose(13.inch, 58.inch, 90.0.deg)
     val leftIntakePose = Pose(-12.inch, 28.inch, 90.0.deg)
-    val leftIntakePoseBack = Pose(-12.inch, 50.inch, 90.0.deg)
+    val leftIntakePoseBack = Pose(-11.inch, 50.inch, 90.0.deg)
 
     val gateIntakePose = Pose(8.inch, 53.inch, 90.0.deg)
     val gateIntakePoseBack = Pose(17.inch, 56.inch, 120.0.deg)
