@@ -37,7 +37,8 @@ class Shooter(
     val motorTurret: DcMotorEx,
     val encoderTurret: Encoder,
     val encoderOuttake: Encoder,
-    val voltageSensor: VoltageSensor
+    val voltageSensor: VoltageSensor,
+    resetPos: Boolean = true
 )
 {
     @Config
@@ -125,7 +126,15 @@ class Shooter(
     }
     var currentMode = MODE.PID
 
-    private var offset = encoderTurret.getPositionAndVelocity().position
+    companion object {
+        private var offset = 0.0
+    }
+
+    init {
+        if (resetPos) {
+            offset = encoderTurret.getPositionAndVelocity().position
+        }
+    }
 
     val turretPosition get() = encoderTurret.getPositionAndVelocity().position - offset
 

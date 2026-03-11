@@ -22,6 +22,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor
 import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.hardware.VoltageSensor
+import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.teamcode.roadrunner.FusedLocalizer
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive
 
@@ -167,7 +168,7 @@ class Robot(
         shootBall()
     )
 
-    fun turretShootingWhileMoving(deltaTime: Duration) {
+    fun turretShootingWhileMoving(deltaTime: Duration, telemetry: Telemetry) {
         val robotPos = fusedLocalizer.pinpointLocalizer.pose
         val robotVel = fusedLocalizer.pinpointLocalizer.worldVelocity
         val goal = Vector2d(-71.0, 71.0)
@@ -176,7 +177,8 @@ class Robot(
         val targetAngle = shooterCommand.targetAngle - robotPos.heading
         shooter.turretTargetAngle = targetAngle.rad
         shooter.updateRpm(deltaTime)
-        shooter.updateTurretPosition(deltaTime)
+        telemetry.addData("turret target angle", shooter.turretTargetAngle)
+//        shooter.updateTurretPosition(deltaTime)
     }
 
     init {
@@ -250,7 +252,8 @@ class Robot(
             motorTurret = motorTurret,
             encoderOuttake = encoderOuttake,
             encoderTurret = encoderTurret,
-            voltageSensor = voltageSensor
+            voltageSensor = voltageSensor,
+            resetPos = resetPos
         )
         transfer = Spindexer(
             servoTransfer1 = servoTransferFront,
