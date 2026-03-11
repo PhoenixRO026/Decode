@@ -67,12 +67,14 @@ class Spindexer(
         BallColor.EMPTY
     )
 
+    val offsetTurret = 0.0
+
     var currentPos = TransferPos.intake0
         get() = field
         set(value) {
-            val clampedVal = value.pos.coerceAtMost(1.0 - 0.0044)
+            val clampedVal = value.pos.coerceAtMost(1.0 - offsetTurret)
             servoTransfer1.position = clampedVal
-            servoTransfer2.position = clampedVal + 0.0044
+            servoTransfer2.position = clampedVal + offsetTurret
             field = value
         }
 
