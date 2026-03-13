@@ -173,11 +173,11 @@ class Robot(
         val goal = Vector2d(-71.0, 71.0)
         val shooterCommand = shootWhileMoving.calculate(robotPos, robotVel, goal)
         shooter.targetRpm = shooterCommand.targetRpm
-        val targetAngle = shooterCommand.targetAngle - robotPos.heading
+        val targetAngle = robotPos.heading - shooterCommand.targetAngle
         shooter.turretTargetAngle = targetAngle.rad
         shooter.updateRpm(deltaTime)
         telemetry.addData("turret target angle", shooter.turretTargetAngle)
-//        shooter.updateTurretPosition(deltaTime)
+        shooter.updateTurretPosition(deltaTime)
     }
 
     init {

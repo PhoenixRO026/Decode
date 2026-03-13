@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.roadrunner;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -275,8 +276,8 @@ public final class MecanumDrive {
             c.setStroke("#4CAF50");
             Drawing.drawRobot(c, txWorldTarget.value());
 
-            c.setStroke("#3F51B5");
-            Drawing.drawRobot(c, localizer.getPose());
+            //c.setStroke("#3F51B5");
+            //Drawing.drawRobot(c, localizer.getPose());
 
             c.setStroke("#4CAF50FF");
             c.setStrokeWidth(1);
@@ -384,8 +385,8 @@ public final class MecanumDrive {
             c.setStroke("#4CAF50");
             Drawing.drawRobot(c, txWorldTarget.value());
 
-            c.setStroke("#3F51B5");
-            Drawing.drawRobot(c, localizer.getPose());
+            //c.setStroke("#3F51B5");
+            //Drawing.drawRobot(c, localizer.getPose());
 
             c.setStroke("#4CAF50FF");
             c.setStrokeWidth(1);
@@ -465,8 +466,8 @@ public final class MecanumDrive {
             c.setStroke("#4CAF50");
             Drawing.drawRobot(c, txWorldTarget.value());
 
-            c.setStroke("#3F51B5");
-            Drawing.drawRobot(c, localizer.getPose());
+            //c.setStroke("#3F51B5");
+            //Drawing.drawRobot(c, localizer.getPose());
 
             c.setStroke("#7C4DFFFF");
             c.fillCircle(turn.beginPose.position.x, turn.beginPose.position.y, 2);
@@ -490,7 +491,11 @@ public final class MecanumDrive {
         }
 
         estimatedPoseWriter.write(new PoseMessage(localizer.getPose()));
-        
+
+        TelemetryPacket packet = new TelemetryPacket();
+        packet.fieldOverlay().setStroke("#3F51B5");
+        Drawing.drawRobot(packet.fieldOverlay(), localizer.getPose());
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
         
         return vel;
     }

@@ -87,6 +87,6 @@ public final class PinpointLocalizer implements Localizer {
     }
 
     public PoseVelocity2d getWorldVelocity() {
-        return worldVelocity;
+        return txWorldPinpoint.heading.times(worldVelocity);
     }
 }
