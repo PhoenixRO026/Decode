@@ -32,9 +32,9 @@ class SmallTriangleBlueDuo : LinearOpMode() {
     val firstCycle = Pose(37.inch, -58.inch, -160.0.deg)
     val firstCycleBack = Pose(23.inch, -58.inch, 180.0.deg)
 
-    val humanIntakePose = Pose(50.inch, -55.inch, -90.0.deg)
+    val humanIntakePose = Pose(50.inch, -56.inch, -90.0.deg)
     //val humanGetReady = Pose(57.inch, -57.inch, -90.0.deg)
-    val humanIntakePoseBack = Pose(61.inch, -55.inch, -90.0.deg)
+    val humanIntakePoseBack = Pose(61.inch, -56.inch, -90.0.deg)
 
     val endPose = Pose(58.inch, -30.inch, -90.0.deg)
     val shooterOffset = 94.0

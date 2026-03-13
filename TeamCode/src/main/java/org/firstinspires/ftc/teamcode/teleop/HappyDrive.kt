@@ -7,12 +7,14 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket
 import com.acmerobotics.roadrunner.Action
 import com.acmerobotics.roadrunner.InstantAction
 import com.acmerobotics.roadrunner.SequentialAction
+import com.acmerobotics.roadrunner.now
 import com.commonlibs.units.Pose
 import com.commonlibs.units.angle
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
 import com.commonlibs.units.radsec
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import com.qualcomm.robotcore.eventloop.opmode.LoggedOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.buttons.ButtonReader
@@ -54,12 +56,23 @@ open class HappyDrive : LinearOpMode(){
         val intakeBallsRaw = ToggleButtonReader ({gamepad1.b})
         val buttons = listOf(shootGreen, shootPurple, shootAll, highRpm, lowRpm, stopShooter, intakeBallsSort, intakeBallsRaw)
 
+//        val timeKeepLocal = TimeKeep()
+//        var previousTime: Double
+//        var deltaTime : Double
+//        var now : Double
+
         waitForStart()
 
+//        previousTime = now()
         robot.transfer.fingerDown()
         robot.transfer.goToPos(Spindexer.TransferPos.intake0)
 
         while (opModeIsActive()) {
+//            now = now()
+//            deltaTime = now - previousTime
+//            previousTime = now
+//            val increment = (deltaTime * 0.01)
+            val increment = timeKeep.deltaTime.asS * 0.01
             timeKeep.resetDeltaTime()
             buttons.forEach { it.readValue() }
             val robotVel = robot.drive.updatePoseEstimateOdo()
@@ -152,15 +165,26 @@ open class HappyDrive : LinearOpMode(){
                 robot.shooter.resetTargetAngle(robot.drive.mecanumDrive.localizer.pose.heading.angle)
             }
 
+            if (gamepad2.dpad_up) {
+                robot.transfer.emergencyOffset= (robot.transfer.emergencyOffset + increment)
+                robot.transfer.goToPos(Spindexer.TransferPos.intake0)
+            }else if(gamepad2.dpad_down) {
+                robot.transfer.emergencyOffset= (robot.transfer.emergencyOffset - increment)
+                robot.transfer.goToPos(Spindexer.TransferPos.intake0)
+            }
 
-//            robot.shooter.updateRpm(timeKeep.deltaTime)
+
+            robot.shooter.updateRpm(timeKeep.deltaTime)
             robot.limelight.updateHeadingError()
-//            robot.shooter.updateTurret(timeKeep.deltaTime, robot.limelight.headingErrorDeg, robotVel.angVel.radsec,
-//                robot.drive.mecanumDrive.localizer.pose.heading.angle)
-            robot.turretShootingWhileMoving(timeKeep.deltaTime, telemetry)
+            robot.shooter.updateTurret(timeKeep.deltaTime, robot.limelight.headingErrorDeg, robotVel.angVel.radsec,
+                robot.drive.mecanumDrive.localizer.pose.heading.angle)
+//            robot.turretShootingWhileMoving(timeKeep.deltaTime, telemetry)
 
             robot.shooter.addTelemetry(telemetry)
 
+            telemetry.addData("emergency offset", robot.transfer.emergencyOffset)
+            telemetry.addData("intake 0 pos", Spindexer.TransferConfig.intake0Pos)
+            telemetry.addData("servo pos", robot.transfer.servoTransfer1.position)
             telemetry.addData("color", robot.transfer.sensorColor)
             telemetry.addData("hue", robot.transfer.sensorHue)
             telemetry.addData("sensor distance", robot.transfer.distance)

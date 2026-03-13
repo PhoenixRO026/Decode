@@ -28,10 +28,9 @@ class Spindexer(
         @JvmField val fingerUpPosition = 0.5989
         @JvmField val  fingerDownPosition = 0.4972
         @JvmField val shootOffset = 0.07
-
-        @JvmField val intake0Pos = 0.1105
+        @JvmField var intake0Pos = 0.1105
         @JvmField val wholePosDist = 0.1351
-        @JvmField val toShootPosDist = 0.0751
+        @JvmField val toShootPosDist = 0.065
     }
 
     enum class BallColor {
@@ -51,6 +50,8 @@ class Spindexer(
         pseudo0(TransferConfig.toShootPosDist + TransferConfig.intake0Pos + 4 * TransferConfig.wholePosDist, 0)
     }
 
+    var emergencyOffset = 0.0
+
     /*
     * intake0(0.0883, 0),
         intake1(0.2344, 1),
@@ -67,12 +68,12 @@ class Spindexer(
         BallColor.EMPTY
     )
 
-    val offsetTurret = 0.0
+    val offsetTurret = 0.0067
 
     var currentPos = TransferPos.intake0
         get() = field
         set(value) {
-            val clampedVal = value.pos.coerceAtMost(1.0 - offsetTurret)
+            val clampedVal = (value.pos + emergencyOffset).coerceAtMost(1.0 - offsetTurret)
             servoTransfer1.position = clampedVal
             servoTransfer2.position = clampedVal + offsetTurret
             field = value
@@ -224,8 +225,8 @@ class Spindexer(
     var hsv = floatArrayOf(0f, 0f, 0f)
 
     val sensorColor get() = when {
-        hsv[1] != 0f && sensorHue in 120f..190f -> BallColor.PURPLE
-        hsv[1] != 0f && sensorHue in 110f..120f -> BallColor.GREEN
+        hsv[1] != 0f && sensorHue in 150f..190f -> BallColor.PURPLE
+        hsv[1] != 0f && sensorHue in 119f..121f -> BallColor.GREEN
         else -> BallColor.EMPTY
     }
 

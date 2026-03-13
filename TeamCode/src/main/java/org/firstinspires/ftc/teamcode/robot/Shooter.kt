@@ -260,8 +260,8 @@ class Shooter(
         if (currentMode != MODE.PID) {
             return
         }
-      powerTurret = computeHeadingPower(deltaTime, error, robotAngularVelocity)
-//        powerTurret = turretAngleHold(deltaTime, error, robotAngle.asDeg)
+//      powerTurret = computeHeadingPower(deltaTime, error, robotAngularVelocity)
+        powerTurret = turretAngleHold(deltaTime, error, robotAngle.asDeg)
     }
 
 //    var errorCache = 0.0

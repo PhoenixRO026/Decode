@@ -27,12 +27,12 @@ class FusedLocalizer(
     private val cameraPosStruct = StructPoseInputs("Pose2d", "Pose3d")
     @Config
     data object FusionConfig {
-        @JvmField var pinpointCovarianceX = 0.0
-        @JvmField var pinpointCovarianceY = 0.0
-        @JvmField var pinpointCovarianceH = 0.0
-        @JvmField var limelightCovarianceX = 0.0
-        @JvmField var limelightCovarianceY = 0.0
-        @JvmField var limelightCovarianceH = 0.0
+        @JvmField var pinpointCovarianceX = 0.002
+        @JvmField var pinpointCovarianceY = 0.002
+        @JvmField var pinpointCovarianceH = 0.001
+        @JvmField var limelightCovarianceX = 0.5
+        @JvmField var limelightCovarianceY = 0.5
+        @JvmField var limelightCovarianceH = 0.05
         @JvmField var bufferSize = 100
     }
     val pinpointLocalizer = PinpointLocalizer(hardwareMap, 0.0, initialPose, resetPos)

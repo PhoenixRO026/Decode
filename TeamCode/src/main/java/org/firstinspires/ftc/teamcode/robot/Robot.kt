@@ -193,7 +193,12 @@ class Robot(
             resetPos
         )
 
-        val mecanumDrive = MecanumDrive(hardwareMap, pose.pose2d, fusedLocalizer.pinpointLocalizer)
+        val localizer = if (resetPos)
+            fusedLocalizer.pinpointLocalizer
+        else
+            fusedLocalizer
+
+        val mecanumDrive = MecanumDrive(hardwareMap, pose.pose2d, localizer)
 
         ///  Shooter  ///
 
@@ -240,7 +245,7 @@ class Robot(
         val finger = hardwareMap.get(Servo::class.java, "finger")
 
         val colorSensor = hardwareMap.get(NormalizedColorSensor::class.java, "colorSensor")
-        colorSensor.gain = 1.47f
+        colorSensor.gain = 1.7f
 
         val voltageSensor = hardwareMap.get(VoltageSensor::class.java, "Control Hub")
 
