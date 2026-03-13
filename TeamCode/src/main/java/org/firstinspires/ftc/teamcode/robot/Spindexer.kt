@@ -68,7 +68,7 @@ class Spindexer(
         BallColor.EMPTY
     )
 
-    val offsetTurret = 0.0067
+    val offsetTurret = 0.0
 
     var currentPos = TransferPos.intake0
         get() = field
