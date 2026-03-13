@@ -8,10 +8,12 @@ import com.acmerobotics.roadrunner.MecanumKinematics
 import com.acmerobotics.roadrunner.MinVelConstraint
 import com.acmerobotics.roadrunner.ParallelAction
 import com.acmerobotics.roadrunner.SequentialAction
+import com.acmerobotics.roadrunner.SleepAction
 import com.acmerobotics.roadrunner.VelConstraint
 import com.commonlibs.units.Pose
 import com.commonlibs.units.deg
 import com.commonlibs.units.inch
+import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.LoggedOpMode
@@ -21,17 +23,20 @@ import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
 import org.firstinspires.ftc.teamcode.robot.Spindexer
 
 @Autonomous
-class SmallTriangleRedDuo : LoggedOpMode() {
+class SmallTriangleRedDuo : LinearOpMode() {
     val startPose = Pose(63.inch, 11.inch, 180.0.deg)
-    val smallTrianglePose = Pose(50.inch, 11.inch, 90.0.deg)
-    val rightIntakePose = Pose(36.inch, 28.inch, 90.0.deg)
-    val rightIntakePoseBack = Pose(36.inch, 55.inch, 90.0.deg)
-    val humanIntakePose = Pose(53.inch, 54.inch, 60.0.deg)
-    val humanIntakePoseBack = Pose(59.inch, 59.inch, 0.0.deg)
-    val firstCycle = Pose(36.inch, 58.inch, 150.0.deg)
+    val smallTrianglePose = Pose(55.inch, 14.inch, 90.0.deg)
+
+    val rightIntakePose = Pose(36.inch, 30.inch, 90.0.deg)
+    val rightIntakePoseBack = Pose(36.inch, 50.inch, 90.0.deg)
+    val firstCycle = Pose(37.inch, 58.inch, 160.0.deg)
+    val firstCycleBack = Pose(23.inch, 58.inch, 180.0.deg)
+
+    val humanIntakePose = Pose(50.inch, 55.inch, 90.0.deg)
+    //val humanGetReady = Pose(57.inch, -57.inch, -90.0.deg)
+    val humanIntakePoseBack = Pose(61.inch, 55.inch, 90.0.deg)
 
     val endPose = Pose(58.inch, 30.inch, 90.0.deg)
-
     val shooterOffset = 94.0
 
     var ticksPerRev = ((((1.0+(46.0/17.0))) * (1.0+(46.0/11.0))) * 28.0)
@@ -55,7 +60,6 @@ class SmallTriangleRedDuo : LoggedOpMode() {
             listOf(
                 kinematics.WheelVelConstraint(20.0),
                 AngularVelConstraint(Math.toRadians(180.0))
-
             )
         )
 
@@ -71,7 +75,7 @@ class SmallTriangleRedDuo : LoggedOpMode() {
                     robot.shooter.turretToPosAction(-robot.shooter.shootFarPos)
                 ),
 
-                robot.shootBalls(robot.shooter.rpmFar),
+                robot.shootBallsRaw(robot.shooter.rpmFar),
 
                 ParallelAction(
                     robot.drive.actionBuilder(smallTrianglePose)
@@ -84,7 +88,7 @@ class SmallTriangleRedDuo : LoggedOpMode() {
                 ParallelAction(
                     robot.drive.actionBuilder(rightIntakePose)
                         .setTangent(90.deg)
-                        .lineToY(55.inch, slowSpeed)
+                        .lineToY(50.inch, slowSpeed)
                         .build(),
                     robot.intakeBalls(shootPositions[1])
                 ),
@@ -98,7 +102,7 @@ class SmallTriangleRedDuo : LoggedOpMode() {
                     robot.shooter.goToRpmAction(robot.shooter.rpmFar)
                 ),
 
-                robot.shootBalls(robot.shooter.rpmFar),
+                robot.shootBallsRaw(robot.shooter.rpmFar),
 
                 ParallelAction(
                     robot.drive.actionBuilder(smallTrianglePose)
@@ -110,24 +114,68 @@ class SmallTriangleRedDuo : LoggedOpMode() {
 
                 ParallelAction(
                     robot.drive.actionBuilder(humanIntakePose)
-                        .lineToYConstantHeading(54.inch)
-                        .setTangent(0.deg)
-                        .splineToLinearHeading(humanIntakePoseBack, 0.0.deg,slowSpeed)
-                        .lineToXConstantHeading(59.inch)
+                        .setTangent(-90.deg)
+                        .strafeToLinearHeading(humanIntakePoseBack)
                         .build(),
                     robot.intakeBalls(shootPositions[2])
                 ),
 
                 ParallelAction(
                     robot.drive.actionBuilder(humanIntakePoseBack)
-                        .setTangent(-110.deg)
-                        .splineToLinearHeading(smallTrianglePose, 135.deg)
+                        .strafeToLinearHeading(smallTrianglePose)
+                        .build(),
+                    robot.shooter.turretToPosAction(-robot.shooter.shootFarPos),
+                    robot.shooter.goToRpmAction(robot.shooter.rpmFar)
+                ),
+
+                robot.shootBallsRaw(robot.shooter.rpmFar),
+
+                ParallelAction(
+                    robot.drive.actionBuilder(smallTrianglePose)
+                        .setTangent(0.deg)
+                        .strafeToLinearHeading(humanIntakePose)
+                        .build(),
+                    robot.intake.startIntakeAction()
+                ),
+
+                ParallelAction(
+                    robot.drive.actionBuilder(humanIntakePose)
+                        .setTangent(-90.deg)
+                        .strafeToLinearHeading(humanIntakePoseBack)
+                        .build(),
+                    robot.intakeBalls(shootPositions[2])
+                ),
+
+                ParallelAction(
+                    robot.drive.actionBuilder(humanIntakePoseBack)
+                        .strafeToLinearHeading(smallTrianglePose)
+                        .build(),
+                    robot.shooter.turretToPosAction(-robot.shooter.shootFarPos),
+                    robot.shooter.goToRpmAction(robot.shooter.rpmFar)
+                ),
+
+                robot.shootBallsRaw(robot.shooter.rpmFar),
+
+                /*ParallelAction(
+                    robot.drive.actionBuilder(smallTrianglePose)
+                        .setTangent(-90.deg)
+                        .splineToLinearHeading(firstCycle, -135.0.deg)
+                        .setTangent(180.0.deg)
+                        .splineToLinearHeading(firstCycleBack, 0.0.deg)
+                        .build(),
+                    robot.intakeBallsLong(shootPositions[1])
+                ),
+
+                ParallelAction(
+                    robot.drive.actionBuilder(firstCycleBack)
+                        .setTangent(60.deg)
+                        .strafeToLinearHeading(smallTrianglePose)
                         .build(),
                     robot.shooter.turretToPosAction(robot.shooter.shootFarPos),
                     robot.shooter.goToRpmAction(robot.shooter.rpmFar)
                 ),
 
-                robot.shootBalls(robot.shooter.rpmFar),
+                robot.shootBallsRaw(robot.shooter.rpmFar),*/
 
                 robot.drive.actionBuilder(smallTrianglePose)
                     .setTangent(90.deg)
@@ -192,6 +240,7 @@ class SmallTriangleRedDuo : LoggedOpMode() {
             dash.sendTelemetryPacket(packet)
             telemetry.addData("rpm", robot.shooter.rpm)
             telemetry.addData("target rpm", robot.shooter.targetRpm)
+            telemetry.addData("current color", robot.transfer.sensorColor)
             telemetry.update()
         }
     }
