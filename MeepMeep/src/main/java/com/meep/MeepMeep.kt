@@ -14,10 +14,13 @@ import com.commonlibs.robotWorldvelToTurretWorldVel
 import com.commonlibs.units.Pose
 import com.commonlibs.units.deg
 import com.commonlibs.units.inch
+import com.commonlibs.units.radsec
 import com.commonlibs.units.rotate
+import com.commonlibs.units.rpm
 import com.noahbres.meepmeep.MeepMeep
 import com.noahbres.meepmeep.MeepMeep.Background
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder
+import kotlin.math.cos
 
 data object blueGoalFarSolo{
     val startPoseClose = Pose(63.inch, -11.inch, 180.0.deg)
@@ -329,4 +332,18 @@ fun main() {
         .addEntity(redBotCloseDuo)
         //.addEntity(blueBotFar)
         .start()
+
+    fun rpmToHorizontalVelocity(rpm: Double): Double {
+        val radPerSec = rpm.rpm.asRadSec
+        val tangentialVelocity = radPerSec * (48.0 / 25.4)
+        return tangentialVelocity * cos(Math.toRadians(47.2))
+    }
+
+    fun horizontalVelocityToRpm(horizVel: Double): Double {
+        val tangentialVelocity = horizVel / cos(Math.toRadians(47.2))
+        val angularVelocity = tangentialVelocity / (48.0 / 25.40)
+        return angularVelocity.radsec.asRpm
+    }
+
+    println(horizontalVelocityToRpm(166.0))
 }

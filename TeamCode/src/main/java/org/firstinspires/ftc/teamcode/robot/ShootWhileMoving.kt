@@ -7,8 +7,11 @@ import com.acmerobotics.roadrunner.Rotation2d
 import com.acmerobotics.roadrunner.Vector2d
 import com.commonlibs.robotWorldPosToTurretWorldPos
 import com.commonlibs.robotWorldvelToTurretWorldVel
+import com.commonlibs.units.radsec
+import com.commonlibs.units.rpm
 import org.firstinspires.ftc.teamcode.library.interpolation.InterpolatingTreeMap
 import org.firstinspires.ftc.teamcode.library.interpolation.MathUtil
+import kotlin.math.cos
 
 
 class ShootWhileMoving {
@@ -89,6 +92,18 @@ class ShootWhileMoving {
         val requiredRpm = shooterTable.get(effectiveDistance).rpm
 
         return ShooterCommand(requiredRpm, requiredAngle)
+    }
+
+    fun rpmToHorizontalVelocity(rpm: Double): Double {
+        val radPerSec = rpm.rpm.asRadSec
+        val tangentialVelocity = radPerSec * (48.0 / 25.4)
+        return tangentialVelocity * cos(Math.toRadians(47.2))
+    }
+
+    fun horizontalVelocityToRpm(horizVel: Double): Double {
+        val tangentialVelocity = horizVel / cos(Math.toRadians(47.2))
+        val angularVelocity = tangentialVelocity / (48.0 / 25.40)
+        return angularVelocity.radsec.asRpm
     }
 
     fun velocityToEffectiveDistance(velocity: Double): Double {
