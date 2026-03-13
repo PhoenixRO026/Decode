@@ -168,8 +168,8 @@ class Robot(
     )
 
     fun turretShootingWhileMoving(deltaTime: Duration, telemetry: Telemetry) {
-        val robotPos = fusedLocalizer.pinpointLocalizer.pose
-        val robotVel = fusedLocalizer.pinpointLocalizer.worldVelocity
+        val robotPos = fusedLocalizer.pose
+        val robotVel = fusedLocalizer.worldVelocity
         val goal = Vector2d(-71.0, 71.0)
         val shooterCommand = shootWhileMoving.calculate(robotPos, robotVel, goal)
         shooter.targetRpm = shooterCommand.targetRpm

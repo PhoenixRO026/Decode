@@ -112,4 +112,6 @@ class FusedLocalizer(
         logPos(pinpointLocalizer.pose, "PinpointPose")
         return vel
     }
+
+    val worldVelocity by pinpointLocalizer::worldVelocity
 }
