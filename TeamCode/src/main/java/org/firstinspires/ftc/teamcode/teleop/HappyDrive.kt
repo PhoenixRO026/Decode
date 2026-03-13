@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.robot.Spindexer
 
 
 @TeleOp
-open class HappyDrive : LinearOpMode(){
+open class HappyDrive : LoggedOpMode(){
     open val pipeline: Int = 1
     @Config
     data object HappyDrive {
@@ -40,7 +40,7 @@ open class HappyDrive : LinearOpMode(){
     override fun runOpMode() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
-        val robot = Robot(hardwareMap,Pose(0.0.cm, 0.0.cm, 0.0.deg), resetPos = true)
+        val robot = Robot(hardwareMap,Pose(0.0.cm, 0.0.cm, 0.0.deg), resetPos = false)
         val timeKeep = TimeKeep()
 
         robot.limelight.setPipeline(pipeline)
@@ -174,11 +174,11 @@ open class HappyDrive : LinearOpMode(){
             }
 
 
-            robot.shooter.updateRpm(timeKeep.deltaTime)
-            robot.limelight.updateHeadingError()
-            robot.shooter.updateTurret(timeKeep.deltaTime, robot.limelight.headingErrorDeg, robotVel.angVel.radsec,
-                robot.drive.mecanumDrive.localizer.pose.heading.angle)
-//            robot.turretShootingWhileMoving(timeKeep.deltaTime, telemetry)
+//            robot.shooter.updateRpm(timeKeep.deltaTime)
+//            robot.limelight.updateHeadingError()
+//            robot.shooter.updateTurret(timeKeep.deltaTime, robot.limelight.headingErrorDeg, robotVel.angVel.radsec,
+//                robot.drive.mecanumDrive.localizer.pose.heading.angle)
+            robot.turretShootingWhileMoving(timeKeep.deltaTime, telemetry)
 
             robot.shooter.addTelemetry(telemetry)
 
