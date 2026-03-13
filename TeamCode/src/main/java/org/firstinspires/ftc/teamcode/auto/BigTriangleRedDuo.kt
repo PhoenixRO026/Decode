@@ -24,12 +24,12 @@ class BigTriangleRedDuo : LinearOpMode() {
     val startPose = Pose(-61.5.inch, 38.inch, -90.0.deg)
     val smallTrianglePose = Pose(50.inch, 11.inch, 90.deg)
     val bigTrianglePose = Pose(-3.inch, 11.inch, 90.0.deg)
-    val middleIntakePose = Pose(13.inch, 28.inch, 90.0.deg)
-    val middleIntakePoseBack = Pose(13.inch, 58.inch, 90.0.deg)
+    val middleIntakePose = Pose(10.inch, 28.inch, 90.0.deg)
+    val middleIntakePoseBack = Pose(10.inch, 50.inch, 90.0.deg)
     val leftIntakePose = Pose(-12.inch, 28.inch, 90.0.deg)
-    val leftIntakePoseBack = Pose(-12.inch, 50.inch, 90.0.deg)
+    val leftIntakePoseBack = Pose(-11.inch, 50.inch, 90.0.deg)
 
-    val gateIntakePose = Pose(8.inch, 53.inch, 90.0.deg)
+    val gateIntakePose = Pose(7.inch, 53.inch, 90.0.deg)
     val gateIntakePoseBack = Pose(17.inch, 56.inch, 120.0.deg)
 
     val endPose = Pose(58.inch, 30.inch, 180.0.deg)
@@ -64,7 +64,7 @@ class BigTriangleRedDuo : LinearOpMode() {
                     robot.drive.actionBuilder(bigTrianglePose)
                         .setTangent(0.deg)
                         .splineToLinearHeading(middleIntakePose, 90.deg)
-                        .lineToY(58.inch)
+                        .lineToY(50.inch)
                         .build(),
                     robot.shooter.goToRpmAction(robot.shooter.rpmRest),
                     robot.intakeBalls(shootPositions[0])
