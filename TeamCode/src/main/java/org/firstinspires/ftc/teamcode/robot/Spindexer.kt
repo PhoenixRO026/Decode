@@ -25,8 +25,8 @@ class Spindexer(
 {
     @Config
     data object TransferConfig {
-        @JvmField val fingerUpPosition = 0.5989
-        @JvmField val  fingerDownPosition = 0.4972
+        @JvmField val fingerUpPosition = 0.5728
+        @JvmField val  fingerDownPosition = 0.465
         @JvmField val shootOffset = 0.07
         @JvmField var intake0Pos = 0.1205
         @JvmField val wholePosDist = 0.1351
@@ -221,6 +221,7 @@ class Spindexer(
     }
 
     var sensorHue: Float = 0f
+    var sensorSaturation: Float = 0f
 
     var hsv = floatArrayOf(0f, 0f, 0f)
 
@@ -230,7 +231,7 @@ class Spindexer(
         else -> BallColor.EMPTY
     }
 
-    fun  updateHue() {
+    fun updateHue() {
         val normalizedColors = colorSensor.normalizedColors
         Color.RGBToHSV(
             (normalizedColors.red * 256).toInt(),
@@ -239,6 +240,7 @@ class Spindexer(
             hsv
         )
         sensorHue = hsv[0]
+        sensorSaturation = hsv[1]
         Logger.recordOutput("Spindexer/sensorHSVHue", sensorHue)
         Logger.recordOutput("Spindexer/sensorHSVSaturation", hsv[1])
         Logger.recordOutput("Spindexer/sensorHSVValue", hsv[2])
@@ -282,7 +284,7 @@ class Spindexer(
             updateHue()
             it.addLine("Waiting for any ball")
             Logger.recordOutput("Spindexer/waitForColorResult", sensorColor)
-            val result = sensorColor == BallColor.EMPTY
+            val result = sensorSaturation < 0.5f
             Logger.recordOutput("Spindexer/isUpdatingColor", result)
             result
         },
