@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.robot.Spindexer
 
 
 @TeleOp
-open class HappyDrive : LinearOpMode(){
+open class HappyDrive : LoggedOpMode(){
     open val pipeline: Int = 1
     @Config
     data object HappyDrive {

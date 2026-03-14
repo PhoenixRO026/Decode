@@ -7,10 +7,12 @@ import com.acmerobotics.roadrunner.AngularVelConstraint
 import com.acmerobotics.roadrunner.MecanumKinematics
 import com.acmerobotics.roadrunner.MinVelConstraint
 import com.acmerobotics.roadrunner.ParallelAction
+import com.acmerobotics.roadrunner.RaceAction
 import com.acmerobotics.roadrunner.SequentialAction
 import com.acmerobotics.roadrunner.SleepAction
 import com.acmerobotics.roadrunner.VelConstraint
 import com.commonlibs.units.Pose
+import com.commonlibs.units.SleepAction
 import com.commonlibs.units.deg
 import com.commonlibs.units.inch
 import com.commonlibs.units.s
@@ -23,16 +25,18 @@ import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
 import org.firstinspires.ftc.teamcode.robot.Spindexer
 
 @Autonomous
-class SmallTriangleRedDuo : LinearOpMode() {
+class SmallTriangleRedDuo : LoggedOpMode() {
     val startPose = Pose(63.inch, 11.inch, 180.0.deg)
     val smallTrianglePose = Pose(55.inch, 14.inch, 90.0.deg)
 
-    val rightIntakePose = Pose(36.inch, 30.inch, 90.0.deg)
-    val rightIntakePoseBack = Pose(36.inch, 50.inch, 90.0.deg)
+    val leavePose = Pose(50.0.inch, 24.inch, 90.deg)
+
+    val rightIntakePose = Pose(36.inch, 29.inch, 90.0.deg)
+    val rightIntakePoseBack = Pose(36.inch, 55.inch, 90.0.deg)
     val firstCycle = Pose(37.inch, 58.inch, 160.0.deg)
     val firstCycleBack = Pose(23.inch, 58.inch, 180.0.deg)
 
-    val humanIntakePose = Pose(50.inch, 55.inch, 90.0.deg)
+    val humanIntakePose = Pose(48.inch, 55.inch, 90.0.deg)
     //val humanGetReady = Pose(57.inch, -57.inch, -90.0.deg)
     val humanIntakePoseBack = Pose(61.inch, 55.inch, 90.0.deg)
 
@@ -88,7 +92,7 @@ class SmallTriangleRedDuo : LinearOpMode() {
                 ParallelAction(
                     robot.drive.actionBuilder(rightIntakePose)
                         .setTangent(90.deg)
-                        .lineToY(50.inch, slowSpeed)
+                        .lineToY(55.inch)
                         .build(),
                     robot.intakeBalls(shootPositions[1])
                 ),
@@ -203,6 +207,8 @@ class SmallTriangleRedDuo : LinearOpMode() {
             Spindexer.TransferPos.shoot2
         )
 
+        val leaveAction = robot.drive.correctionAction(leavePose, 2.0.s)
+
         robot.transfer.goToPos(Spindexer.TransferPos.shoot0)
 
         while (opModeInInit()) {
@@ -218,9 +224,17 @@ class SmallTriangleRedDuo : LinearOpMode() {
             else -> actionPPG
         }
 
+        val parkRace = SequentialAction(
+            RaceAction(
+                action,
+                SleepAction(28.s)
+            ),
+            leaveAction
+        )
+
         val dash = FtcDashboard.getInstance()
         val c = Canvas()
-        action.preview(c)
+        parkRace.preview(c)
 
         var running = true
 
@@ -235,7 +249,7 @@ class SmallTriangleRedDuo : LinearOpMode() {
             val packet = TelemetryPacket()
             packet.fieldOverlay().operations.addAll(c.operations)
 
-            running = action.run(packet)
+            running = parkRace.run(packet)
 
             dash.sendTelemetryPacket(packet)
             telemetry.addData("rpm", robot.shooter.rpm)

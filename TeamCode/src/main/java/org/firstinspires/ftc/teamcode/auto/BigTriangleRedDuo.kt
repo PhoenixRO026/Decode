@@ -7,30 +7,37 @@ import com.acmerobotics.roadrunner.AngularVelConstraint
 import com.acmerobotics.roadrunner.MecanumKinematics
 import com.acmerobotics.roadrunner.MinVelConstraint
 import com.acmerobotics.roadrunner.ParallelAction
+import com.acmerobotics.roadrunner.RaceAction
 import com.acmerobotics.roadrunner.SequentialAction
 import com.acmerobotics.roadrunner.VelConstraint
 import com.commonlibs.units.Pose
+import com.commonlibs.units.SleepAction
 import com.commonlibs.units.deg
 import com.commonlibs.units.inch
+import com.commonlibs.units.s
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import com.qualcomm.robotcore.eventloop.opmode.LoggedOpMode
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.robot.Robot
 import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
 import org.firstinspires.ftc.teamcode.robot.Spindexer
 
 @Autonomous
-class BigTriangleRedDuo : LinearOpMode() {
+class BigTriangleRedDuo : LoggedOpMode() {
     val startPose = Pose(-61.5.inch, 38.inch, -90.0.deg)
     val smallTrianglePose = Pose(50.inch, 11.inch, 90.deg)
     val bigTrianglePose = Pose(-3.inch, 11.inch, 90.0.deg)
-    val middleIntakePose = Pose(10.inch, 28.inch, 90.0.deg)
+    val middleIntakePose = Pose(10.inch, 26.inch, 90.0.deg)
     val middleIntakePoseBack = Pose(10.inch, 50.inch, 90.0.deg)
+    val openGatePose = Pose(6.inch, 53.inch, 90.0.deg)
     val leftIntakePose = Pose(-12.inch, 28.inch, 90.0.deg)
     val leftIntakePoseBack = Pose(-11.inch, 50.inch, 90.0.deg)
 
+    val leavePose = Pose(-3.inch, 20.inch, 90.0.deg)
+
     val gateIntakePose = Pose(7.inch, 53.inch, 90.0.deg)
-    val gateIntakePoseBack = Pose(17.inch, 56.inch, 120.0.deg)
+    val gateIntakePoseBack = Pose(17.inch, 56.inch, 130.0.deg)
 
     val endPose = Pose(58.inch, 30.inch, 180.0.deg)
 
@@ -45,6 +52,17 @@ class BigTriangleRedDuo : LinearOpMode() {
 
         robot.transfer.fingerDown()
 
+        val kinematics = MecanumKinematics(
+            15.0,
+            1.0
+        )
+
+        val slowSpeed: VelConstraint = MinVelConstraint(
+            listOf(
+                kinematics.WheelVelConstraint(20.0),
+                AngularVelConstraint(Math.toRadians(180.0))
+            )
+        )
 
         fun buildBigTriangleAction(vararg shootPositions: Spindexer.TransferPos): SequentialAction {
             return SequentialAction(
@@ -64,7 +82,8 @@ class BigTriangleRedDuo : LinearOpMode() {
                     robot.drive.actionBuilder(bigTrianglePose)
                         .setTangent(0.deg)
                         .splineToLinearHeading(middleIntakePose, 90.deg)
-                        .lineToY(50.inch)
+                        .lineToY(50.inch, slowSpeed)
+                        .strafeToLinearHeading(openGatePose)
                         .build(),
                     robot.shooter.goToRpmAction(robot.shooter.rpmRest),
                     robot.intakeBalls(shootPositions[0])
@@ -72,7 +91,7 @@ class BigTriangleRedDuo : LinearOpMode() {
 
 
                 ParallelAction(
-                    robot.drive.actionBuilder(middleIntakePoseBack)
+                    robot.drive.actionBuilder(openGatePose)
                         .setTangent(-90.deg)
                         .splineToLinearHeading(bigTrianglePose, 180.deg)
                         .build(),
@@ -169,10 +188,19 @@ class BigTriangleRedDuo : LinearOpMode() {
             AutoCase.PGP -> actionPGP
             else -> actionPPG
         }
+        val leaveAction = robot.drive.correctionAction(leavePose, 2.0.s)
+
+        val parkRace = SequentialAction(
+            RaceAction(
+                action,
+                SleepAction(28.s)
+            ),
+            leaveAction
+        )
 
         val dash = FtcDashboard.getInstance()
         val c = Canvas()
-        action.preview(c)
+        parkRace.preview(c)
 
         var running = true
 
@@ -187,7 +215,7 @@ class BigTriangleRedDuo : LinearOpMode() {
             val packet = TelemetryPacket()
             packet.fieldOverlay().operations.addAll(c.operations)
 
-            running = action.run(packet)
+            running = parkRace.run(packet)
 
             dash.sendTelemetryPacket(packet)
             telemetry.addData("rpm", robot.shooter.rpm)

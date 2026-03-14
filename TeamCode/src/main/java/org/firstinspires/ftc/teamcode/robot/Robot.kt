@@ -132,7 +132,7 @@ class Robot(
     )
 
     fun shootBallsRaw(rpm: Double = shooter.rpmFar) = SequentialAction (
-        SleepAction(0.55.s),
+//        SleepAction(0.55.s),
         shooter.goToRpmAction(rpm),
         shootBall(),
         transfer.goToNextShootAction(),

@@ -28,7 +28,7 @@ class Spindexer(
         @JvmField val fingerUpPosition = 0.5989
         @JvmField val  fingerDownPosition = 0.4972
         @JvmField val shootOffset = 0.07
-        @JvmField var intake0Pos = 0.1105
+        @JvmField var intake0Pos = 0.1205
         @JvmField val wholePosDist = 0.1351
         @JvmField val toShootPosDist = 0.065
     }
