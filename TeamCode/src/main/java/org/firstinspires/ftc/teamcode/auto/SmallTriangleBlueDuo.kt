@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.robot.LimeLightCore.AutoCase
 import org.firstinspires.ftc.teamcode.robot.Spindexer
 
 @Autonomous
-class SmallTriangleBlueDuo : LinearOpMode() {
+class SmallTriangleBlueDuo : LoggedOpMode() {
     val startPose = Pose(63.inch, -11.inch, 180.0.deg)
     val smallTrianglePose = Pose(55.inch, -14.inch, -90.0.deg)
 

@@ -11,6 +11,7 @@ import com.commonlibs.units.Pose
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import com.qualcomm.robotcore.eventloop.opmode.LoggedOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.library.TimeKeep
 import org.firstinspires.ftc.teamcode.library.buttons.ButtonReader
@@ -19,7 +20,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot
 
 
 @TeleOp
-abstract class BlindDriveTurret : LinearOpMode(){
+abstract class BlindDriveTurret : LoggedOpMode(){
     abstract val pipeline : Int
     @Config
     data object BlindDrive {
