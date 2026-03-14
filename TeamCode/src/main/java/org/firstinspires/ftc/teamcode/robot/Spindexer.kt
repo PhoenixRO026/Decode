@@ -239,7 +239,9 @@ class Spindexer(
             hsv
         )
         sensorHue = hsv[0]
-        Logger.recordOutput("Spindexer/sensorHue", sensorHue)
+        Logger.recordOutput("Spindexer/sensorHSVHue", sensorHue)
+        Logger.recordOutput("Spindexer/sensorHSVSaturation", hsv[1])
+        Logger.recordOutput("Spindexer/sensorHSVValue", hsv[2])
         Logger.recordOutput("Spindexer/sensorColor", sensorColor)
     }
 
