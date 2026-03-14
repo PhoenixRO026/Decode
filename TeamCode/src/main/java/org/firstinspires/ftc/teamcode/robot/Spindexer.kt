@@ -278,7 +278,9 @@ class Spindexer(
             updateHue()
             it.addLine("Waiting for any ball")
             Logger.recordOutput("Spindexer/waitForColorResult", sensorColor)
-            sensorColor == BallColor.EMPTY
+            val result = sensorColor == BallColor.EMPTY
+            Logger.recordOutput("Spindexer/isUpdatingColor", result)
+            result
         },
         SleepAction(maxTime)
     )
