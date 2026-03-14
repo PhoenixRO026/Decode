@@ -270,7 +270,9 @@ class Spindexer(
             updateDistance()
             it.addLine("Waiting for distance")
             Logger.recordOutput("Spindexer/waitDistanceResult mm", distance)
-            distance >= 57.0
+            val result = distance >= 57.0
+            Logger.recordOutput("Spindexer/isUpdatingDistance", result)
+            result
         },
         SleepAction(maxTime)
     )
