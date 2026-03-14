@@ -245,7 +245,7 @@ class Robot(
         val finger = hardwareMap.get(Servo::class.java, "finger")
 
         val colorSensor = hardwareMap.get(NormalizedColorSensor::class.java, "colorSensor")
-        colorSensor.gain = 1.7f
+        colorSensor.gain = 1.585f
 
         val voltageSensor = hardwareMap.get(VoltageSensor::class.java, "Control Hub")
 
