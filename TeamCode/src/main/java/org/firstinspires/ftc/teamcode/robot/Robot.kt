@@ -61,19 +61,17 @@ class Robot(
         intake.spew(),
     )
 
-    fun intakeBallsLong(nextShoot: Spindexer.TransferPos) = SequentialAction (
+    fun intakeBallsCycle(nextShoot: Spindexer.TransferPos) = SequentialAction (
         intake.startIntakeAction(),
-        transfer.waitForColors(4.0.s),
+        transfer.waitForColors(3.s),
         transfer.goToNextIntakeAction(),
-        SleepAction(0.25.s),
-        transfer.waitForColors(2.0.s),
+        SleepAction(0.3.s),
+        transfer.waitForColors(0.25.s),
         transfer.goToNextIntakeAction(),
-        SleepAction(0.25.s),
-        transfer.waitForColors(2.0.s),
-        SleepAction(0.25.s),
+        SleepAction(0.3.s),
+        transfer.waitForColors(0.25.s),
+        SleepAction(0.3.s),
         transfer.goToPosAction(nextShoot),
-        SleepAction(0.15.s),
-        intake.spew(),
     )
 
     fun intakeTeleBallsSort() = SequentialAction (
@@ -246,7 +244,7 @@ class Robot(
         val finger = hardwareMap.get(Servo::class.java, "finger")
 
         val colorSensor = hardwareMap.get(NormalizedColorSensor::class.java, "colorSensor")
-        colorSensor.gain = 1.695f
+        colorSensor.gain = 1.6f
 
         val voltageSensor = hardwareMap.get(VoltageSensor::class.java, "Control Hub")
 

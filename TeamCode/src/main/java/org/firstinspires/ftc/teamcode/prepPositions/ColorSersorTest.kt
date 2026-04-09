@@ -52,7 +52,6 @@ class ColorSersorTest : LinearOpMode() {
                 robot.transfer.goToPos(Spindexer.TransferPos.intake0)
             }
 
-
             telemetry.addData("distance",
                 (robot.transfer.colorSensor as DistanceSensor).getDistance(DistanceUnit.MM))
             telemetry.addData("Gain", gain)

@@ -74,14 +74,15 @@ class Shooter(
 
         @JvmField var targetPosTolerance = 75
         @JvmField var minTurretPosition = -10000.0
-        @JvmField var maxTurretPosition = 13000.0
+        @JvmField var maxTurretPosition = 16000.0
         @JvmField var limitTolerence = 50
         @JvmField var gearRatio = 23.0 / 30.0
-        @JvmField var rpmFar = 3200.0
+        @JvmField var rpmFar = 3450.0
         @JvmField var rpmClose = 2850.0
         @JvmField var rpmRest = 2200.0
         @JvmField var shootClosePos = 5250.0
         @JvmField var shootFarPos = 7500.0
+        @JvmField var shootChicagoFarPos = 14000.0
 
         @JvmField var cameraPos = 12000.0
         // in dreapta creste pozitia
@@ -95,6 +96,7 @@ class Shooter(
 
     var shootClosePos by ShooterConfig::shootClosePos
     var shootFarPos by ShooterConfig::shootFarPos
+    var shootChicagoFarPos by ShooterConfig::shootChicagoFarPos
 
     var targetRpm = 0.0
 

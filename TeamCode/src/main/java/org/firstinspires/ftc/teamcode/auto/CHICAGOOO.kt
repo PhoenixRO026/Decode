@@ -32,13 +32,15 @@ class CHICAGOOO : LoggedOpMode() {
     val bigTrianglePreloadPose = Pose(2.inch, -11.inch, -125.deg)
     val bigTriangleParkPose = Pose(-25.inch, -11.5.inch, -135.deg)
     val bigTrianglePose = Pose(4.inch, -9.inch, -90.0.deg)
+
+    val rightIntakePose = Pose(36.inch, -29.inch, -90.0.deg)
     val middleIntakePose = Pose(14.inch, -32.inch, -90.0.deg)
     val middleIntakePoseBack = Pose(14.inch, -50.inch, -90.0.deg)
     val leftIntakePose = Pose(-10.inch, -30.inch, -90.0.deg)
     val leftIntakePoseBack = Pose(-11.inch, -52.inch, -90.0.deg)
 
-    val openGatePose = Pose(11.inch, -56.inch, -100.deg)
-    val openGatePoseBack = Pose(23.inch, -59.inch, -110.deg)
+    val openGatePose = Pose(11.inch, -56.5.inch, -100.deg)
+    val openGatePoseBack = Pose(21.5.inch, -59.inch, -110.deg)
     val nextToGatePose = Pose(17.inch, -60.inch, -115.deg)
 
     val shooterOffset = 94.0
@@ -106,7 +108,7 @@ class CHICAGOOO : LoggedOpMode() {
                     robot.drive.actionBuilder(bigTrianglePose)
                         .setTangent(-90.0.deg)
                         .splineToLinearHeading(openGatePose, -90.deg)
-                        .setTangent(-20.deg)
+                        .setTangent(-35.deg)
                         .splineToLinearHeading(openGatePoseBack, -90.deg)
                         .turnTo(-90.deg)
                         .build(),
@@ -129,10 +131,11 @@ class CHICAGOOO : LoggedOpMode() {
                 ParallelAction(
                     robot.drive.actionBuilder(bigTrianglePose)
                         .setTangent(0.0.deg)
-                        .splineToLinearHeading(nextToGatePose, -135.deg)
-                        .turnTo(-90.deg)
-                        .setTangent(90.deg)
-                        .splineToLinearHeading(bigTrianglePose, 90.deg)
+                        .splineToLinearHeading(rightIntakePose, -45.deg)
+                        .setTangent(-90.deg)
+                        .lineToY(-56.inch)
+                        .setTangent(135.deg)
+                        .splineToLinearHeading(bigTrianglePose, 180.deg)
                         .build(),
                     SequentialAction(
                         ParallelAction(
@@ -143,9 +146,9 @@ class CHICAGOOO : LoggedOpMode() {
                             robot.shooter.turretToPosAction(robot.shooter.shootClosePos),
                             robot.shooter.goToRpmAction(robot.shooter.rpmClose)
                         ),
-                        robot.shootBalls(robot.shooter.rpmClose),
                     )
                 ),
+                robot.shootBalls(robot.shooter.rpmClose),
 
 
                 ParallelAction(
@@ -153,7 +156,7 @@ class CHICAGOOO : LoggedOpMode() {
                         .setTangent(-90.0.deg)
                         .splineToLinearHeading(leftIntakePose, -120.deg)
                         .setTangent(-90.deg)
-                        .lineToY(-51.inch)
+                        .lineToY(-52.inch)
                         .setTangent(90.deg)
                         .lineToY(-23.inch)
                         .build(),
@@ -163,7 +166,12 @@ class CHICAGOOO : LoggedOpMode() {
                 ),
 
                 robot.shootBalls(robot.shooter.rpmClose),
+                robot.drive.actionBuilder(bigTrianglePose)
+                    .setTangent(-90.0.deg)
+                    .lineToY(-20.0.inch)
+                    .build(),
             )
+
         }
 
         val actionPGP = buildBigTriangleAction(

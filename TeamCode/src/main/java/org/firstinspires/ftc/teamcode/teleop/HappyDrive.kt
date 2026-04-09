@@ -12,6 +12,8 @@ import com.commonlibs.units.Pose
 import com.commonlibs.units.angle
 import com.commonlibs.units.cm
 import com.commonlibs.units.deg
+import com.commonlibs.units.inch
+import com.commonlibs.units.pose
 import com.commonlibs.units.radsec
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.LoggedOpMode
@@ -29,18 +31,21 @@ open class HappyDrive : LoggedOpMode(){
     open val pipeline: Int = 1
     @Config
     data object HappyDrive {
-        @JvmField var rpmSmall = 3300.0
+        @JvmField var rpmSmall = 3400.0
         @JvmField var rpmBig = 2900.0
 
         @JvmField var rpmRest = 1200.0
     }
     private var driver1Action: Action? = null
+    private var driver2Action: Action? = null
     private var driver1ActionIsIntake: Boolean = false
 
     override fun runOpMode() {
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
 
-        val robot = Robot(hardwareMap,Pose(0.0.cm, 0.0.cm, 0.0.deg), resetPos = true)
+        val robot = Robot(hardwareMap,Pose(61.inch, -61.inch, -90.0.deg), resetPos = true)
+        val bigTrianglePose = Pose(4.inch, -9.inch, -90.0.deg)
+        val parkPose = Pose(38.inch, 31.inch, 90.0.deg)
         val timeKeep = TimeKeep()
 
         robot.limelight.setPipeline(pipeline)
@@ -53,8 +58,9 @@ open class HappyDrive : LoggedOpMode(){
         val stopShooter = ButtonReader {gamepad2.dpad_left}
         val restShooter = ButtonReader {gamepad2.dpad_right}
         val intakeBallsSort = ToggleButtonReader ({gamepad1.x})
-        val intakeBallsRaw = ToggleButtonReader ({gamepad1.b})
-        val buttons = listOf(shootGreen, shootPurple, shootAll, highRpm, lowRpm, stopShooter, intakeBallsSort, intakeBallsRaw)
+        val goToBigTriangle = ButtonReader {gamepad1.a}
+        val goToPark = ButtonReader { gamepad1.b }
+        val buttons = listOf(shootGreen, shootPurple, shootAll, highRpm, lowRpm, stopShooter, intakeBallsSort, goToBigTriangle, goToPark)
 
 //        val timeKeepLocal = TimeKeep()
 //        var previousTime: Double
@@ -86,13 +92,27 @@ open class HappyDrive : LoggedOpMode(){
                 robot.drive.isSlowMode = false
             }
 
-            robot.drive.driveFieldCentric(
-                -gamepad1.left_stick_y.toDouble(),
-                -gamepad1.left_stick_x.toDouble(),
-                -gamepad1.right_stick_x.toDouble()
-            )
-            if (gamepad1.y) {
-                robot.drive.resetFieldCentric()
+            if (driver2Action == null) {
+                robot.drive.driveFieldCentric(
+                    -gamepad1.left_stick_y.toDouble(),
+                    -gamepad1.left_stick_x.toDouble(),
+                    -gamepad1.right_stick_x.toDouble()
+                )
+                if (gamepad1.y) {
+                    robot.drive.resetFieldCentric()
+                }
+                if (goToBigTriangle.wasJustPressed()) {
+                    driver2Action = robot.drive.actionBuilder(robot.drive.mecanumDrive.localizer.getPose().pose)
+                        .setTangent(90.deg)
+                        .splineToLinearHeading(bigTrianglePose, 90.deg)
+                        .build()
+                }
+                if (goToPark.wasJustPressed()) {
+                    driver2Action = robot.drive.actionBuilder(robot.drive.mecanumDrive.localizer.getPose().pose)
+                        .setTangent(40.deg)
+                        .strafeToLinearHeading(parkPose)
+                        .build()
+                }
             }
 
             /// Intake
@@ -102,14 +122,6 @@ open class HappyDrive : LoggedOpMode(){
                     driver1Action = SequentialAction(
                         robot.intakeTeleBallsSort(),
                         InstantAction { intakeBallsSort.setState(false) }
-                    )
-                    driver1ActionIsIntake = true
-                }
-            } else if(intakeBallsRaw.state) {
-                if (driver1Action == null) {
-                    driver1Action = SequentialAction(
-                        robot.intakeTeleBallsRaw(),
-                        InstantAction { intakeBallsRaw.setState(false) }
                     )
                     driver1ActionIsIntake = true
                 }
@@ -225,6 +237,11 @@ open class HappyDrive : LoggedOpMode(){
         driver1Action?.let {
             if (!it.run(TelemetryPacket())) {
                 driver1Action = null
+            }
+        }
+        driver2Action?.let {
+            if (!it.run(TelemetryPacket())) {
+                driver2Action = null
             }
         }
     }
