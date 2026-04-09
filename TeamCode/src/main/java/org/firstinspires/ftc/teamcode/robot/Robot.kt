@@ -48,16 +48,16 @@ class Robot(
 
     fun intakeBalls(nextShoot: Spindexer.TransferPos) = SequentialAction (
         intake.startIntakeAction(),
-        transfer.waitForColors(4.0.s),
+        transfer.waitForColors(3.s),
         transfer.goToNextIntakeAction(),
-        SleepAction(0.25.s),
-        transfer.waitForColors(1.0.s),
+        SleepAction(0.3.s),
+        transfer.waitForColors(0.25.s),
         transfer.goToNextIntakeAction(),
-        SleepAction(0.25.s),
-        transfer.waitForColors(1.0.s),
-        SleepAction(0.25.s),
+        SleepAction(0.3.s),
+        transfer.waitForColors(0.25.s),
+        SleepAction(0.3.s),
         transfer.goToPosAction(nextShoot),
-        SleepAction(0.15.s),
+        SleepAction(0.125.s),
         intake.spew(),
     )
 
@@ -81,10 +81,12 @@ class Robot(
         intake.startIntakeAction(),
         transfer.waitForColors(7.0.s),
         InstantAction{transfer.updateBallSlot()},
+        SleepAction(0.05.s),
         transfer.goToNextIntakeAction(),
         SleepAction(0.6.s),
         transfer.waitForColors(7.0.s),
         InstantAction{transfer.updateBallSlot()},
+        SleepAction(0.05.s),
         transfer.goToNextIntakeAction(),
         SleepAction(0.6.s),
         transfer.waitForColors(7.0.s),
@@ -110,16 +112,15 @@ class Robot(
     )
 
     fun shootBall() = SequentialAction(
-        SleepAction(0.2.s),
+        SleepAction(0.175.s),
         InstantAction{transfer.fingerUp()},
-        SleepAction(0.2.s),
+        SleepAction(0.175.s),
         InstantAction{transfer.fingerDown()},
-        SleepAction(0.2.s),
+        SleepAction(0.175.s),
         InstantAction{transfer.emptySlot(transfer.currentPos)}
     )
 
     fun shootBalls(rpm: Double = shooter.rpmFar) = SequentialAction (
-        shooter.goToRpmAction(rpm),
         shootBall(),
         transfer.goToNextShootAction(),
         shootBall(),
@@ -245,7 +246,7 @@ class Robot(
         val finger = hardwareMap.get(Servo::class.java, "finger")
 
         val colorSensor = hardwareMap.get(NormalizedColorSensor::class.java, "colorSensor")
-        colorSensor.gain = 1.585f
+        colorSensor.gain = 1.695f
 
         val voltageSensor = hardwareMap.get(VoltageSensor::class.java, "Control Hub")
 

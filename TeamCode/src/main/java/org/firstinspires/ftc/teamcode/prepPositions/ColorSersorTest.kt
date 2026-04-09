@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.NormalizedColorSensor
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.library.TimeKeep
+import org.firstinspires.ftc.teamcode.robot.Robot
 import org.firstinspires.ftc.teamcode.robot.Spindexer
 
 @TeleOp
@@ -24,12 +25,7 @@ class ColorSersorTest : LinearOpMode() {
         var gain = 1f
 
         telemetry = MultipleTelemetry(telemetry, FtcDashboard.getInstance().telemetry)
-        val transfer = Spindexer(
-            servoTransfer1 = servoTransferFront,
-            servoTransfer2 = servoTransferBack,
-            finger = finger,
-            colorSensor = colorSensor
-        )
+        val robot = Robot(hardwareMap)
         val timeKeep = TimeKeep()
 
         waitForStart()
@@ -41,21 +37,28 @@ class ColorSersorTest : LinearOpMode() {
             if (gamepad1.a) {
                 // Only increase the gain by a small amount, since this loop will occur multiple times per second.
                 gain += 0.005.toFloat()
-            } else if (gamepad1.b && gain > 1) { // A gain of less than 1 will make the values smaller, which is not helpful.
+            } else if (gamepad1.y && gain > 1) { // A gain of less than 1 will make the values smaller, which is not helpful.
                 gain -= 0.005.toFloat()
             }
 
             colorSensor.setGain(gain)
 
-            transfer.updateHue()
+            robot.transfer.updateHue()
+
+            if(gamepad1.x) {
+                robot.transfer.goToNextIntake()
+            }
+            if (gamepad1.b) {
+                robot.transfer.goToPos(Spindexer.TransferPos.intake0)
+            }
 
 
             telemetry.addData("distance",
-                (transfer.colorSensor as DistanceSensor).getDistance(DistanceUnit.MM))
+                (robot.transfer.colorSensor as DistanceSensor).getDistance(DistanceUnit.MM))
             telemetry.addData("Gain", gain)
-            telemetry.addData("color", transfer.sensorColor)
-            telemetry.addData("hue", transfer.sensorHue)
-            telemetry.addData("hsv", transfer.hsv)
+            telemetry.addData("color", robot.transfer.sensorColor)
+            telemetry.addData("hue", robot.transfer.sensorHue)
+            telemetry.addData("hsv", robot.transfer.hsv)
             telemetry.addData("delta time ms", timeKeep.deltaTime.asMs)
             telemetry.addData("fps", 1.s / timeKeep.deltaTime)
             telemetry.update()

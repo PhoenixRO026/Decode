@@ -73,15 +73,17 @@ class Shooter(
         @JvmField var ticksPerRev = 8192.0 * (108.0/22.0)
 
         @JvmField var targetPosTolerance = 75
-        @JvmField var minTurretPosition = -14000.0
-        @JvmField var maxTurretPosition = 14000.0
+        @JvmField var minTurretPosition = -10000.0
+        @JvmField var maxTurretPosition = 13000.0
         @JvmField var limitTolerence = 50
         @JvmField var gearRatio = 23.0 / 30.0
         @JvmField var rpmFar = 3200.0
-        @JvmField var rpmClose = 2900.0
-        @JvmField var rpmRest = 1500.0
-        @JvmField var shootClosePos = 5800.0
+        @JvmField var rpmClose = 2850.0
+        @JvmField var rpmRest = 2200.0
+        @JvmField var shootClosePos = 5250.0
         @JvmField var shootFarPos = 7500.0
+
+        @JvmField var cameraPos = 12000.0
         // in dreapta creste pozitia
     }
 

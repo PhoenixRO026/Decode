@@ -28,7 +28,7 @@ class Spindexer(
         @JvmField val fingerUpPosition = 0.5728
         @JvmField val  fingerDownPosition = 0.465
         @JvmField val shootOffset = 0.07
-        @JvmField var intake0Pos = 0.1205
+        @JvmField var intake0Pos = 0.0772
         @JvmField val wholePosDist = 0.1351
         @JvmField val toShootPosDist = 0.065
     }
@@ -226,7 +226,7 @@ class Spindexer(
     var hsv = floatArrayOf(0f, 0f, 0f)
 
     val sensorColor get() = when {
-        hsv[1] != 0f && sensorHue in 150f..190f -> BallColor.PURPLE
+        hsv[1] != 0f && sensorHue in 121f..300f -> BallColor.PURPLE
         hsv[1] != 0f && sensorHue in 119f..121f -> BallColor.GREEN
         else -> BallColor.EMPTY
     }

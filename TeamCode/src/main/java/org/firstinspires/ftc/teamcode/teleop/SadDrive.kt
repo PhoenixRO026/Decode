@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.robot.Spindexer
 
 
 @TeleOp
-open class HappyDrive : LoggedOpMode(){
+open class SadDrive : LoggedOpMode(){
     open val pipeline: Int = 1
     @Config
     data object HappyDrive {
@@ -45,33 +45,21 @@ open class HappyDrive : LoggedOpMode(){
 
         robot.limelight.setPipeline(pipeline)
 
-        val shootGreen = ButtonReader { gamepad2.x }
-        val shootPurple = ButtonReader { gamepad2.b }
         val shootAll = ButtonReader { gamepad2.y }
         val highRpm = ButtonReader {gamepad2.right_bumper}
         val lowRpm = ButtonReader {gamepad2.left_bumper}
         val stopShooter = ButtonReader {gamepad2.dpad_left}
         val restShooter = ButtonReader {gamepad2.dpad_right}
         val intakeBallsSort = ToggleButtonReader ({gamepad1.x})
-        val intakeBallsRaw = ToggleButtonReader ({gamepad1.b})
-        val buttons = listOf(shootGreen, shootPurple, shootAll, highRpm, lowRpm, stopShooter, intakeBallsSort, intakeBallsRaw)
+        val buttons = listOf(shootAll, highRpm, lowRpm, stopShooter, intakeBallsSort)
 
-//        val timeKeepLocal = TimeKeep()
-//        var previousTime: Double
-//        var deltaTime : Double
-//        var now : Double
 
         waitForStart()
 
-//        previousTime = now()
         robot.transfer.fingerDown()
         robot.transfer.goToPos(Spindexer.TransferPos.intake0)
 
         while (opModeIsActive()) {
-//            now = now()
-//            deltaTime = now - previousTime
-//            previousTime = now
-//            val increment = (deltaTime * 0.01)
             val increment = timeKeep.deltaTime.asS * 0.01
             timeKeep.resetDeltaTime()
             buttons.forEach { it.readValue() }
@@ -80,18 +68,18 @@ open class HappyDrive : LoggedOpMode(){
 
             /// Drive
 
-            if (gamepad1.left_trigger >= 0.2) {
+            if (gamepad2.left_trigger >= 0.2) {
                 robot.drive.isSlowMode = true
             } else {
                 robot.drive.isSlowMode = false
             }
 
             robot.drive.driveFieldCentric(
-                -gamepad1.left_stick_y.toDouble(),
-                -gamepad1.left_stick_x.toDouble(),
-                -gamepad1.right_stick_x.toDouble()
+                -gamepad2.left_stick_y.toDouble(),
+                -gamepad2.left_stick_x.toDouble(),
+                -gamepad2.right_stick_x.toDouble()
             )
-            if (gamepad1.y) {
+            if (gamepad2.x) {
                 robot.drive.resetFieldCentric()
             }
 
@@ -105,14 +93,6 @@ open class HappyDrive : LoggedOpMode(){
                     )
                     driver1ActionIsIntake = true
                 }
-            } else if(intakeBallsRaw.state) {
-                if (driver1Action == null) {
-                    driver1Action = SequentialAction(
-                        robot.intakeTeleBallsRaw(),
-                        InstantAction { intakeBallsRaw.setState(false) }
-                    )
-                    driver1ActionIsIntake = true
-                }
             } else {
                 if (driver1ActionIsIntake) {
                     driver1Action = null
@@ -122,20 +102,12 @@ open class HappyDrive : LoggedOpMode(){
                 }
 
                 /// Intake
-                if (gamepad1.right_bumper) {
-                    robot.intake.power = 1.0
-                } else if (gamepad1.left_bumper) {
+                if (gamepad2.right_trigger >= 0.2) {
                     robot.intake.power = -1.0
                 } else {
                     robot.intake.power = 0.0
                 }
 
-                if (shootGreen.wasJustPressed() && driver1Action == null) {
-                    driver1Action = robot.shootGreen()
-                }
-                if (shootPurple.wasJustPressed() && driver1Action == null) {
-                    driver1Action = robot.shootPurple()
-                }
                 if (shootAll.wasJustPressed() && driver1Action == null) {
                     driver1Action = robot.shootBallsTele()
                 }
@@ -151,15 +123,7 @@ open class HappyDrive : LoggedOpMode(){
                 robot.shooter.goToRmp(0.0)
             }
 
-            if (gamepad2.left_trigger > 0) {
-                robot.shooter.currentMode = MODE.MANUAL
-                robot.shooter.powerTurret = -0.5
-            }
-            else if (gamepad2.right_trigger > 0) {
-                robot.shooter.currentMode = MODE.MANUAL
-                robot.shooter.powerTurret = 0.5
-            }
-            else if (robot.shooter.currentMode != MODE.PID) {
+            if (robot.shooter.currentMode != MODE.PID) {
                 robot.shooter.currentMode = MODE.PID
                 robot.shooter.powerTurret = 0.0
                 robot.shooter.resetTargetAngle(robot.drive.mecanumDrive.localizer.pose.heading.angle)
@@ -173,14 +137,10 @@ open class HappyDrive : LoggedOpMode(){
                 robot.transfer.goToPos(Spindexer.TransferPos.intake0)
             }
 
-
-//            robot.transfer.updateHue()
-
             robot.shooter.updateRpm(timeKeep.deltaTime)
             robot.limelight.updateHeadingError()
             robot.shooter.updateTurret(timeKeep.deltaTime, robot.limelight.headingErrorDeg, robotVel.angVel.radsec,
                 robot.drive.mecanumDrive.localizer.pose.heading.angle)
-//            robot.turretShootingWhileMoving(timeKeep.deltaTime, telemetry)
 
             robot.shooter.addTelemetry(telemetry)
 

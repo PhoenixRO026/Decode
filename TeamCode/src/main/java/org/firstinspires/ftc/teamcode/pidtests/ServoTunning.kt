@@ -17,8 +17,8 @@ class ServoTunning: LinearOpMode() {
         var deltaTime : Double
         var now : Double
 
-        servoFront.position = 0.0
-        servoBack.position = 0.0044
+        servoFront.position = 0.0067
+        servoBack.position = 0.00
 
         waitForStart()
         previousTime = now()
@@ -34,9 +34,9 @@ class ServoTunning: LinearOpMode() {
             if(gamepad1.dpad_down) {
                 servoFront.position = (servoFront.position - increment).coerceIn(0.0, 1.0 - 0.0044)
             }
-            servoBack.position = servoFront.position + 0.0044
+            servoBack.position = servoFront.position - 0.0067
 
-            telemetry.addData("pos ", servoFront.position)
+            telemetry.addData("pos ", servoBack.position)
             telemetry.update()
         }
 
