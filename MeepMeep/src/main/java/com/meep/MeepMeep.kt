@@ -305,6 +305,7 @@ fun main() {
         .strafeToLinearHeading(blueGoalFarDuo.smallTrianglePose)
 
         .strafeToLinearHeading(blueGoalFarDuo.endPose)
+        
 
         .build()
     )
