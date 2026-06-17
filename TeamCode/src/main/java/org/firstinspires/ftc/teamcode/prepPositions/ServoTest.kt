@@ -12,7 +12,7 @@ class ServoTest: LinearOpMode() {
     @Config
     data object servoConfig {
         @JvmField
-        var servoPos = 0.5
+        var servoPos = 0.485
     }
     override fun runOpMode() {
 
