@@ -190,12 +190,13 @@ open class HappyDrive : LoggedOpMode(){
 
             robot.shooter.updateRpm(timeKeep.deltaTime)
             robot.limelight.updateHeadingError()
-            robot.shooter.updateTurret(timeKeep.deltaTime, robot.limelight.headingErrorDeg, robotVel.angVel.radsec,
-                robot.drive.mecanumDrive.localizer.pose.heading.angle)
+//            robot.shooter.updateTurret(timeKeep.deltaTime, robot.limelight.headingErrorDeg, robotVel.angVel.radsec,
+//                robot.drive.mecanumDrive.localizer.pose.heading.angle)
 //            robot.turretShootingWhileMoving(timeKeep.deltaTime, telemetry)
 
             robot.shooter.addTelemetry(telemetry)
 
+            telemetry.addData("heading", robot.drive.heading)
             telemetry.addData("emergency offset", robot.transfer.emergencyOffset)
             telemetry.addData("intake 0 pos", Spindexer.TransferConfig.intake0Pos)
             telemetry.addData("servo pos", robot.transfer.servoTransfer1.position)
